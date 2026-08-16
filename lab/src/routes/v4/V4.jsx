@@ -227,8 +227,8 @@ export default function V4() {
         <footer className="v4-foot">
           <p>Sources: FilmiBeat, myvi.in, FilmyChill, Boston.com. Poster art via TMDB.</p>
           <p>
-            “~” marks approximate artwork. Titles without confirmed art show their name in
-            place of a poster.
+            “(approx.)” marks approximate artwork. Titles without confirmed art show their name
+            in place of a poster.
           </p>
         </footer>
       </div>
