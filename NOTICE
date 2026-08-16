@@ -1,0 +1,97 @@
+NOTICE
+======
+
+This repository vendors third-party work. The list below is what is redistributed
+here, who wrote it, and under what terms. Full license texts are in
+`third_party/licenses/`.
+
+Everything outside `.agents/skills/` and `.claude/skills/` — `lab/`, `playbook/`,
+`docs/`, and the root documents — is this repository's own work.
+
+Why these are vendored at all: the `v5` drill measured what installed community
+design skill packs contribute to an AI-built UI. Reproducing that measurement
+requires the exact pack contents that were present, so they are committed rather
+than installed at setup time. `skills-lock.json` records the source and content
+hash of each. They are included as research apparatus, not as an improvement on,
+or a fork of, the originals.
+
+Both directories hold the same 24 packs. `.claude/skills/` is 23 symlinks into
+`.agents/skills/` plus one real directory (`impeccable`).
+
+--------------------------------------------------------------------------------
+1. emilkowalski/skills — MIT
+--------------------------------------------------------------------------------
+
+Copyright (c) 2026 Emil Kowalski
+https://github.com/emilkowalski/skills
+License text: third_party/licenses/emilkowalski-skills.LICENSE
+
+Packs used here (10):
+  animate                       animation-vocabulary
+  apple-design                  ask-sonner
+  emil-design-eng               find-animation-opportunities
+  improve-animations            pick-ui-library
+  prototype                     review-animations
+
+--------------------------------------------------------------------------------
+2. Leonxlnx/taste-skill — MIT
+--------------------------------------------------------------------------------
+
+Copyright (c) 2026 Leonxlnx
+https://github.com/Leonxlnx/taste-skill
+License text: third_party/licenses/Leonxlnx-taste-skill.LICENSE
+
+Packs used here (13):
+  brandkit                      design-taste-frontend
+  design-taste-frontend-v1      full-output-enforcement
+  gpt-taste                     high-end-visual-design
+  image-to-code                 imagegen-frontend-mobile
+  imagegen-frontend-web         industrial-brutalist-ui
+  minimalist-ui                 redesign-existing-projects
+  stitch-design-taste
+
+Note: pack names here are the installed aliases, which differ from the upstream
+directory names (for example `high-end-visual-design` is upstream `soft-skill`,
+and `full-output-enforcement` is upstream `output-skill`). `skills-lock.json`
+maps each alias to its upstream `skillPath`.
+
+--------------------------------------------------------------------------------
+3. impeccable — Apache License 2.0
+--------------------------------------------------------------------------------
+
+Copyright (c) Paul Bakaus and contributors
+https://github.com/pbakaus/impeccable  ·  https://impeccable.style
+License text: third_party/licenses/pbakaus-impeccable.LICENSE
+
+Pack used here (1): impeccable — vendored SKILL.md declares version 4.1.1.
+
+The playbook also reports results from impeccable's CLI (`npx impeccable detect`),
+run against the pages rather than vendored. The findings in `playbook/` about this
+tool — including that its source-file scan reported zero findings on a page its
+live-browser scan found 28 defects in — describe how the tool was used in this
+experiment. They are observations from one project, not a defect report, and the
+distinction between its two scan modes is documented behaviour, not a bug.
+
+--------------------------------------------------------------------------------
+Provenance and corrections
+--------------------------------------------------------------------------------
+
+Sources were read from `skills-lock.json` (which records 23 of the 24 packs) and,
+for impeccable, from the published npm package metadata. Upstream license texts
+were retrieved from each project's repository.
+
+The packs are unmodified. `playbook/findings/v5.md` and `v5-conflicts.md` describe
+where their advice was deliberately overridden, and why — those are disagreements
+recorded in this repository's own documents, not changes to anyone's pack.
+
+If you maintain one of these projects and want the attribution corrected, the
+vendored copy removed, or the framing changed, please open an issue.
+
+--------------------------------------------------------------------------------
+Other credits
+--------------------------------------------------------------------------------
+
+Poster artwork referenced by `lab/` is served from TMDB (https://www.themoviedb.org)
+by URL and is not redistributed here. This product uses the TMDB API but is not
+endorsed or certified by TMDB. Release dates were compiled from FilmiBeat, myvi.in,
+FilmyChill and Boston.com; see `lab/src/data/releases.js`.
