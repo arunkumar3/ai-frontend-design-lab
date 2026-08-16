@@ -431,6 +431,7 @@ git commit -m "feat: real OTT release dataset for 15-21 Aug 2026 with region hel
 ```js
 import { chromium } from 'playwright'
 import { mkdir } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
 
 const route = process.argv[2]
 if (!route) {
@@ -456,8 +457,10 @@ for (const width of VIEWPORTS) {
     await page.goto(`${BASE}/${route}`, { waitUntil: 'networkidle' })
     // let entrance animations settle before capturing
     await page.waitForTimeout(1200)
+    // fileURLToPath, not .pathname — .pathname stays percent-encoded, so a repo
+    // path containing a space would write to a literal "%20" path and ENOENT.
     await page.screenshot({
-      path: new URL(`${width}-${colorScheme}.png`, outDir).pathname,
+      path: fileURLToPath(new URL(`${width}-${colorScheme}.png`, outDir)),
       fullPage: true,
     })
     await page.close()
