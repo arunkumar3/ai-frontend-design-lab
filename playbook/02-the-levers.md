@@ -12,7 +12,9 @@ Ordered by measured value, not by how good they sound.
 **What it is:** render the page, look at the captures, write down specific defects, fix
 only those, then render and look **again**.
 
-**Measured:** 15 of 17 tells fixed. Page height 7102px → 3742px. Killed the orphan-row
+**Measured:** 15 of 17 tells fixed. Page height 7102px → 3742px (device pixels at
+`deviceScaleFactor: 2`, i.e. 2× CSS px — every height figure in this playbook uses this
+unit; `document.documentElement.scrollHeight` in-browser will read half). Killed the orphan-row
 problem that a constitution, a token system, and a reference pipeline had all failed on.
 
 **Why it wins:** every other lever operates on your *intent*. This one operates on the
@@ -20,14 +22,20 @@ problem that a constitution, a token system, and a reference pipeline had all fa
 wrong — a font that never loaded, a date range the data contradicted, an audit run against
 source instead of the render. Each was invisible to inspection and obvious on screen.
 
-**The non-obvious part: one round is worse than none.** Roughly 10 of 16 defects found
-across three rounds were *introduced by the loop's own earlier fixes*. In the implementer's
-words: *"every fix I made broke something else that I only caught on the next round's fresh
-screenshot, never in my own immediate spot-check right after editing."*
+**The non-obvious part: one round is not enough — it ships unseen regressions.** Round 1
+alone fixed six genuine pre-existing defects, including the orphan-row tell (T1) that had
+survived three prior drills, and produced most of the page-height collapse — after Round 1
+the page was clearly better than `v3`. But 8–10 of the 16 defects found across all three
+rounds were *introduced by the loop's own earlier fixes* (two of those ten are judgement
+calls: an incomplete fix and a pre-existing weakness the fix made visible, rather than clean
+regressions — see `findings/v4.md`). In the implementer's words: *"every fix I made broke
+something else that I only caught on the next round's fresh screenshot, never in my own
+immediate spot-check right after editing."*
 
-A single round finds real defects, fixes them, creates new ones, and ships them unseen —
-leaving you broken in different places while feeling verified. **The value is not in
-looking. It is in looking again after you fix.** Budget three rounds or don't start.
+A single round finds real defects, fixes them, creates new ones, and ships the new ones
+unseen — better than no round, but still leaving you broken in places you haven't looked.
+**The value is not only in looking. It is in looking again after you fix.** Budget three
+rounds or don't start.
 
 **What it cannot do — three blind spots:**
 
@@ -54,13 +62,16 @@ header wraps and the count sits alone on line 2" is.
 and the reasoning behind them. The `taste` skill (`senlindesign/taste-skill`) automates this
 into token + rationale files from any URL.
 
-**Measured:** 13 of 17. But the raw count misses the point — it delivered the single change
+**Measured:** 14 of 17. But the raw count misses the point — it delivered the single change
 no amount of iteration produced.
 
-**Why it wins:** the platform-badge problem survived three drills. `v0` let eleven brand
-colours *be* the palette; `v1` shrank them to tints; `v2` to 8px dots. All three kept brand
-colour **inside** the grid. JustWatch stamps the platform once on a group header, and the
-grid carries no brand colour at all — 22 marks became 7.
+**Why it wins:** the platform-badge problem survived three drills. `v0` let platform
+colours *be* the palette — up to seven distinct brand colours on the India render, six on
+the US render (the `PLATFORMS` map defines eleven; only the platforms present in a given
+region's data appear on that page). `v1` shrank them to tints; `v2` to 8px dots. All three
+kept brand colour **inside** the grid. JustWatch stamps the platform once on a group header,
+and the grid carries no brand colour at all — per render, that's **13 marks → 7 (India)**
+and **9 marks → 6 (US)**, one mark per group instead of one per item.
 
 Iteration makes a bad component smaller. **A reference replaces it.**
 
@@ -91,8 +102,9 @@ accent, radius and elevation rules, motion timings — to a file **before** writ
 
 **Why it wins:** compare with the constitution on the identical rule. Both had "exactly one
 accent colour" available. The constitution *stated* it and got a partial result — chrome
-obeyed, eleven brand colours still tinted content. The token system wrote the palette down
-as committed values before any component existed, and got a complete one.
+obeyed, platform brand colours (up to seven visible per render, of eleven defined) still
+tinted content. The token system wrote the palette down as committed values before any
+component existed, and got a complete one.
 
 **A rule tells you what not to do. A token system removes the opportunity.**
 
@@ -103,6 +115,12 @@ card. The discipline caught it.
 
 **What it cannot do:** govern layout invariants. Nothing expressible in `tokens.md` says
 "metadata rows in a row must align," so ragged card heights regressed here.
+
+Also: `v2`'s `theme.css` still needed conventional constants outside the token
+vocabulary — 1px hairlines, a −2px hover lift, a 640px breakpoint. A second, concrete
+instance of "tokens govern values, not layout invariants": some values are inherently
+structural (a border is either there or not; a breakpoint is a fact about viewports) and a
+token system has nothing useful to say about them.
 
 ---
 
@@ -136,12 +154,19 @@ constitution at all. Measure your own baseline before crediting a ban list.
 **What they are:** `emilkowalski/skill` (motion), `pbakaus/impeccable` (anti-patterns),
 `Leonxlnx/taste-skill` (anti-slop).
 
-**Measured:** no change from `v4` — identical page height, identical audit score.
+**Measured:** no change from `v4` — identical page height, identical audit score. **Not
+separately scored against the 17-item tell list** — the layout is unchanged from `v4`, so
+`v5` inherits `v4`'s 15/17 rather than earning its own number.
 
-**They did not load.** All seven returned `Unknown skill`, verified from the main session.
-Project-local installs (`.claude/skills/`, `.agents/skills/`) do **not** hot-reload;
-a global `~/.claude/skills/` clone does. **Install, then restart Claude Code** — nothing
-warns you, and a silent no-op looks exactly like success.
+**They did not load.** Seven were checked by name (of 24 installed skill directories) and
+all returned `Unknown skill`, verified from the main session. One global `~/.claude/skills/`
+clone worked immediately; two project-local installs (`.claude/skills/`, `.agents/skills/`)
+did not — but that's an observation, not a confirmed mechanism: install method, location,
+and 23-of-24 of `.claude/skills/` being symlinks into `.agents/skills/` were never isolated
+from each other. "Install, then restart Claude Code" was proposed as the fix but was never
+tested, and a check in a brand-new session shows it does not work — treat the cause as
+unconfirmed, and **test with a direct invocation before relying on a pack.** Nothing warns
+you otherwise, and a silent no-op looks exactly like success.
 
 **What they genuinely earned:** one real WCAG contrast failure — an active toggle pill at
 **4.03:1**, present since `v3` — that `impeccable detect` reported clean in both modes. It

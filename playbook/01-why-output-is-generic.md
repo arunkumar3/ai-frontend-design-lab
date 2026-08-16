@@ -46,8 +46,9 @@ to.**
 ### 2. Decisions never made
 
 `v0` had no colour identity. Not wrong colours — *no colour decision*. Neutral greys plus
-eleven borrowed platform brand colours, so Netflix red and ZEE5 purple became the accent by
-default.
+whichever platform brand colours happened to be in view — up to seven on the India render,
+six on the US render, of eleven defined in the `PLATFORMS` map — so Netflix red and ZEE5
+purple became the accent by default.
 
 This is the characteristic failure, and it is invisible to ban lists. No rule against purple
 gradients catches "the palette is whatever the content happened to contain."
@@ -65,12 +66,19 @@ drill.**
 
 ## The uncomfortable finding
 
-An automated anti-pattern audit ranked `v0` **above** two of the designed versions.
+Audited against the **live rendered page** — the only mode worth trusting; see
+`02-the-levers.md` on why the source-mode scan is worthless — an automated anti-pattern
+detector still ranks `v0` **above** two of the designed versions: `v0` scores **7** live
+findings, `v2` scores **14**, `v1` scores **28** (`v3`–`v5` all score **3**).
 
-It scores zero on "overused font" because the system font stack is not a choice, so it
-cannot be a bad one. `v2` and `v3` picked distinctive-feeling display serifs that are, per
-the same audit, exactly what every AI-generated UI now picks.
+This is not because `v0` dodges the fashionable-font tell — the live scan flags it too,
+`overused-font: roboto`, the same class of finding as `v2`'s Fraunces and `v3`'s Instrument
+Serif. `v0` scores lower on the whole because it introduced far fewer *other* problems: no
+cramped padding, no low-contrast pairing, nothing invented — because it made few decisions
+of any kind. `v2` scores higher despite being the more considered page, because being more
+considered means making more decisions, and every decision is a chance to trip a rule.
 
-**Absence of a tell is not presence of design.** Any tool that detects clichés will reward
-abstention. That is why the levers in this playbook are measured against before/after
-captures and a hand-written tell list, not against a score.
+**Absence of a tell is not presence of design.** A detector built to catch clichés cannot
+distinguish "avoided the cliché" from "never tried." That is why the levers in this
+playbook are measured against before/after captures and a hand-written tell list, not
+against a score.

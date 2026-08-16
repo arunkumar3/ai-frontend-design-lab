@@ -81,6 +81,6 @@ and nothing in this lab's toolkit would have proposed it.
 |---|---|---|---|
 | Constitution | 9/17 | raised the general standard well beyond its own ban list | only bans what its author already imagined |
 | Token system | 14/17 | removed the *opportunity* to break the colour rule | governs values, not layout invariants |
-| References | 13/17 | the one **structural** move — brand colour out of the grid | imported a structure whose data assumptions did not transfer |
+| References | 14/17 | the one **structural** move — brand colour out of the grid | imported a structure whose data assumptions did not transfer |
 | Screenshot loop | 15/17 | killed the orphan rows three drills had failed on | cannot see absences or cross-state relationships |
-| Community skills | 15/17 | one real WCAG contrast bug the scanner missed | not discoverable without a restart; strongest opinions all overridden |
+| Community skills | not separately scored (layout unchanged from v4) | one real WCAG contrast bug the scanner missed | not discoverable without a restart; strongest opinions all overridden |

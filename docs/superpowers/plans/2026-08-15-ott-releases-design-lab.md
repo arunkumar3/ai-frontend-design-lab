@@ -904,7 +904,20 @@ git add -A && git commit -m "docs: complete design operating playbook"
 ```bash
 cd /Users/arunjalanila/MyProjects/web_development/lab
 pnpm vitest run          # dataset invariants — 10 passing
+```
+
+Then, in a **second shell**, start the dev server and leave it running — `pnpm shoot`
+requires it to already be up, it does not start one itself:
+
+```bash
+cd /Users/arunjalanila/MyProjects/web_development/lab
 pnpm dev                 # then visit / and click through all six drills
+```
+
+Back in the first shell, with that dev server still running:
+
+```bash
+cd /Users/arunjalanila/MyProjects/web_development/lab
 for v in v0 v1 v2 v3 v4 v5; do pnpm shoot $v; done
 ls shots/*/ | wc -l      # expect 36 PNGs
 ```

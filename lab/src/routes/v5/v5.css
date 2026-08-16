@@ -224,7 +224,7 @@
    report a one-column max-content width, squeezing dense groups into a
    single narrow lane once laid out (R2 D7/D8). An explicit basis sidesteps
    that ambiguity entirely. */
-main {
+.v5-page main {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -431,7 +431,7 @@ main {
 
   /* Not enough width for groups to sit side by side; keep the original
      single-column stack. */
-  main {
+  .v5-page main {
     display: block;
   }
 

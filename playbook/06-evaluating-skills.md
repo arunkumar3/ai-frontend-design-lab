@@ -43,26 +43,40 @@ being published. **That is the normal state of tutorial content.**
 
 ## The step everyone skips: confirm it loaded
 
-All three packs installed successfully — 23 skill directories on disk. Then:
+All three packs installed successfully — 24 skill directories on disk (seven of those were
+actually invoked and checked by name; the other 17 were not individually tested, but sit in
+the same locations and share the same non-discovery). Then:
 
 ```
 Skill(impeccable) → Unknown skill: impeccable
 ```
 
-All seven returned `Unknown skill`, verified from the main session, not just a subagent.
+All seven tested returned `Unknown skill`, verified from the main session, not just a
+subagent.
 
-**The mechanism:**
+**An observation, not a confirmed mechanism.** One global `~/.claude/skills/` clone
+(`git clone`) worked immediately; two project-local installs (`npx skills add`,
+`impeccable skills install`, landing in `.claude/skills/` and `.agents/skills/`) did not.
+But install method and location were never varied independently, so this does not isolate
+a cause. Live alternative explanations that were not ruled out:
 
-| Location | Hot-reloads mid-session |
-|---|---|
-| `~/.claude/skills/` | **yes** |
-| `.claude/skills/`, `.agents/skills/` (project-local) | **no** |
+- **Install method** — `git clone` vs. package-manager install may behave differently
+  regardless of where the files land.
+- **Symlinks** — 23 of the 24 entries in `.claude/skills/` are symlinks into
+  `../../.agents/skills/`; only `impeccable` is a real directory. A symlinked skill
+  directory is a plausible, untested reason project-local discovery could fail even if the
+  global clone would not.
+- **Project-local discovery may simply not be supported** in this session's Claude Code
+  version, independent of install method or symlinking.
 
-Both installs happened minutes apart in the same session. The globally-cloned one was usable
-immediately; the project-local ones never registered.
-
-**So: install, then restart Claude Code.** Nothing warns you. A skill that never loads
-produces output that looks exactly like a skill that loaded and had no opinion.
+**What is actually confirmed:** installation does not imply availability, and no warning is
+raised. The cause of *why* project-local skills didn't load is unconfirmed. What is
+confirmed is narrower and still useful — **test with a direct invocation before relying on
+a pack.** "Install, then restart Claude Code" was never actually tested when it was first
+written — and a direct check in a brand-new session (`Skill(impeccable)`, `Skill(animate)`,
+both project-local) still returns `Unknown skill`. A fresh session is the strongest form of
+"restart" available, so the prescription is not a reliable remedy; treat it as
+false/unconfirmed rather than repeat it.
 
 This is the same failure shape as an inert `@theme` block — a silent no-op indistinguishable
 from success. Whenever a tool's effect is invisible, **make it prove it ran.** The direct

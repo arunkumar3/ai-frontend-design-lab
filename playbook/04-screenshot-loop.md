@@ -74,17 +74,23 @@ Vague impressions cannot be verified, cannot be fixed precisely, and cannot be c
 round. **The discipline that makes the loop work is not looking — it is being forced to say
 precisely what you saw.**
 
-## Three rounds minimum. One round is worse than none.
+## Three rounds minimum. One round is not enough — it ships unseen regressions.
 
-Across three rounds this lab logged 16 defects. Roughly **10 were introduced by the loop's
-own earlier fixes.**
+Across three rounds this lab logged 16 defects. **8–10 were introduced by the loop's own
+earlier fixes** (8 are clean regressions; 2 more are judgement calls — an earlier fix
+landing incomplete, and an earlier fix exposing a pre-existing weakness rather than
+creating it — see `findings/v4.md`).
 
 > every fix I made broke something else that I only caught on the *next* round's fresh
 > screenshot, never in my own immediate spot-check right after editing
 
-A single round finds real defects, fixes them, creates new ones, and ships them unseen. You
-end up broken in different places while feeling verified. **The value is in looking again
-after you fix.** If you cannot afford three rounds, the loop is not the lever to reach for.
+That is not an argument against Round 1: it fixed six genuine pre-existing defects,
+including the orphan-row tell that had survived three prior drills, and the page was
+already clearly better than the input after Round 1 alone. But a single round also creates
+new defects it cannot see yet, and ships them unseen alongside the real fixes. You end up
+broken in different places while feeling verified. **The value is not only in looking. It
+is in looking again after you fix.** If you cannot afford three rounds, budget for the fact
+that a first pass will ship regressions of its own.
 
 ## What it cannot see
 

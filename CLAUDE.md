@@ -56,8 +56,8 @@ them and the drills exposed the gap. See `playbook/05-troubleshooting.md` for ev
 - Before claiming any surface complete, capture it with `pnpm shoot <route>` and look at the
   images.
 - **(measured)** Three rounds, not one. One round of screenshot review ships the regressions
-  it just introduced. Roughly 10 of 16 defects in `v4` were caused by the loop's own earlier
-  fixes.
+  it just introduced. 8–10 of 16 defects in `v4` were caused by the loop's own earlier
+  fixes (8 clean regressions, 2 more on a generous reading — see `playbook/findings/v4.md`).
 - **(measured)** Verify against the render, never against your intent. Check computed style
   in a browser; cross-reference displayed text against the underlying data.
 - **(measured)** Audit the running page, not the repository:
