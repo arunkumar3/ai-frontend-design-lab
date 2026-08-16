@@ -23,6 +23,9 @@ design exists.
 - **Banned defaults** (enforced from `v1` onward, via `CLAUDE.md`): indigo→purple gradients; centered hero with two buttons; emoji as iconography; blanket `shadow-lg`; `max-w-7xl mx-auto` as the default container; copy containing "seamless", "empower", "effortless", "unlock", "elevate".
 - **Every route must render both regions** (`IN`, `US`) via a working toggle.
 - **Tailwind v4 is CSS-first.** Configuration lives in `@theme` inside CSS. There is no `tailwind.config.js`.
+- **No `loading="lazy"` on poster images.** `shoot.mjs` waits for `networkidle` at the
+  pre-expansion viewport, so lazy images below the fold capture blank. All six drills
+  must capture under identical conditions for the comparison to mean anything.
 - **Capture before claiming.** No drill is complete until `pnpm shoot vN` has produced its six screenshots.
 
 ## Poster Artwork
@@ -649,20 +652,38 @@ git add -A && git commit -m "feat(v1): design constitution + delta vs v0"
 
 Must specify, with concrete values: a typeface pairing (self-hosted or Google Fonts, and explicitly not Inter); a modular type scale (base size and ratio, four steps); a spacing scale; one accent color with its light/dark variants; a radius rule; an elevation rule; and motion timings with named easing curves.
 
-- [ ] **Step 2: Express the tokens in Tailwind v4 `@theme`**
+- [ ] **Step 2: Express the tokens as route-scoped CSS custom properties**
 
-`lab/src/routes/v2/theme.css` — Tailwind v4 is CSS-first, so tokens are declared in CSS, e.g.:
+**Do NOT use an `@theme` block here.** `@tailwindcss/vite` only processes `@theme` inside
+the CSS module graph rooted at the file containing `@import "tailwindcss"` — that is
+`lab/src/index.css`. A route CSS file imported from a component with `import './theme.css'`
+sits outside that graph, so an `@theme` block ships to the browser as literal, inert text
+and every token in it silently resolves to `""`. There is no dev-time error; `vite build`
+prints `Unknown at rule: @theme` and continues. This cost `v1` its display font and was
+caught only by checking computed style in a real browser.
+
+Declare plain CSS custom properties scoped to the route's root class instead. This needs
+no build-tool processing and keeps every token local to this drill, so `/v0` and `/v1`
+cannot be affected:
 
 ```css
-@theme {
+.v2-page {
   --font-display: "Instrument Serif", serif;
   --font-body: "Geist", system-ui, sans-serif;
-  --color-accent: oklch(0.72 0.19 45);
+  --accent: oklch(0.72 0.19 45);
   --ease-standard: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@media (prefers-color-scheme: dark) {
+  .v2-page { /* dark values — designed, not inherited */ }
 }
 ```
 
 Replace these placeholders with the actual values chosen in Step 1.
+
+**Verify the tokens actually apply** before building anything on them: in a real browser,
+`getComputedStyle(document.querySelector('.v2-page')).getPropertyValue('--accent')` must
+return your value, not `""`.
 
 - [ ] **Step 3: Build v2 from the tokens**
 
