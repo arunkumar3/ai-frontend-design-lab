@@ -1,0 +1,113 @@
+# Phase 2 — handoff
+
+Phase 1 ran six drills (`v0`–`v5`) to measure which lever most improves AI-generated
+frontend, then built `v6` from what the measurements said. This document is the starting
+point for the next conversation. Read this, `CLAUDE.md`, and `playbook/findings/RANKING.md`
+first.
+
+**State:** branch `v6-weekly-radar`, commit `d82fbf9`, not merged to `main`.
+Route `/v6` at `http://localhost:5173/v6` (`pnpm dev` in `lab/`).
+
+---
+
+## 1. Where phase 1 landed
+
+The lab's own verdict, from `playbook/findings/RANKING.md`:
+
+> the best-scoring page is not the best product
+
+`v3` copied JustWatch's platform grouping, `v4` and `v5` inherited it, and all three
+scored best on the audit while failing at the thing the product is for — *what drops
+when*. Nothing in the toolkit caught it. The audit has no rule for a missing axis, the
+screenshot loop cannot photograph an absence, and the community packs never looked at the
+data. Only reading the data and asking what the page is for found it.
+
+`v6` is that page built: `v4`'s card craft, chronology restored, and a palette derived from
+the artwork rather than picked.
+
+## 2. What `v6` is, and why each decision was made
+
+| Decision | Why |
+|---|---|
+| Palette sampled from the posters | The slate's dominant hue band is 10–40° (12,757px) vs a 180–210° cyan minority (5,476px). Canvas is a poster's own brown deepened; accent sits mid-band. Cyan is left to the artwork so the chrome never competes with it. Re-derive with `pnpm palette:v6`. |
+| Grouped by publishing week | The run is weekly. Day grouping was built first and was too fine; week is the unit the product actually ships. |
+| Weeks anchored to **Thursday** | The run day. A title dropping Thursday morning belongs to the week that run publishes, not the tail of the week already sent. `RUN_DAY` in `V6.jsx`. |
+| Exact date moved onto the card | The week is the section, so per-title chronology has to live on the title or the axis is decorative. Sits above the descriptive metadata because it is the question the page exists to answer. |
+| Platform demoted to card metadata | It stopped being the grouping dimension, so per the constitution it had to be *replaced, not deleted* — it appears on every card and in the header count. No brand colour enters the grid. |
+| Landing = current week only | Resolved against the clock, not the end of the table. **This data set is frozen and will age** — see §5. |
+| Week selection derived, not synchronised | The two regions publish different weeks. A derived value with a fallback means switching region can never land on an empty page and no effect races the render. |
+| Future weeks labelled, not hidden | The feed carries dates on both sides of today. Hiding them would silently drop real releases; they are marked `upcoming`. |
+| Native `<select>` for the archive | A one-of-many choice. Brings keyboard support, type-ahead and the platform touch picker for free; a custom listbox would need focus management, escape and click-outside to match. |
+
+## 3. How to verify it (do this before trusting any change)
+
+```bash
+cd lab && pnpm dev
+```
+
+```bash
+pnpm verify:v6 && pnpm contrast:v6 && npx impeccable detect http://localhost:5173/v6
+```
+
+- `pnpm verify:v6` — 27 render-vs-data checks across both regions: landing week, picker
+  contents and ordering, archive switching, per-card dates, region-switch fallback.
+- `pnpm contrast:v6` — 20 computed contrast pairs, both themes. Tightest is 4.53:1, so
+  **any palette edit needs a re-run**.
+- `npx impeccable detect <url>` — live-browser audit. Currently clean. Source-mode is
+  worthless here (see RANKING.md §1); always audit the running page.
+- `pnpm shoot v6` — captures 3 widths × 2 themes into `shots/v6/`. Then *look at them*.
+
+All four were green at `d82fbf9`.
+
+## 4. Traps this project has already paid for
+
+Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they exist.
+
+- **A clean automated scan is not proof.** `impeccable detect` reported zero contrast
+  findings on a page with a real WCAG failure. Compute the values.
+- **`opacity` on already-muted text** stacks two reductions the tokens cannot see: the
+  computed pair passes, the rendered pixels fail. Recede with size, not alpha.
+- **One review round ships the regressions it just introduced.** In `v6`, four of the seven
+  defects found were caused by earlier fixes in the same session.
+- **Check the layout against the real data shape.** The US slate is 9 titles on 9 separate
+  dates; the layout that worked for India stranded every one of them. Group sizes here run
+  1 to 11.
+- **`ch` resolves against the element's own font-size.** A measure cap on a 16px wrapper
+  sized a 56px headline at ~190px.
+- **After changing a convention, grep for everything documenting it.** Removing the rail
+  removed the page's only `<h2>` and broke the heading outline — caught by the audit, not
+  by four screenshot passes.
+- **Verify against the render, never the intent.** And when a check fails, confirm the
+  check is right before "fixing" the page — one `v6` failure was a bad assertion looking
+  for CSS `::after` separators in `textContent`.
+
+## 5. Known gaps — start here
+
+1. **The data is frozen and dated `2026-08`.** `pickDefaultWeek` resolves against the real
+   clock, so once today drifts past the table the landing view falls back to the most
+   recent week that has releases and every week reads `archive`. Verified as intended
+   behaviour, but it means **the page needs a live feed to be real**. `releases.js` is a
+   hand-scraped snapshot of 22 titles.
+2. **No empty state.** Every week in the data has at least one title, so the "no releases
+   this week" surface has never rendered. The constitution requires it to be designed, not
+   inherited. A real feed will hit this.
+3. **No `playbook/findings/v6.md`.** Every other drill has one, and `RANKING.md` predicted
+   `v6` explicitly — the write-up against that prediction is unwritten. The interesting
+   result: the screenshot loop still could not see the missing axis; only reading the data
+   could.
+4. **Tablet wrap.** At 768px an 11-title week wraps into rows of 2. It stays under its own
+   week so nothing is stranded, but the breakpoint has not been tuned.
+5. **The native select's option list** is drawn by the OS and is the one surface the
+   palette cannot reach.
+6. **`lab/public/directions.html`** is the static four-way colour comparison used to choose
+   the direction (D). Keep or delete deliberately — it ships in `dist`.
+
+## 6. Open questions for the next session
+
+- Merge `v6-weekly-radar` into `main`, or keep drills on branches from here?
+- Is `v6` a seventh drill to be scored against the 17-item tell list like the others, or is
+  it the product the drills were for? It was not built under a single lever, so it is not
+  a like-for-like measurement.
+- Does the region toggle survive contact with a real feed, or does region become a route?
+- Where does the weekly run actually execute, and does it publish static HTML per week —
+  which would change the archive from client-side state to real URLs?
