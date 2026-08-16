@@ -23,6 +23,15 @@ is visible in source. Both are obvious once rendered.
 
 **Rule: audit the running page, not the repository.** `npx impeccable detect http://localhost:5173/v1`, not `npx impeccable detect src/`.
 
+> **Amendment.** The running page has to be *only* the page. Every column above was measured
+> with all seven routes imported eagerly, so each page carried the other six stylesheets and
+> the detector's stylesheet-text rules were reading pages that were not on screen. The
+> pixel-level findings that drive this ranking — contrast and padding, measured on the
+> render — are unaffected; anything derived from CSS source text is not. Splitting the
+> routes dropped `/v4` from 4 findings to the 3 recorded here, which is how the pollution
+> was confirmed. See `v6-frontend-design-skill.md` §3a. Re-running all seven, against a
+> pinned `impeccable` version, is an open task in `PHASE-2.md` §6.
+
 This is the third time in this lab the same failure has appeared — a check that inspects
 intent rather than output:
 

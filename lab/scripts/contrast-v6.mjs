@@ -1,5 +1,9 @@
 // WCAG contrast for the v6 palette. Constitution: "Text contrast must be
 // computed, not eyeballed. 4.5:1 for body, 3:1 for large."
+//
+// The last three rows of each theme are not contrast requirements — they check
+// that a fallback panel is far enough off the canvas to read as a surface
+// rather than as a hole punched in the page. That defect shipped twice.
 const hex = (h) => {
   const n = parseInt(h.slice(1), 16)
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
@@ -18,24 +22,24 @@ const ratio = (a, b) => {
 }
 
 const DARK = {
-  canvas: '#1D1410',
-  surfaceA: '#2A1D16',
-  surfaceB: '#3A281D',
-  surfaceC: '#33251B',
-  text: '#F6EFE6',
-  muted: '#B39C87',
-  accent: '#E0983F',
-  accentInk: '#21140A',
+  canvas: '#262320',
+  surfaceA: '#383329',
+  surfaceB: '#453F33',
+  surfaceC: '#302B23',
+  text: '#EFEBE3',
+  muted: '#B5ADA1',
+  accent: '#5FC3CE',
+  accentInk: '#0E2529',
 }
 const LIGHT = {
-  canvas: '#F4EDE2',
-  surfaceA: '#E8DECE',
-  surfaceB: '#DBCDB6',
-  surfaceC: '#EFE2CD',
-  text: '#211610',
-  muted: '#6A5443',
-  accent: '#8C4711',
-  accentInk: '#FFF7EC',
+  canvas: '#DEDAD2',
+  surfaceA: '#C9C2B4',
+  surfaceB: '#BAB2A2',
+  surfaceC: '#D1CABC',
+  text: '#191714',
+  muted: '#443E37',
+  accent: '#09545B',
+  accentInk: '#F0F7F7',
 }
 
 const checks = (p, name) => {
@@ -47,9 +51,14 @@ const checks = (p, name) => {
     ['muted meta on canvas', p.muted, p.canvas, 4.5],
     ['muted meta on surface-a', p.muted, p.surfaceA, 4.5],
     ['muted meta on surface-b', p.muted, p.surfaceB, 4.5],
-    ['accent day-label on canvas', p.accent, p.canvas, 4.5],
+    ['muted meta on surface-c', p.muted, p.surfaceC, 4.5],
+    ['accent standing/today on canvas', p.accent, p.canvas, 4.5],
+    ['accent on surface-a', p.accent, p.surfaceA, 4.5],
     ['accent-ink on accent pill', p.accentInk, p.accent, 4.5],
     ['accent focus ring on canvas', p.accent, p.canvas, 3.0],
+    ['fallback surface-a reads off canvas', p.surfaceA, p.canvas, 1.15],
+    ['fallback surface-b reads off canvas', p.surfaceB, p.canvas, 1.15],
+    ['fallback surface-c reads off canvas', p.surfaceC, p.canvas, 1.1],
   ]
   console.log(`\n== ${name} ==`)
   let fails = 0

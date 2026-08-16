@@ -5,8 +5,12 @@ frontend, then built `v6` from what the measurements said. This document is the 
 point for the next conversation. Read this, `CLAUDE.md`, and `playbook/findings/RANKING.md`
 first.
 
-**State:** branch `v6-weekly-radar`, commit `d82fbf9`, not merged to `main`.
+**State:** branch `claude/frontend-design-v6-18py7n`, not merged to `main`.
 Route `/v6` at `http://localhost:5173/v6` (`pnpm dev` in `lab/`).
+
+`/v6` has since been rebuilt under Anthropic's `frontend-design` skill. This document is
+updated for that page; `playbook/findings/v6-frontend-design-skill.md` records what
+changed and why, and the pre-skill page is at commit `330ead5`.
 
 ---
 
@@ -29,7 +33,10 @@ the artwork rather than picked.
 
 | Decision | Why |
 |---|---|
-| Palette sampled from the posters | The slate's dominant hue band is 10–40° (12,757px) vs a 180–210° cyan minority (5,476px). Canvas is a poster's own brown deepened; accent sits mid-band. Cyan is left to the artwork so the chrome never competes with it. Re-derive with `pnpm palette:v6`. |
+| Palette derived from the posters, then **inverted** | The slate's dominant hue band is 10–40° (12,757px) vs a 180–210° cyan minority (5,476px), mean lightness 39. The first cut spent the dominant band on the chrome and landed on cream-plus-terracotta — one of the three looks generative design defaults into, and the one hue an amber poster cannot stand on. Now: ground is the dominant hue at near-zero chroma (a mid-toned grey card, both themes), accent is the *minority* band, so the one interface colour can never be mistaken for poster colour. Re-derive with `pnpm palette:v6`. |
+| A seven-day ruler above the grid | The page's job is *what drops when*, and the grid cannot show the shape of a week — eleven cards do not tell you five of them land on the Saturday. Day numerals are the largest type on the page, one countable mark per title sits under each day, today's column carries the accent, and a day with nothing is drawn rather than skipped. |
+| The archive lists the whole run | Quiet weeks included. A weekly run has weeks where nothing landed (the US feed has three); listing only the other six presents a feed with holes in it as continuous. It also makes the empty surface reachable instead of dead code. |
+| Region switch keeps the week | Both runs are continuous, so the reader stays where they were in time and a region that published nothing that week says so. Only a week outside the other run entirely falls back. |
 | Grouped by publishing week | The run is weekly. Day grouping was built first and was too fine; week is the unit the product actually ships. |
 | Weeks anchored to **Thursday** | The run day. A title dropping Thursday morning belongs to the week that run publishes, not the tail of the week already sent. `RUN_DAY` in `V6.jsx`. |
 | Exact date moved onto the card | The week is the section, so per-title chronology has to live on the title or the axis is decorative. Sits above the descriptive metadata because it is the question the page exists to answer. |
@@ -49,15 +56,27 @@ cd lab && pnpm dev
 pnpm verify:v6 && pnpm contrast:v6 && npx impeccable detect http://localhost:5173/v6
 ```
 
-- `pnpm verify:v6` — 27 render-vs-data checks across both regions: landing week, picker
-  contents and ordering, archive switching, per-card dates, region-switch fallback.
-- `pnpm contrast:v6` — 20 computed contrast pairs, both themes. Tightest is 4.53:1, so
-  **any palette edit needs a re-run**.
-- `npx impeccable detect <url>` — live-browser audit. Currently clean. Source-mode is
-  worthless here (see RANKING.md §1); always audit the running page.
-- `pnpm shoot v6` — captures 3 widths × 2 themes into `shots/v6/`. Then *look at them*.
+- `pnpm verify:v6` — 42 render-vs-data checks across both regions: landing week, the day
+  ruler against per-day counts, picker contents and ordering over the whole run, archive
+  switching, per-card dates, the quiet week and its one control, and both region-switch
+  behaviours.
+- `pnpm contrast:v6` — 30 computed contrast pairs, both themes, plus three
+  surface-separation assertions per theme (a fallback panel that collapses into the canvas
+  has shipped twice). Tightest pair is 4.70:1, so **any palette edit needs a re-run**.
+- `npx impeccable detect <url>` — live-browser audit. Currently clean at 1280 and at
+  390×844. Source-mode is worthless here (see RANKING.md §1); always audit the running
+  page. Note that a clean run prints *nothing* — use `--json` and look for `[]` rather than
+  reading silence, and remember `npx -y` resolves whatever version npm serves that day.
+- `pnpm shoot v6` — captures 3 widths × 2 themes into `shots/v6/`. Then *look at them*, and
+  read `shots/v6/README.md` first: where `image.tmdb.org` is blocked, every card captures
+  on the no-artwork path.
 
-All four were green at `d82fbf9`.
+All four were green at the head of `claude/frontend-design-v6-18py7n`.
+
+Two environment notes. The three Playwright scripts honour `CHROMIUM_PATH` for sandboxes
+that ship a browser and block the Playwright CDN. And `impeccable` drives Puppeteer, which
+refuses to launch as root without `--no-sandbox`; point `PUPPETEER_EXECUTABLE_PATH` at a
+wrapper that adds the flag.
 
 ## 4. Traps this project has already paid for
 
@@ -79,7 +98,13 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
   by four screenshot passes.
 - **Verify against the render, never the intent.** And when a check fails, confirm the
   check is right before "fixing" the page — one `v6` failure was a bad assertion looking
-  for CSS `::after` separators in `textContent`.
+  for CSS `::after` separators in `textContent`, and two more were a date format that Node
+  and Chromium disagree about (`Wed 12 Aug` vs `Wed, 12 Aug`).
+- **Audit only the page.** Every route's CSS was attached to every page, so the live audit's
+  stylesheet-text rules were reading five other drills while pointed at `/v6`. Routes are
+  lazy now. See `playbook/findings/v6-frontend-design-skill.md` §3a.
+- **Evidence behind a choice does not stop it being the reflex answer.** `v6`'s palette was
+  measured from the real artwork and still arrived at cream-plus-terracotta.
 
 ## 5. Known gaps — start here
 
@@ -88,23 +113,35 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
    recent week that has releases and every week reads `archive`. Verified as intended
    behaviour, but it means **the page needs a live feed to be real**. `releases.js` is a
    hand-scraped snapshot of 22 titles.
-2. **No empty state.** Every week in the data has at least one title, so the "no releases
-   this week" surface has never rendered. The constitution requires it to be designed, not
-   inherited. A real feed will hit this.
-3. **No `playbook/findings/v6.md`.** Every other drill has one, and `RANKING.md` predicted
-   `v6` explicitly — the write-up against that prediction is unwritten. The interesting
-   result: the screenshot loop still could not see the missing axis; only reading the data
-   could.
-4. **Tablet wrap.** At 768px an 11-title week wraps into rows of 2. It stays under its own
-   week so nothing is stranded, but the breakpoint has not been tuned.
+2. ~~**No empty state.**~~ Closed. The archive lists the whole run, so quiet weeks are
+   reachable and the surface is designed, exercised by `verify:v6` and hit by an ordinary
+   region switch. `poster: null` and *poster URL failed to load* now both land on it too.
+3. ~~**No `playbook/findings/v6.md`.**~~ Closed, and joined by
+   `playbook/findings/v6-frontend-design-skill.md`.
+4. ~~**Tablet wrap.**~~ Closed. `auto-fill` counts repetitions against a definite max track
+   size, so a 280px card ceiling gave 768px exactly two columns and a 7,722px page. The
+   base grid uses `minmax(160px, 1fr)`; the ceiling is enforced on the track box above
+   1200px instead. 768px now runs four columns at 3,720px.
 5. **The native select's option list** is drawn by the OS and is the one surface the
    palette cannot reach.
 6. **`lab/public/directions.html`** is the static four-way colour comparison used to choose
-   the direction (D). Keep or delete deliberately — it ships in `dist`.
+   the pre-skill direction (D). It documents a palette the page no longer uses. Keep,
+   update or delete deliberately — it ships in `dist`.
+7. **`pnpm palette:v6` cannot run where `image.tmdb.org` is blocked**, and neither can a
+   truthful `pnpm shoot v6`. The figures in `v6.css`'s header are cited as recorded on
+   2026-08-16, not as freshly sampled. Re-run both somewhere with access.
+8. **An 11-title week still leaves one card alone on the last row at 390px** — 2 columns,
+   odd count. Standard for a wrapping list rather than the marooned-single-item defect, but
+   untuned.
 
 ## 6. Open questions for the next session
 
-- Merge `v6-weekly-radar` into `main`, or keep drills on branches from here?
+- Merge `claude/frontend-design-v6-18py7n` into `main`, or keep drills on branches from
+  here?
+- Phase 1's audit numbers were taken with every route's CSS attached to every page. The
+  pixel-level findings that decided the ranking are unaffected, but the stylesheet-text
+  ones are not. Worth re-running all seven routes now that they are isolated — and pinning
+  an `impeccable` version so the numbers compare.
 - Is `v6` a seventh drill to be scored against the 17-item tell list like the others, or is
   it the product the drills were for? It was not built under a single lever, so it is not
   a like-for-like measurement.

@@ -4,7 +4,9 @@ Applies to all frontend work in this repository.
 
 Rules marked **(measured)** were added after `v0`–`v5`, because the original list missed
 them and the drills exposed the gap. Rules marked **(v6)** were added after the `v6` build.
-See `playbook/05-troubleshooting.md` and `playbook/findings/v6.md` for evidence.
+Rules marked **(skill)** were added after `/v6` was rebuilt under Anthropic's
+`frontend-design` skill. See `playbook/05-troubleshooting.md`, `playbook/findings/v6.md`
+and `playbook/findings/v6-frontend-design-skill.md` for evidence.
 
 ## Start here
 
@@ -14,9 +16,11 @@ Phase 1 (`v0`–`v5`) is complete and scored. The current work is `v6`.
    open questions. Read this first in a new session.
 2. `playbook/findings/RANKING.md` — why the best-scoring page was not the best product.
 3. `playbook/findings/v6.md` — what the `v6` build proved about the toolkit.
+4. `playbook/findings/v6-frontend-design-skill.md` — the rebuild, and the two instruments
+   it caught lying.
 
-`v6` lives on branch `v6-weekly-radar`, unmerged. Before trusting any change to it, run all
-four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
+`v6` lives on branch `claude/frontend-design-v6-18py7n`, unmerged. Before trusting any
+change to it, run all four checks in `PHASE-2.md` §3.
 
 ## Banned outright
 
@@ -34,6 +38,14 @@ four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
   as overused in AI-generated UIs.
 - **(measured)** Invented abbreviations or monograms as a fallback for missing content. If
   the data has a title, show the title.
+- **(skill)** IBM Plex, Space Mono, Syne, Playfair Display, Cormorant, Lora, Newsreader,
+  DM Sans, DM Serif, Outfit, Instrument Sans — the rest of the same list, per impeccable's
+  `reference/new-work.md`. A subject association is not a reason: tech wanting a mono is
+  exactly the association the list exists to break.
+- **(skill)** The three looks generative design falls into regardless of subject: warm
+  cream (near `#F4F1EA`) with a serif display and a terracotta accent; near-black with one
+  bright acid-green or vermilion accent; a broadsheet of hairline rules, zero radius and
+  dense columns. Legitimate for a brief that asks for them, never as the free choice.
 
 ## Required
 
@@ -61,6 +73,17 @@ four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
 - **(v6)** Restoring what an earlier version did is a hypothesis, not an instruction. `v0`'s
   date grouping was the missing axis, but re-implemented literally it put the 9-title US
   slate into nine groups of one — the orphan defect `v4` had already fixed.
+- **(skill)** Deriving a choice from the data does not stop it being the reflex answer.
+  `v6`'s palette was quantised from the real poster art and still arrived at cream paper
+  with a rust accent. Check the *result* against the default list, not the method.
+- **(skill)** Chrome takes the hue the content uses least. Giving the interface the
+  artwork's own dominant hue means the artwork has nowhere to stand.
+- **(skill)** A missing value and a failed fetch are two different absences. `poster: null`
+  had a designed panel; a poster URL that 403s rendered as the browser's broken-image box
+  with alt text beside it. Both are the same surface to a reader.
+- **(skill)** Design the state, then make it reachable. An empty state nothing renders is
+  the same failure as a tested function nothing calls — here it took changing the archive
+  to list the whole run, quiet weeks included, which was the better product anyway.
 
 ## Build rules
 
@@ -85,6 +108,12 @@ four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
 - **(measured)** Audit the running page, not the repository:
   `npx impeccable detect http://localhost:5173/<route>`. Source-mode reported 0 findings on
   a page the live scan gave 28.
+- **(skill)** And audit *only* the page. Routes were imported eagerly, so every drill's CSS
+  was attached to every page and the audit's stylesheet-text rules read five other pages
+  while pointed at one. Routes are `React.lazy` now; keep them that way.
+- **(skill)** A clean run of `impeccable detect` prints nothing. Use `--json` and look for
+  `[]` — silence is not evidence. `npx -y` also resolves whatever version npm serves today,
+  so two runs weeks apart are not the same instrument.
 - **(measured)** After changing a convention, grep for everything that documents it. Stale
   legends survive any number of screenshot passes because they look perfectly designed.
 - **(measured)** Passing tests prove correctness, not wiring. A function with full coverage
@@ -92,6 +121,10 @@ four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
 - **(v6)** When a check fails, confirm the check before changing the page. A `v6` assertion
   reported a real page as broken because it searched `textContent` for `·` separators that
   are CSS `::after` content. The mirror of the trap above: a failing test that means nothing.
+- **(skill)** Two runtimes, one expression, two answers. `verify:v6` compared card dates
+  against `Intl.DateTimeFormat` computed in Node; Node's ICU says `Wed 12 Aug` and the
+  browser's says `Wed, 12 Aug`. Assert what the check is actually about — normalise before
+  comparing anything a platform library formats.
 - **(v6)** Removing a structural element removes everything it silently carried. Deleting
   the week rail also deleted the page's only `<h2>`, leaving `h1` → `h3`; four screenshot
   passes could not see it and the live audit caught it immediately.

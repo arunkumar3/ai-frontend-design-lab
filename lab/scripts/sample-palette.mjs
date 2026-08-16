@@ -12,7 +12,10 @@ const POSTERS = [
   ['Lanterns', 'rb94rKVIzLyfWufIN7WqLvadBDH.jpg'],
 ]
 
-const browser = await chromium.launch()
+// See verify-v6.mjs — CHROMIUM_PATH escape hatch for sandboxed runs.
+const browser = await chromium.launch(
+  process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
+)
 const page = await browser.newPage()
 await page.goto('http://localhost:5173/')
 

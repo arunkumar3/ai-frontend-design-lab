@@ -1,61 +1,79 @@
-/* v6 — v4's card craft on a restored chronological spine, in a palette
-   derived from the week's own artwork.
+/* v6 — a weekly release radar, designed around the thing it exists to answer:
+   what lands, and on which day.
 
    Plain CSS only: this file is imported from a component, not from index.css,
    so an @theme block here would ship as inert text (v1's failure). All tokens
    are custom properties scoped to .v6-page.
 
-   Palette provenance — quantised from the seven IN posters that have artwork
-   (60x90 downsample, saturation-weighted 4x4x4 histogram, 2026-08-16):
+   ---------------------------------------------------------------- palette
+
+   Provenance — quantised from the seven IN posters that have artwork
+   (60x90 downsample, saturation-weighted 4x4x4 histogram, recorded 2026-08-16
+   by `pnpm palette:v6`; image.tmdb.org is unreachable from some sandboxes, so
+   these are the recorded figures, not a fresh sample):
      dominant hue band  10-40deg  12,757px   (amber / rust / brown)
      secondary band    180-210deg  5,476px   (cyan — Aakhri Sawal, Mr. WFH)
      mean saturation 52, mean lightness 39
-   Bigg Boss: The Common Man is 54% #FEC60D gold; Bigg Boss Agnipareeksha is
-   44% #23160E warm brown; Lanterns carries #5A331B rust. The canvas is that
-   brown deepened, the accent sits mid-band between the gold and the rust. The
-   cyan minority is deliberately left to the posters — the chrome takes the
-   majority hue so the accent never competes with the artwork it frames.
+
+   The first cut of this page spent the *dominant* band on the chrome: warm
+   cream paper, rust accent. Two problems with that. It puts the chrome in the
+   same hue as most of the artwork, so a gold poster (Bigg Boss: The Common Man
+   is 54% #FEC60D) and a rust one (Lanterns, #5A331B) sink into the page
+   instead of standing on it. And cream-plus-terracotta is one of the three
+   looks generative design falls into by default, arriving regardless of
+   subject.
+
+   So the derivation is kept and the conclusion inverted:
+
+     ground  the dominant hue held at near-zero chroma — a photographer's grey
+             card warmed by the slate's own hue. Mean lightness 39 says the
+             artwork is mid-dark and saturated, so its surround should be
+             neither paper-white nor void-black. Both themes are mid-toned.
+     accent  the *minority* 180-210deg band. It is the hue the posters use
+             least, so the one interface colour can never be mistaken for
+             poster colour. Exactly one, in both themes.
 
    Every text/background pair below was computed, not eyeballed (constitution:
-   4.5:1 body, 3:1 large). Tightest pair in the file is muted-on-surface-b in
-   light mode at 4.53:1. */
+   4.5:1 body, 3:1 large) — `pnpm contrast:v6`. Tightest pair in the file is
+   accent-on-surface-a at 4.98:1. Any edit here needs a re-run. */
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap');
 
 .v6-page {
-  /* ---- light: warm paper, the same hue family read at high lightness ---- */
-  /* The three fallback tones sit in a band *beside* the canvas, never at the
-     extremes: a near-white or near-black panel reads as a hole in the page
-     rather than as the designed surface six of thirteen IN titles need. */
-  --canvas: #F4EDE2;
-  --surface-a: #E8DECE;
-  --surface-b: #DBCDB6;
-  --surface-c: #EFE2CD;
-  --text: #211610;
-  --text-muted: #6A5443;
-  --hairline: rgba(33, 22, 16, 0.16);
-  --hairline-strong: rgba(33, 22, 16, 0.30);
+  /* ---- light: grey card in daylight ---- */
+  --canvas: #DEDAD2;
+  /* The three fallback tones sit in a band *below* the canvas and well clear
+     of it: a panel within a step or two of the ground reads as a hole in the
+     page rather than as the designed surface six of thirteen IN titles need.
+     Separation against canvas is 1.27 / 1.51 / 1.17. */
+  --surface-a: #C9C2B4;
+  --surface-b: #BAB2A2;
+  --surface-c: #D1CABC;
+  --text: #191714;
+  --text-muted: #443E37;
+  --hairline: rgba(25, 23, 20, 0.18);
+  --hairline-strong: rgba(25, 23, 20, 0.34);
 
-  /* ---- accent: interactive state, month markers, focus. Exactly one, and
-     it is the slate's own hue darkened until it carries text (5.97:1). ---- */
-  --accent: #8C4711;
-  --accent-ink: #FFF7EC;
+  --accent: #09545B;
+  --accent-ink: #F0F7F7;
 
-  --shadow-rest: 0 1px 2px rgba(45, 28, 14, 0.16), 0 8px 18px -12px rgba(45, 28, 14, 0.34);
-  --shadow-lift: 0 2px 5px rgba(45, 28, 14, 0.22), 0 18px 34px -16px rgba(45, 28, 14, 0.44);
+  --shadow-rest: 0 1px 2px rgba(20, 16, 10, 0.18), 0 8px 18px -12px rgba(20, 16, 10, 0.36);
+  --shadow-lift: 0 2px 5px rgba(20, 16, 10, 0.24), 0 18px 34px -16px rgba(20, 16, 10, 0.46);
 
   /* Square-ish corners: this is a schedule, not a carousel. */
   --radius-art: 3px;
   --radius-pill: 999px;
 
-  --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Familjen Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Spline Sans Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* Four sizes on screen, no more. */
-  --fs-0: 0.8125rem;
-  --fs-1: 1rem;
-  --fs-2: 1.75rem;
-  --fs-3: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
+  /* Four steps, and the largest is the date. On a page whose job is "when",
+     the day numeral outranks the sentence above it — that is the one risk
+     this design takes, and the reason the ruler reads before the headline. */
+  --fs-micro: 0.8125rem;
+  --fs-body: 1rem;
+  --fs-head: clamp(1.75rem, 1.15rem + 1.7vw, 2.375rem);
+  --fs-day: clamp(1.75rem, 0.9rem + 3.6vw, 4.25rem);
 
   --sp-1: 4px;
   --sp-2: 8px;
@@ -67,6 +85,7 @@
   --sp-8: 64px;
 
   --shell-max: 1220px;
+  --col-max: 280px;
 
   background: var(--canvas);
   color: var(--text);
@@ -75,24 +94,25 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---- dark: the canvas is Bigg Boss Agnipareeksha's #23160E deepened one
-   step; surfaces climb the same hue toward the rust the posters share. ---- */
+/* ---- dark: the same card under tungsten. Deliberately not near-black:
+   poster art needs a surround it can sit on, and #000 with one bright accent
+   is the other look generative design defaults to. ---- */
 @media (prefers-color-scheme: dark) {
   .v6-page {
-    --canvas: #1D1410;
-    --surface-a: #2A1D16;
-    --surface-b: #3A281D;
-    --surface-c: #33251B;
-    --text: #F6EFE6;
-    --text-muted: #B39C87;
-    --hairline: rgba(246, 239, 230, 0.14);
-    --hairline-strong: rgba(246, 239, 230, 0.28);
+    --canvas: #262320;
+    --surface-a: #383329;
+    --surface-b: #453F33;
+    --surface-c: #302B23;
+    --text: #EFEBE3;
+    --text-muted: #B5ADA1;
+    --hairline: rgba(239, 235, 227, 0.16);
+    --hairline-strong: rgba(239, 235, 227, 0.32);
 
-    --accent: #E0983F;
-    --accent-ink: #21140A;
+    --accent: #5FC3CE;
+    --accent-ink: #0E2529;
 
-    --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.50), 0 10px 22px -12px rgba(0, 0, 0, 0.60);
-    --shadow-lift: 0 3px 8px rgba(0, 0, 0, 0.58), 0 20px 40px -18px rgba(0, 0, 0, 0.74);
+    --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.46), 0 10px 22px -12px rgba(0, 0, 0, 0.58);
+    --shadow-lift: 0 3px 8px rgba(0, 0, 0, 0.54), 0 20px 40px -18px rgba(0, 0, 0, 0.70);
   }
 }
 
@@ -100,8 +120,13 @@
   box-sizing: border-box;
 }
 
-.v6-page h1, .v6-page h2, .v6-page h3, .v6-page p, .v6-page figure {
+.v6-page h1, .v6-page h2, .v6-page h3, .v6-page p, .v6-page figure, .v6-page ol {
   margin: 0;
+}
+
+.v6-page ol {
+  padding: 0;
+  list-style: none;
 }
 
 .v6-page :focus-visible {
@@ -112,6 +137,20 @@
 .v6-page ::selection {
   background: var(--accent);
   color: var(--accent-ink);
+}
+
+/* Visually hidden, still read. The ruler's day cells are three separate
+   fragments on screen (name, numeral, load marks); screen readers get one
+   sentence instead. */
+.v6-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .v6-shell {
@@ -125,50 +164,30 @@
 .v6-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--sp-6);
-  padding-bottom: var(--sp-6);
-  margin-bottom: var(--sp-7);
-  border-bottom: 2px solid var(--hairline-strong);
-}
-
-.v6-head-copy {
-  max-width: 40rem;
+  gap: var(--sp-5) var(--sp-6);
 }
 
 /* Measure caps belong on the text element, not the wrapper: `ch` resolves
-   against the element's own font-size, so a cap set on the 16px wrapper was
-   sizing the 56px headline at ~190px and breaking it over three lines. */
+   against the element's own font-size, so a cap set on a 16px wrapper was
+   sizing the headline at ~190px and breaking it over three lines. */
 .v6-h1 {
-  font-size: var(--fs-3);
-  font-weight: 800;
-  line-height: 0.98;
-  letter-spacing: -0.03em;
-  max-width: 14ch;
+  font-size: var(--fs-head);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  max-width: 18ch;
   text-wrap: balance;
 }
 
 .v6-sub {
-  margin-top: var(--sp-4);
+  margin-top: var(--sp-3);
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   color: var(--text-muted);
   line-height: 1.6;
   letter-spacing: 0.01em;
-  /* Fits the longer of the two region strings on one line — the US slate's
-     "9 new titles · 6 platforms · Jul 2 – Aug 28, 2026" is 49 characters and
-     was orphaning "2026" onto a second line at 46ch. */
-  max-width: 52ch;
-}
-
-/* Carries the accent because it changes what the page is claiming: without it
-   an archive week reads as this week's slate. */
-.v6-sub-flag {
-  color: var(--accent);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
 }
 
 /* ------------------------------------------------------------ toggle */
@@ -189,7 +208,7 @@
   border: 0;
   background: transparent;
   font-family: var(--font-sans);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   font-weight: 600;
   color: var(--text-muted);
   padding: var(--sp-3) var(--sp-5);
@@ -218,9 +237,6 @@
 
 /* --------------------------------------------------------- week picker */
 
-/* The page shows one week, so the week is named once — here, by the control
-   that changes it — instead of by a rail labelling a single group. */
-
 .v6-controls {
   display: flex;
   flex-direction: column;
@@ -237,11 +253,11 @@
 
 .v6-weekpick-label {
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
-  font-weight: 600;
+  font-size: var(--fs-micro);
+  font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text-muted);
 }
 
 .v6-weekpick-field {
@@ -250,10 +266,13 @@
   align-items: center;
 }
 
+/* A native select, deliberately: an archive picker is a plain one-of-many
+   choice, and the native control brings keyboard support, type-ahead and the
+   platform touch picker for free. Styled to the page rather than replaced. */
 .v6-weekpick-select {
   appearance: none;
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   color: var(--text);
   background: var(--surface-a);
   border: 1px solid var(--hairline-strong);
@@ -268,8 +287,8 @@
   border-color: var(--accent);
 }
 
-/* Drawn, not a glyph: an emoji or a "▾" character inherits font metrics and
-   sits off-centre. A rotated square keeps its own geometry. */
+/* Drawn, not a glyph: a "▾" character inherits font metrics and sits
+   off-centre. A rotated square keeps its own geometry. */
 .v6-weekpick-arrow {
   position: absolute;
   right: var(--sp-4);
@@ -284,29 +303,174 @@
 /* The native option list is drawn by the OS, so it keeps the platform's own
    colours — the one surface on this page the palette cannot reach. */
 
+/* ------------------------------------------------------------ the week */
+
+/* The signature of the page. Seven columns, one per day of the publishing
+   week, each carrying its own load as countable marks. It is the only place
+   the *shape* of a week is visible: the grid below can show eleven titles but
+   not that five of them land on the Saturday, and a reader who wants "what
+   drops when" is asking about the shape first. Days with nothing are drawn,
+   not skipped — an absent Tuesday is a fact about the week. */
+
+/* Heading and standing sit together on the left. Pushed apart to the two ends
+   of a 1170px bar, the word "ARCHIVE" lost its subject — it read as a stray
+   label rather than as a qualifier on the date beside it. */
+.v6-weekbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-7);
+}
+
+.v6-week-heading {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Carries the accent because it changes what the page is claiming: without it
+   an archive week reads as this week's slate. */
+.v6-standing {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.v6-ruler {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--sp-3);
+  /* Clear of the week heading: at --sp-3 the six rules to the right of the
+     heading sat on its baseline and read as a strikethrough running off the
+     page. */
+  margin-top: var(--sp-5);
+}
+
+.v6-day {
+  border-top: 2px solid var(--hairline);
+  padding-top: var(--sp-3);
+  min-width: 0;
+}
+
+/* Today is the one segment of the rule that is coloured. A printed guide
+   rings tonight's listing; this is the same move with the page's one accent. */
+.v6-day.is-today {
+  border-top-color: var(--accent);
+}
+
+.v6-day-name {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.v6-day.is-today .v6-day-name {
+  color: var(--accent);
+}
+
+/* Three letters at desk widths, one on a phone. Both are in the DOM and
+   swapped by media query rather than by measuring in JS, so the printed
+   ruler never reflows after paint. */
+.v6-day-name-min {
+  display: none;
+}
+
+.v6-day-num {
+  display: block;
+  margin-top: var(--sp-2);
+  font-size: var(--fs-day);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums lining-nums;
+  /* A quiet day recedes by *colour token*, never by opacity: opacity stacks a
+     second reduction the computed pair cannot see (v5's and v6's shared
+     defect). --text-muted is a designed value that clears 4.5:1 on canvas. */
+  color: var(--text-muted);
+}
+
+.v6-day.has-titles .v6-day-num {
+  color: var(--text);
+}
+
+.v6-day.is-today .v6-day-num {
+  color: var(--accent);
+}
+
+/* A tally, one mark per title. The first cut stacked full-width rules and
+   five of them read as hatching, not as five — a magnitude you had to
+   estimate. Separated marks in a row are counted at a glance, and the row
+   keeps every column's bottom edge level. */
+.v6-day-load {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: var(--sp-4);
+  min-height: 10px;
+}
+
+.v6-tick {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: var(--text);
+  transform-origin: left center;
+}
+
+.v6-day.is-today .v6-tick {
+  background: var(--accent);
+}
+
+/* Nothing landed: a short rule holds the column open so the empty day is
+   drawn rather than missing. */
+.v6-tick.is-empty {
+  width: 14px;
+  height: 2px;
+  align-self: center;
+  background: var(--hairline-strong);
+}
+
 /* ---------------------------------------------------------------- grid */
 
+.v6-week {
+  display: block;
+  margin-top: var(--sp-7);
+}
+
+/* `1fr` as the max, not `--col-max`: auto-fill counts repetitions against a
+   definite max, so a fixed 280px ceiling made a 768px tablet fit exactly two
+   columns and stretched an 11-title week to 7,700px. Against `1fr` the same
+   width fits four. The 280px ceiling still applies above the breakpoint,
+   where it is enforced on the track box instead. */
 .v6-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 200px));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: var(--sp-6) var(--sp-5);
   align-content: start;
 }
 
 /* Above the breakpoint the week gets exactly as many columns as it has titles
-   (`--cols`, set inline, capped at 5), each free to shrink. `auto-fill` sizes
+   (`--cols`, set inline, capped), each free to shrink. `auto-fill` sizes
    columns from available width instead, so a 5-title week broke 4+1 and left
-   one card marooned on its own line — the orphan-row defect three earlier
-   drills shipped. Below the breakpoint there isn't width for that, and
-   `auto-fill`'s honest 2-up wrap takes over. */
+   one card marooned — the orphan-row defect three earlier drills shipped.
+   Below the breakpoint there isn't width for that, and `auto-fill`'s honest
+   wrap takes over. */
 @media (min-width: 1200px) {
   .v6-grid {
     grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
     /* Bound the track box to its own column count, or `1fr` columns divide the
        full content width and a 2-title week flings its two cards to opposite
-       ends of the page. Columns land at 200px when there's room and shrink
-       together when there isn't. */
-    max-width: calc(var(--cols, 4) * 200px + (var(--cols, 4) - 1) * var(--sp-5));
+       ends of the page. */
+    max-width: calc(
+      var(--cols, 4) * var(--col-max) + (var(--cols, 4) - 1) * var(--sp-5)
+    );
   }
 }
 
@@ -325,8 +489,8 @@
 }
 
 /* A drawn edge rather than a mat: poster art with its own pale background
-   needs a boundary against warm paper, and the dark canvas needs one against
-   pale art. Inset so it sits on the artwork, not around it. */
+   needs a boundary against the card ground, and the dark theme needs one
+   against pale art. Inset so it sits on the artwork, not around it. */
 .v6-poster-frame::after {
   content: '';
   position: absolute;
@@ -340,16 +504,24 @@
    releases, leaving the lift stuck until the next tap elsewhere. Keyboard
    focus stays ungated. */
 @media (hover: hover) and (pointer: fine) {
-  .v6-poster-frame:hover,
-  .v6-fallback:hover {
+  .v6-poster-frame:hover {
     box-shadow: var(--shadow-lift), 0 0 0 2px var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .v6-fallback:hover {
+    box-shadow: 0 0 0 2px var(--accent);
     transform: translateY(-2px);
   }
 }
 
-.v6-poster-frame:focus-within,
-.v6-fallback:focus-visible {
+.v6-poster-frame:focus-within {
   box-shadow: var(--shadow-lift), 0 0 0 2px var(--accent);
+  transform: translateY(-2px);
+}
+
+.v6-fallback:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent);
   transform: translateY(-2px);
 }
 
@@ -368,9 +540,12 @@
   container-type: inline-size;
   width: 100%;
   aspect-ratio: 2 / 3;
+  /* A drawn edge and no elevation. A poster is an object on the page and
+     earns a shadow; this is a stated gap in the data and should sit flat in
+     it. Carrying both a hairline and an 18px shadow was also the one thing
+     the live audit flagged five times over. */
   border: 1px solid var(--hairline-strong);
   border-radius: var(--radius-art);
-  box-shadow: var(--shadow-rest);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -382,7 +557,7 @@
    absence — the panel is a stated gap in the data, not a broken image. */
 .v6-fallback-flag {
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -392,10 +567,13 @@
 .v6-fallback.v6-tone-b { background: var(--surface-b); }
 .v6-fallback.v6-tone-c { background: var(--surface-c); }
 
+/* Moves between two steps of the scale rather than inventing a fifth: the
+   title stands in for the artwork, so it is allowed to reach headline size in
+   a wide panel and settles at body size in a narrow one. */
 .v6-fallback-title {
-  font-size: clamp(var(--fs-1), 5cqi + 0.3rem, 1.375rem);
-  font-weight: 800;
-  line-height: 1.08;
+  font-size: clamp(var(--fs-body), 9cqi, 1.75rem);
+  font-weight: 700;
+  line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--text);
   text-wrap: balance;
@@ -406,7 +584,7 @@
 }
 
 .v6-title {
-  font-size: var(--fs-1);
+  font-size: var(--fs-body);
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.01em;
@@ -414,29 +592,33 @@
 
 .v6-approx {
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   color: var(--text-muted);
   font-weight: 400;
   white-space: nowrap;
   cursor: help;
 }
 
-/* The exact release day, promoted to its own line at full text contrast: with
-   the week as the section unit this is the page's primary answer, so it
-   outranks the descriptive metadata under it. */
+/* The ruler answers "when" for the week; this answers it for the title. Full
+   text contrast, above the descriptive metadata, because it is the question
+   the page exists to answer. */
 .v6-when {
   margin-top: var(--sp-1);
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   line-height: 1.5;
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
 
+/* The caption is two groups, not four evenly spaced lines: the date belongs
+   tight under the title it dates, and the descriptive metadata steps away
+   from both. Spacing every line by the same 4px reads as a list with no
+   rhythm — the live audit called it at 18 of 18 gaps. */
 .v6-meta {
-  margin-top: var(--sp-1);
+  margin-top: var(--sp-2);
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   line-height: 1.5;
   color: var(--text-muted);
   display: flex;
@@ -452,11 +634,54 @@
 }
 
 .v6-cross-region {
-  margin-top: var(--sp-1);
+  margin-top: var(--sp-2);
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   line-height: 1.5;
   color: var(--text);
+}
+
+/* -------------------------------------------------------------- empty */
+
+/* Reachable, not hypothetical: the archive lists every week of the run, and
+   the two regions do not publish the same weeks, so switching region while
+   parked on a quiet week lands here. It says what happened and offers the
+   nearest week that has something in it. */
+.v6-empty {
+  border: 1px dashed var(--hairline-strong);
+  border-radius: var(--radius-art);
+  padding: var(--sp-7) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  max-width: 44rem;
+}
+
+.v6-empty-lead {
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+.v6-empty-note {
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+
+.v6-empty-jump {
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius-art);
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
 }
 
 /* -------------------------------------------------------------- foot */
@@ -466,7 +691,7 @@
   padding-top: var(--sp-5);
   border-top: 2px solid var(--hairline-strong);
   font-family: var(--font-mono);
-  font-size: var(--fs-0);
+  font-size: var(--fs-micro);
   line-height: 1.6;
   color: var(--text-muted);
   display: flex;
@@ -479,6 +704,8 @@
 .v6-foot p {
   max-width: 62ch;
 }
+
+/* ---------------------------------------------------------- reduced motion */
 
 /* Movement out, colour and shadow fades kept — gentler, not zero. The JS
    entrance has its own reduced-motion branch in V6.jsx. */
@@ -496,17 +723,20 @@
   }
 }
 
+/* -------------------------------------------------------------- narrow */
+
+/* Once the controls wrap under the headline they are no longer the right-hand
+   column of anything, and right-aligning them inside a full-width box left
+   the toggle floating in the middle of the page. */
+@media (max-width: 1023px) {
+  .v6-controls {
+    align-items: flex-start;
+  }
+}
+
 @media (max-width: 720px) {
   .v6-shell {
     padding: var(--sp-6) var(--sp-4) var(--sp-7);
-  }
-
-  .v6-head {
-    align-items: flex-start;
-  }
-
-  .v6-head-copy {
-    max-width: none;
   }
 
   /* Controls go full-width and left-aligned: a right-aligned stack on a phone
@@ -529,7 +759,47 @@
     width: 100%;
   }
 
+  /* Seven columns still fit at 390px because the day name drops to its
+     initial and the numeral shrinks with the viewport. Dropping to fewer
+     columns would mean dropping days, and a week with days missing is not a
+     week. */
+  .v6-ruler {
+    gap: var(--sp-1);
+  }
+
+  .v6-day {
+    padding-top: var(--sp-2);
+  }
+
+  .v6-day-name {
+    letter-spacing: 0.04em;
+  }
+
+  /* A 47px column cannot hold five 12px marks in a row; smaller marks and a
+     tighter gap keep a busy day to two rows instead of three. */
+  .v6-day-load {
+    gap: 4px;
+    margin-top: var(--sp-3);
+  }
+
+  .v6-tick {
+    width: 8px;
+    height: 8px;
+  }
+
+  .v6-day-name-full {
+    display: none;
+  }
+
+  .v6-day-name-min {
+    display: inline;
+  }
+
   .v6-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .v6-empty {
+    padding: var(--sp-6) var(--sp-4);
   }
 }

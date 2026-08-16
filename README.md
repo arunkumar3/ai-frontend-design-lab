@@ -48,7 +48,14 @@ page, never the repository.
 Routes are append-only: a later drill never edits an earlier one, so all seven stay live
 and directly comparable.
 
-Two caveats worth stating before anyone quotes these numbers:
+Three caveats worth stating before anyone quotes these numbers:
+
+- **They were taken with every route's stylesheet attached to every page.** All seven
+  routes were imported eagerly, so the audit's stylesheet-text rules were reading five
+  other drills while pointed at one. The pixel-level findings that decided the ranking are
+  unaffected; the rest need re-running now that routes load one at a time. See
+  [`playbook/findings/v6-frontend-design-skill.md`](playbook/findings/v6-frontend-design-skill.md)
+  §3a.
 
 - **`v1` scoring worse than `v0` is real, not a typo.** `v0` scores well by never trying;
   the audit counts defects, and a page that attempts nothing has few. Ranking by defect
@@ -91,8 +98,8 @@ Writes six PNGs to `lab/shots/v6/` — 390 / 768 / 1440px, light and dark.
 `v6` ships the checks phase 1 lacked. Each answers a question inspection cannot:
 
 ```bash
-pnpm verify:v6      # 27 render-vs-data checks, both regions
-pnpm contrast:v6    # 20 computed contrast pairs, both themes
+pnpm verify:v6      # 42 render-vs-data checks, both regions
+pnpm contrast:v6    # 30 computed contrast pairs + surface separation, both themes
 pnpm palette:v6     # re-derives the palette from the live poster art
 ```
 
@@ -102,7 +109,11 @@ Plus the live audit, which must be pointed at the running URL, not at `src/`:
 npx impeccable detect http://localhost:5173/v6
 ```
 
-All four were green at commit `d82fbf9`.
+All four were green at the head of `claude/frontend-design-v6-18py7n`.
+
+Where `image.tmdb.org` is blocked, `pnpm palette:v6` cannot run and `pnpm shoot v6`
+captures every card on the no-artwork path — see `lab/shots/v6/README.md`. The three
+Playwright scripts honour `CHROMIUM_PATH` for sandboxes that ship their own browser.
 
 ## A note on the numbers
 
@@ -122,6 +133,9 @@ render the whole slate.
 - [`playbook/findings/RANKING.md`](playbook/findings/RANKING.md) — the verdict pass
 - [`playbook/findings/v6.md`](playbook/findings/v6.md) — what building the predicted page
   proved about the toolkit, including where the verdict's own prescription was wrong
+- [`playbook/findings/v6-frontend-design-skill.md`](playbook/findings/v6-frontend-design-skill.md)
+  — `/v6` rebuilt under Anthropic's `frontend-design` skill: a measured palette that still
+  landed on a default, and two instruments that turned out to be lying
 - [`PHASE-2.md`](PHASE-2.md) — current state and what's next
 - [`CLAUDE.md`](CLAUDE.md) — the constitution, including the rules the drills forced into it
 

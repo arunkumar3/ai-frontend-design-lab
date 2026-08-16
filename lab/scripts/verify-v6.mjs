@@ -1,6 +1,7 @@
-// Verify the render against the data, not against intent. The page now shows
-// one week at a time, so most of what matters is behaviour a screenshot cannot
-// show: which week it opens on, and what the picker does.
+// Verify the render against the data, not against intent. The page shows one
+// week at a time, so most of what matters is behaviour a screenshot cannot
+// show: which week it opens on, what the picker holds, what the day ruler
+// claims, and what a week with nothing in it does.
 import { chromium } from 'playwright'
 import { RELEASES, PLATFORMS } from '../src/data/releases.js'
 
@@ -22,6 +23,15 @@ function weekStart(iso) {
   return d
 }
 
+// Node's ICU and the browser's do not agree on whether en-GB puts a comma
+// after the weekday ("Wed 12 Aug" vs "Wed, 12 Aug"), and the split moves with
+// the Chromium build. The assertion is about which date a card shows, not
+// about a separator glyph, so both sides are flattened before comparison.
+// Confirm the check before changing the page: this one was reporting a correct
+// page as broken.
+const sameDateString = (a, b) =>
+  a.replace(/[,\s]+/g, ' ').trim() === b.replace(/[,\s]+/g, ' ').trim()
+
 function expectedWhen(r) {
   const start = asDate(r.date)
   if (!r.endDate) return entryFmt.format(start)
@@ -31,7 +41,8 @@ function expectedWhen(r) {
   return `${(sameMonth ? entryNoMonthFmt : entryFmt).format(start)} – ${entryFmt.format(end)}`
 }
 
-const weeksFor = (region) => {
+// Weeks that carry at least one title.
+const filledWeeks = (region) => {
   const map = new Map()
   for (const r of RELEASES.filter((x) => x.region === region)) {
     const key = isoOf(weekStart(r.date))
@@ -41,10 +52,30 @@ const weeksFor = (region) => {
   return map
 }
 
+// The whole run: every publishing week from the first with a title to the
+// last, quiet weeks included. This is what the picker is expected to hold.
+const runWeeks = (region) => {
+  const keys = [...filledWeeks(region).keys()].sort()
+  const out = []
+  const cursor = asDate(keys[0])
+  const last = keys[keys.length - 1]
+  while (isoOf(cursor) <= last) {
+    out.push(isoOf(cursor))
+    cursor.setDate(cursor.getDate() + 7)
+  }
+  return out
+}
+
 const todayIso = isoOf(new Date())
 const currentStart = isoOf(weekStart(todayIso))
+const standingOf = (start) =>
+  start === currentStart ? 'this week' : start > currentStart ? 'upcoming' : 'archive'
 
-const browser = await chromium.launch()
+// Sandboxes that ship a preinstalled Chromium and block the CDN set
+// CHROMIUM_PATH; everywhere else Playwright resolves its own build.
+const browser = await chromium.launch(
+  process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
+)
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
 await page.goto('http://localhost:5173/v6', { waitUntil: 'networkidle' })
 
@@ -63,6 +94,20 @@ const readCards = () =>
     })),
   )
 
+// The ruler is the page's one structural claim about the week, so it is read
+// back from the render the same way the cards are.
+const readRuler = () =>
+  page.$$eval('.v6-day', (nodes) =>
+    nodes.map((d) => ({
+      iso: d.querySelector('.v6-day-num').getAttribute('datetime'),
+      ticks: d.querySelectorAll('.v6-tick:not(.is-empty)').length,
+      today: d.classList.contains('is-today'),
+    })),
+  )
+
+const standingText = () =>
+  page.$$eval('.v6-standing', (ns) => ns.map((n) => n.textContent.trim()).join(''))
+
 console.log(`today ${todayIso} · current week starts ${currentStart}\n`)
 
 for (const region of ['IN', 'US']) {
@@ -72,8 +117,8 @@ for (const region of ['IN', 'US']) {
     await page.waitForTimeout(500)
   }
 
-  const byWeek = weeksFor(region)
-  const keys = [...byWeek.keys()].sort()
+  const byWeek = filledWeeks(region)
+  const run = runWeeks(region)
 
   // --- landing view -------------------------------------------------------
   const selected = await page.$eval('#v6-week', (n) => n.value)
@@ -100,34 +145,51 @@ for (const region of ['IN', 'US']) {
     'header counts describe the shown week, not the whole feed',
     sub.trim(),
   )
-  check(!/archive|upcoming/.test(sub), 'current week carries no archive flag')
+  check((await standingText()) === '', 'current week carries no standing flag')
+
+  const heading = (await page.textContent('.v6-week-heading')).trim()
+  check(heading.length > 0, 'the week names itself in a heading', heading)
+
+  // --- the day ruler ------------------------------------------------------
+  const ruler = await readRuler()
+  check(ruler.length === 7, 'the ruler draws all seven days of the week', `${ruler.length} cells`)
+  const perDay = new Map()
+  for (const r of wantCurrent) perDay.set(r.date, (perDay.get(r.date) ?? 0) + 1)
+  check(
+    ruler.every((d) => d.ticks === (perDay.get(d.iso) ?? 0)),
+    'every day carries one mark per title landing that day',
+    ruler.map((d) => `${d.iso.slice(8)}:${d.ticks}`).join(' '),
+  )
+  check(
+    ruler.filter((d) => d.today).length === (ruler.some((d) => d.iso === todayIso) ? 1 : 0) &&
+      ruler.every((d) => d.today === (d.iso === todayIso)),
+    'today is marked, and only today',
+  )
 
   // --- the picker ---------------------------------------------------------
   const opts = await page.$$eval('#v6-week option', (ns) =>
     ns.map((n) => ({ value: n.value, text: n.textContent.trim() })),
   )
   check(
-    opts.length === keys.length,
-    'picker lists every week present in the data',
-    `${opts.length} options, ${keys.length} weeks`,
+    opts.length === run.length,
+    'picker lists the whole run, quiet weeks included',
+    `${opts.length} options, run is ${run.length} weeks (${
+      run.length - byWeek.size
+    } of them empty)`,
   )
-  check(
-    opts.map((o) => o.value).join() === keys.slice().reverse().join(),
-    'picker runs newest first',
-  )
+  check(opts.map((o) => o.value).join() === run.slice().reverse().join(), 'picker runs newest first')
   check(
     opts.every((o) => {
-      const n = byWeek.get(o.value).length
-      const standing =
-        o.value === currentStart ? 'this week' : o.value > currentStart ? 'upcoming' : 'archive'
-      return o.text.includes(standing) && o.text.includes(`${n} title`)
+      const n = byWeek.get(o.value)?.length ?? 0
+      const count = n ? `${n} title` : 'no titles'
+      return o.text.includes(standingOf(o.value)) && o.text.includes(count)
     }),
     'each option states its standing and its count',
     opts.map((o) => o.text).join(' / '),
   )
 
-  // --- selecting another week --------------------------------------------
-  const other = keys.find((k) => k !== currentStart)
+  // --- selecting another week that has titles ------------------------------
+  const other = [...byWeek.keys()].find((k) => k !== currentStart)
   if (other) {
     await page.selectOption('#v6-week', other)
     await page.waitForTimeout(500)
@@ -138,47 +200,104 @@ for (const region of ['IN', 'US']) {
       'selecting a week swaps in exactly that week',
       `${other} → ${cards.length} cards`,
     )
-    const sub2 = await page.textContent('.v6-sub')
-    const expectFlag = other > currentStart ? 'upcoming' : 'archive'
-    check(sub2.includes(expectFlag), `a non-current week is flagged "${expectFlag}"`, sub2.trim())
+    check(
+      (await standingText()) === standingOf(other),
+      `a non-current week is flagged "${standingOf(other)}"`,
+      await standingText(),
+    )
 
     // every card still carries its own exact date
     const wrong = cards.filter((c) => {
       const rel = want.find((r) => r.title === c.title)
-      return !rel || c.when !== expectedWhen(rel)
+      return !rel || !sameDateString(c.when, expectedWhen(rel))
     })
-    check(wrong.length === 0, 'cards still show their own exact release date')
+    check(wrong.length === 0, 'cards still show their own exact release date', wrong
+      .map((c) => `${c.title}: "${c.when}"`)
+      .join(', '))
 
     const noPlatform = cards.filter((c) => {
       const rel = want.find((r) => r.title === c.title)
       return !rel || !c.meta.includes(PLATFORMS[rel.platform].label)
     })
     check(noPlatform.length === 0, 'platform still named on every card')
-
-    // back to current for the next region pass
-    await page.selectOption('#v6-week', currentStart)
-    await page.waitForTimeout(300)
   }
+
+  // --- a week the run contains but nothing landed in -----------------------
+  const quiet = run.find((k) => !byWeek.has(k))
+  if (quiet) {
+    await page.selectOption('#v6-week', quiet)
+    await page.waitForTimeout(500)
+    check((await readCards()).length === 0, 'a quiet week renders no cards', quiet)
+    check(await page.isVisible('.v6-empty'), 'a quiet week renders the designed empty surface')
+    const quietRuler = await readRuler()
+    check(
+      quietRuler.length === 7 && quietRuler.every((d) => d.ticks === 0),
+      'the ruler still draws the quiet week’s seven days',
+    )
+    // the one control on the empty surface has to lead somewhere real
+    const jump = (await page.textContent('.v6-empty-jump')).trim()
+    const nearest = [...byWeek.keys()].reduce((best, k) => {
+      const d = Math.abs(asDate(k) - asDate(quiet))
+      const bd = Math.abs(asDate(best) - asDate(quiet))
+      return d < bd || (d === bd && k < best) ? k : best
+    })
+    await page.click('.v6-empty-jump')
+    await page.waitForTimeout(500)
+    check(
+      (await page.$eval('#v6-week', (n) => n.value)) === nearest,
+      'the empty surface’s control lands on the nearest week that has titles',
+      `"${jump}" → ${nearest}`,
+    )
+  } else {
+    console.log(`SKIP  ${region} run has no quiet week to test`)
+  }
+
+  // back to current for the next region pass
+  await page.selectOption('#v6-week', currentStart)
+  await page.waitForTimeout(300)
   console.log('')
 }
 
-// --- region switch while parked on a week the other region does not publish
+// --- region switch -------------------------------------------------------
+// The runs overlap but are not the same length, so a switch either keeps the
+// reader's place in time or, when the week is outside the other run entirely,
+// falls back rather than rendering nothing.
 console.log('== region switch ==')
+const usRun = runWeeks('US')
+const inRun = runWeeks('IN')
+
+// (a) a week both runs contain, but only one region published in
+const sharedQuiet = inRun.find((k) => usRun.includes(k) && !filledWeeks('US').has(k))
 await page.getByRole('button', { name: 'India' }).click()
 await page.waitForTimeout(400)
-const inOnly = [...weeksFor('IN').keys()].find((k) => !weeksFor('US').has(k))
-await page.selectOption('#v6-week', inOnly)
+await page.selectOption('#v6-week', sharedQuiet)
 await page.waitForTimeout(400)
 await page.getByRole('button', { name: 'United States' }).click()
 await page.waitForTimeout(500)
-const after = await page.$eval('#v6-week', (n) => n.value)
-const usCards = await readCards()
 check(
-  weeksFor('US').has(after),
-  'switching region falls back to a week that region actually has',
-  `was ${inOnly} (IN-only) → now ${after}`,
+  (await page.$eval('#v6-week', (n) => n.value)) === sharedQuiet,
+  'switching region keeps the week when the other run covers it',
+  sharedQuiet,
 )
-check(usCards.length > 0, 'the fallback never lands on an empty page', `${usCards.length} cards`)
+check(
+  await page.isVisible('.v6-empty'),
+  'and says so rather than showing an empty grid',
+  (await page.textContent('.v6-empty-lead')).trim(),
+)
+
+// (b) a week outside the other run altogether
+const outside = usRun.find((k) => !inRun.includes(k))
+await page.selectOption('#v6-week', outside)
+await page.waitForTimeout(400)
+await page.getByRole('button', { name: 'India' }).click()
+await page.waitForTimeout(500)
+const after = await page.$eval('#v6-week', (n) => n.value)
+check(
+  inRun.includes(after),
+  'a week outside the other run falls back into it',
+  `was ${outside} (US-only) → now ${after}`,
+)
+check((await readCards()).length > 0, 'the fallback never lands on an empty page')
 
 console.log(`\n${failures} failing check(s)`)
 await browser.close()
