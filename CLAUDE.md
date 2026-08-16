@@ -3,7 +3,20 @@
 Applies to all frontend work in this repository.
 
 Rules marked **(measured)** were added after `v0`–`v5`, because the original list missed
-them and the drills exposed the gap. See `playbook/05-troubleshooting.md` for evidence.
+them and the drills exposed the gap. Rules marked **(v6)** were added after the `v6` build.
+See `playbook/05-troubleshooting.md` and `playbook/findings/v6.md` for evidence.
+
+## Start here
+
+Phase 1 (`v0`–`v5`) is complete and scored. The current work is `v6`.
+
+1. **`PHASE-2.md`** (repo root) — current state, the four verification commands, known gaps,
+   open questions. Read this first in a new session.
+2. `playbook/findings/RANKING.md` — why the best-scoring page was not the best product.
+3. `playbook/findings/v6.md` — what the `v6` build proved about the toolkit.
+
+`v6` lives on branch `v6-weekly-radar`, unmerged. Before trusting any change to it, run all
+four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
 
 ## Banned outright
 
@@ -39,6 +52,15 @@ them and the drills exposed the gap. See `playbook/05-troubleshooting.md` for ev
   large. A clean automated scan is not proof.
 - **(measured)** Any organising axis you remove must be replaced, not just deleted. If the
   page's purpose is chronological, chronology has to live somewhere visible.
+- **(v6)** Measure caps in `ch` belong on the text element, not on a wrapper. `ch` resolves
+  against the element's *own* font-size, so a 24ch cap set on a 16px container sized a 56px
+  headline at ~190px and broke it over three lines.
+- **(v6)** Never use `opacity` to make text recede. It stacks a second reduction the token
+  values cannot see: the computed pair passes 4.5:1 and the rendered pixels fail. Recede
+  with type size or a designed muted token.
+- **(v6)** Restoring what an earlier version did is a hypothesis, not an instruction. `v0`'s
+  date grouping was the missing axis, but re-implemented literally it put the 9-title US
+  slate into nine groups of one — the orphan defect `v4` had already fixed.
 
 ## Build rules
 
@@ -67,3 +89,9 @@ them and the drills exposed the gap. See `playbook/05-troubleshooting.md` for ev
   legends survive any number of screenshot passes because they look perfectly designed.
 - **(measured)** Passing tests prove correctness, not wiring. A function with full coverage
   and zero callers is the failure mode where a green suite actively misleads.
+- **(v6)** When a check fails, confirm the check before changing the page. A `v6` assertion
+  reported a real page as broken because it searched `textContent` for `·` separators that
+  are CSS `::after` content. The mirror of the trap above: a failing test that means nothing.
+- **(v6)** Removing a structural element removes everything it silently carried. Deleting
+  the week rail also deleted the page's only `<h2>`, leaving `h1` → `h3`; four screenshot
+  passes could not see it and the live audit caught it immediately.
