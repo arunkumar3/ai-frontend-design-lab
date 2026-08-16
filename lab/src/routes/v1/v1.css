@@ -4,10 +4,13 @@
    hue is used across the page (a tangerine), chosen because it doesn't
    collide with any PLATFORMS.color in data/releases.js. */
 
-@theme {
-  --font-display: 'Georgia', 'Iowan Old Style', 'Times New Roman', serif;
-}
-
+/* Plain CSS custom properties scoped to .v1-page — not a Tailwind @theme
+   block. This file is imported via `import './v1.css'` in V1.jsx, which
+   @tailwindcss/vite never processes (only the module graph rooted at
+   index.css, the file with `@import "tailwindcss"`, is transformed). An
+   @theme block here would ship to the browser as literal, inert CSS text.
+   Scoping to .v1-page also keeps every token local to this route, so /v0
+   and the rest of the app are unaffected. */
 .v1-page {
   /* light (default) */
   --paper: #faf9f6;
@@ -20,7 +23,7 @@
   --border-strong: #d3cfc2;
   --accent: #ff5a1f;
   --accent-ink: #2a1000;
-  --shadow-color: 15 10% 10%;
+  --font-display: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
 
   background: var(--paper);
   color: var(--ink);
