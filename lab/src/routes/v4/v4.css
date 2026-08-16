@@ -350,6 +350,18 @@ main {
   font-variant-numeric: tabular-nums;
 }
 
+/* Surfaces the handful of titles (Reacher S4, Lanterns) that release in both
+   catalogs on different platforms/dates — without this, toggling regions and
+   landing on the same poster again reads as a bug, not a real overlap. Own
+   line rather than folded into .v4-meta: that row already wraps tightly at
+   150px card widths, and the label is longer than the metadata it sits near. */
+.v4-cross-region {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-0);
+  font-weight: 600;
+  color: var(--text);
+}
+
 /* -------------------------------------------------------------- foot */
 
 .v4-foot {

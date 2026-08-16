@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'motion/react'
-import { REGIONS, releasesForRegion } from '../../lib/regions.js'
+import { REGIONS, releasesForRegion, titlesInBothRegions } from '../../lib/regions.js'
 import { PLATFORMS, posterUrl } from '../../data/releases.js'
 import './v4.css'
 
@@ -9,6 +9,12 @@ const TYPE_LABEL = { movie: 'Movie', series: 'Series', sport: 'Live sport' }
 // India first: it carries the larger slate this week (13 vs 9) and is the
 // default a returning visitor from the IN catalog would expect.
 const REGION_NAME = { IN: 'India', US: 'the United States' }
+
+// A handful of titles (Reacher S4, Lanterns) release in both catalogs on
+// different platforms and dates. Toggling the region and landing on the same
+// poster again reads as a bug unless the card says why. Computed once: the
+// RELEASES table is static.
+const CROSS_REGION_TITLES = new Set(titlesInBothRegions())
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
 const dayFmt = new Intl.DateTimeFormat('en-US', { day: 'numeric' })
@@ -109,10 +115,11 @@ function basisFor(count) {
   return cols * CARD_MAX + (cols - 1) * CARD_GAP
 }
 
-function ReleaseCard({ release }) {
+function ReleaseCard({ release, otherRegionName }) {
   const url = posterUrl(release)
   const isRange = Boolean(release.endDate)
   const label = TYPE_LABEL[release.type]
+  const alsoElsewhere = CROSS_REGION_TITLES.has(release.title)
 
   return (
     <figure className="v4-card">
@@ -157,6 +164,9 @@ function ReleaseCard({ release }) {
             </time>
           )}
         </p>
+        {alsoElsewhere && (
+          <p className="v4-cross-region">Also new in {otherRegionName}</p>
+        )}
       </figcaption>
     </figure>
   )
@@ -170,6 +180,7 @@ export default function V4() {
     const { min, max } = computeRange(releases)
     return formatRange(min, max)
   }, [releases])
+  const otherRegionName = REGION_NAME[region === 'IN' ? 'US' : 'IN']
 
   return (
     <div className="v4-page">
@@ -206,7 +217,7 @@ export default function V4() {
               </header>
               <div className="v4-grid">
                 {group.items.map((r) => (
-                  <ReleaseCard key={r.id} release={r} />
+                  <ReleaseCard key={r.id} release={r} otherRegionName={otherRegionName} />
                 ))}
               </div>
             </section>
