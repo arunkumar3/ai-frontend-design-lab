@@ -1,0 +1,336 @@
+/* v3 — reference pipeline. Plain CSS only: this file is imported from a
+   component, not from index.css, so an @theme block here would be inert
+   (see task brief). All tokens are scoped custom properties on .v3-page. */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
+
+.v3-page {
+  /* ---- canvas + surfaces: deliberate non-white, cool-neutral so it does
+     not compete with warm saturated poster art (checked against the
+     Bigg Boss: The Common Man poster — solid saturated gold). ---- */
+  --canvas: #ECEDF0;
+  --surface-a: #E2E4E8;
+  --surface-b: #D9DCE1;
+  --surface-c: #E9EBEE;
+  --text: #16181C;
+  --text-muted: #5B6270;
+  --hairline: rgba(20, 22, 28, 0.10);
+
+  /* ---- accent: interactive state only, never content. teal — no
+     platform brand color in the data set sits in this hue. ---- */
+  --accent: #0E8C86;
+  --accent-ink: #F5FFFE;
+
+  /* ---- elevation: on the poster itself, always-on baseline + a
+     stronger, accent-free lift on hover/focus. ---- */
+  --shadow-rest: 0 1px 2px rgba(15, 17, 20, 0.14), 0 10px 22px -12px rgba(15, 17, 20, 0.30);
+  --shadow-lift: 0 2px 5px rgba(15, 17, 20, 0.20), 0 20px 38px -16px rgba(15, 17, 20, 0.42);
+  --rim: inset 0 0 0 1px rgba(255, 255, 255, 0.40);
+
+  /* ---- radius: percentage clamp per axis, tuned so the arc stays
+     circular against a 2:3 poster (3/2 = 1.5x ratio between the two
+     percentages, matching Letterboxd's technique, not its numbers). ---- */
+  --radius-poster: clamp(4px, 4%, 14px) / clamp(4px, 2.6667%, 14px);
+  --radius-pill: 999px;
+
+  /* ---- type: serif for editorial moments only; sans for everything
+     functional. ---- */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --fs-0: 0.875rem;
+  --fs-1: 1rem;
+  --fs-2: 1.5rem;
+  --fs-3: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  --shell-max: 1360px;
+
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  .v3-page {
+    --canvas: #17181C;
+    --surface-a: #1F2126;
+    --surface-b: #262930;
+    --surface-c: #1B1D22;
+    --text: #F1F2F4;
+    --text-muted: #9AA0AC;
+    --hairline: rgba(255, 255, 255, 0.08);
+
+    --accent: #4FD9CE;
+    --accent-ink: #06211F;
+
+    --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.45), 0 10px 24px -12px rgba(0, 0, 0, 0.55);
+    --shadow-lift: 0 3px 8px rgba(0, 0, 0, 0.55), 0 22px 44px -18px rgba(0, 0, 0, 0.72);
+    --rim: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+}
+
+.v3-page, .v3-page * {
+  box-sizing: border-box;
+}
+
+.v3-page h1, .v3-page h2, .v3-page h3, .v3-page p, .v3-page figure {
+  margin: 0;
+}
+
+.v3-page :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.v3-shell {
+  max-width: var(--shell-max);
+  margin: 0 auto;
+  padding: var(--sp-7) var(--sp-5) var(--sp-8);
+}
+
+/* ---------------------------------------------------------------- head */
+
+.v3-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  padding-bottom: var(--sp-7);
+  margin-bottom: var(--sp-7);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.v3-head-copy {
+  max-width: 640px;
+}
+
+.v3-eyebrow {
+  font-size: var(--fs-0);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-3);
+}
+
+.v3-h1 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-3);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.v3-sub {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-1);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------ toggle */
+
+.v3-toggle {
+  position: relative;
+  display: inline-flex;
+  padding: 4px;
+  gap: 2px;
+  background: var(--surface-a);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.v3-toggle-btn {
+  position: relative;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--fs-0);
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  z-index: 1;
+  transition: color 160ms ease;
+}
+
+.v3-toggle-btn.is-active {
+  color: var(--accent-ink);
+}
+
+.v3-toggle-pill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  z-index: 0;
+}
+
+.v3-toggle-label {
+  position: relative;
+  z-index: 1;
+}
+
+/* -------------------------------------------------------------- group */
+
+.v3-group {
+  margin-bottom: var(--sp-8);
+}
+
+.v3-group-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.v3-group-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.v3-group-header h2 {
+  font-size: var(--fs-2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.v3-group-count {
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+}
+
+.v3-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--sp-6) var(--sp-5);
+}
+
+/* --------------------------------------------------------------- card */
+
+.v3-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.v3-poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-poster);
+  box-shadow: var(--shadow-rest), var(--rim);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+.v3-poster:hover, .v3-poster:focus-visible {
+  box-shadow: var(--shadow-lift), var(--rim), 0 0 0 2px var(--accent);
+  transform: translateY(-2px);
+}
+
+.v3-fallback {
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-poster);
+  box-shadow: var(--shadow-rest), var(--rim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-5);
+  text-align: center;
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+.v3-fallback:hover, .v3-fallback:focus-visible {
+  box-shadow: var(--shadow-lift), var(--rim), 0 0 0 2px var(--accent);
+  transform: translateY(-2px);
+}
+
+.v3-fallback.v3-tone-a { background: var(--surface-a); }
+.v3-fallback.v3-tone-b { background: var(--surface-b); }
+.v3-fallback.v3-tone-c { background: var(--surface-c); }
+
+.v3-fallback-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(var(--fs-1), 4cqi + 0.4rem, var(--fs-2));
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.v3-card figcaption {
+  margin-top: var(--sp-3);
+}
+
+.v3-title {
+  font-size: var(--fs-1);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.v3-approx {
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 2px;
+  cursor: help;
+}
+
+.v3-meta {
+  margin-top: 2px;
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--sp-2);
+}
+
+.v3-meta > * + *::before {
+  content: '\00b7';
+  margin-right: var(--sp-2);
+}
+
+.v3-range {
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------- foot */
+
+.v3-foot {
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--hairline);
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-width: 720px;
+}
+
+@media (max-width: 600px) {
+  .v3-shell {
+    padding: var(--sp-6) var(--sp-4) var(--sp-7);
+  }
+
+  .v3-head {
+    align-items: flex-start;
+  }
+}
