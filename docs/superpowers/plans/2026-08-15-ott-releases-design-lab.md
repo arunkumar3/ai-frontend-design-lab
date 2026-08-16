@@ -402,7 +402,7 @@ cd /Users/arunjalanila/MyProjects/web_development/lab
 pnpm vitest run
 ```
 
-Expected: 11 passed
+Expected: 10 passed
 
 - [ ] **Step 6: Commit**
 
@@ -879,7 +879,7 @@ git add -A && git commit -m "docs: complete design operating playbook"
 
 ```bash
 cd /Users/arunjalanila/MyProjects/web_development/lab
-pnpm vitest run          # dataset invariants — 11 passing
+pnpm vitest run          # dataset invariants — 10 passing
 pnpm dev                 # then visit / and click through all six drills
 for v in v0 v1 v2 v3 v4 v5; do pnpm shoot $v; done
 ls shots/*/ | wc -l      # expect 36 PNGs
