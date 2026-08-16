@@ -11,9 +11,36 @@ const TYPE_LABEL = { movie: 'Movie', series: 'Series', sport: 'Live sport' }
 const REGION_NAME = { IN: 'India', US: 'the United States' }
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
+const dayFmt = new Intl.DateTimeFormat('en-US', { day: 'numeric' })
+const yearFmt = new Intl.DateTimeFormat('en-US', { year: 'numeric' })
 
 function fmtDate(iso) {
   return dateFmt.format(new Date(`${iso}T00:00:00`))
+}
+
+// Real span of the releases actually rendered, not an assumed "this week."
+// A release's own end (sport entries carry `endDate`) can extend the max
+// past every `date` value, so both bounds are derived per-release.
+function computeRange(releases) {
+  let min = releases[0].date
+  let max = releases[0].endDate || releases[0].date
+  for (const r of releases) {
+    if (r.date < min) min = r.date
+    const end = r.endDate || r.date
+    if (end > max) max = end
+  }
+  return { min, max }
+}
+
+function formatRange(min, max) {
+  const minDate = new Date(`${min}T00:00:00`)
+  const maxDate = new Date(`${max}T00:00:00`)
+  const year = yearFmt.format(maxDate)
+  const sameMonth =
+    minDate.getMonth() === maxDate.getMonth() && minDate.getFullYear() === maxDate.getFullYear()
+  return sameMonth
+    ? `${dateFmt.format(minDate)}–${dayFmt.format(maxDate)}, ${year}`
+    : `${dateFmt.format(minDate)} – ${dateFmt.format(maxDate)}, ${year}`
 }
 
 // Deterministic 3-way tone pick so six fallback panels don't render as one
@@ -125,6 +152,10 @@ export default function V3() {
   const [region, setRegion] = useState('IN')
   const releases = useMemo(() => releasesForRegion(region), [region])
   const groups = useMemo(() => groupByPlatform(releases), [releases])
+  const range = useMemo(() => {
+    const { min, max } = computeRange(releases)
+    return formatRange(min, max)
+  }, [releases])
 
   return (
     <div className="v3-page">
@@ -135,7 +166,7 @@ export default function V3() {
             <h1 className="v3-h1">This week in {REGION_NAME[region]}</h1>
             <p className="v3-sub">
               {releases.length} new title{releases.length === 1 ? '' : 's'} across{' '}
-              {groups.length} platform{groups.length === 1 ? '' : 's'} · Aug 15–21, 2026
+              {groups.length} platform{groups.length === 1 ? '' : 's'} · {range}
             </p>
           </div>
           <RegionToggle region={region} onChange={setRegion} />
