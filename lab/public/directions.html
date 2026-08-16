@@ -1,0 +1,131 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>v6 colour directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Bitter:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Libre+Franklin:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #6b6b6b; font-family: system-ui, sans-serif; }
+  .label { color: #fff; font: 600 13px/1 ui-monospace, monospace; letter-spacing: .12em;
+           text-transform: uppercase; padding: 26px 40px 10px; }
+  .label span { opacity: .6; font-weight: 400; letter-spacing: .02em; text-transform: none; }
+  .panel { padding: 34px 40px 40px; }
+  .row { display: flex; gap: 18px; align-items: flex-start; }
+  .poster { width: 132px; aspect-ratio: 2/3; object-fit: cover; display: block; }
+  .fb { width: 132px; aspect-ratio: 2/3; display: flex; align-items: center;
+        justify-content: center; text-align: center; padding: 12px; }
+
+  /* ---------- A · printed listings ---------- */
+  .A { background: #efe9dd; font-family: 'Bitter', Georgia, serif; color: #17150f; }
+  .A .mast { display: flex; align-items: baseline; justify-content: space-between;
+             border-bottom: 3px solid #17150f; padding-bottom: 8px; }
+  .A h2 { font: 800 30px/1 'Archivo', sans-serif; letter-spacing: -.02em; text-transform: uppercase; }
+  .A .iss { font: 400 11px/1 'IBM Plex Mono', monospace; letter-spacing: .1em; }
+  .A .day { display: flex; align-items: baseline; gap: 14px; margin: 20px 0 12px;
+            border-bottom: 1px solid #17150f; padding-bottom: 5px; }
+  .A .day b { font: 800 13px/1 'Archivo', sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+  .A .day i { font: 400 11px/1 'IBM Plex Mono', monospace; font-style: normal; opacity: .55; }
+  .A .poster, .A .fb { border: 1px solid #17150f; }
+  .A .fb { background: #e4dccb; font: italic 400 13px/1.35 'Bitter', serif; }
+  .A .t { font: 700 14px/1.25 'Bitter', serif; margin-top: 7px; max-width: 132px; }
+  .A .m { font: 400 10px/1.5 'IBM Plex Mono', monospace; letter-spacing: .04em;
+          text-transform: uppercase; opacity: .62; margin-top: 3px; }
+  .A .spot { color: #b3200f; }
+
+  /* ---------- B · achromatic ---------- */
+  .B { background: #fff; font-family: 'Libre Franklin', sans-serif; color: #0b0b0b; }
+  .B h2 { font: 900 34px/1 'Libre Franklin'; letter-spacing: -.035em; }
+  .B .sub { font: 400 12px/1 'Libre Franklin'; color: #6f6f6f; margin-top: 7px; }
+  .B .day { font: 600 11px/1 'Libre Franklin'; letter-spacing: .16em; text-transform: uppercase;
+            color: #0b0b0b; margin: 26px 0 12px; padding-bottom: 6px; border-bottom: 1px solid #0b0b0b; }
+  .B .fb { background: #f2f2f2; border: 1px solid #dcdcdc;
+           font: 600 13px/1.3 'Libre Franklin'; color: #6f6f6f; }
+  .B .t { font: 600 14px/1.25 'Libre Franklin'; margin-top: 8px; max-width: 132px; }
+  .B .m { font: 400 11px/1.4 'Libre Franklin'; color: #767676; margin-top: 3px; }
+
+  /* ---------- C · cinema dark ---------- */
+  .C { background: #0b0c0f; font-family: 'Archivo', sans-serif; color: #f2f3f5; }
+  .C h2 { font: 600 30px/1 'Archivo'; letter-spacing: -.02em; }
+  .C .sub { font: 400 12px/1 'Archivo'; color: #7c8089; margin-top: 7px; }
+  .C .day { font: 600 11px/1 'Archivo'; letter-spacing: .16em; text-transform: uppercase;
+            color: #7c8089; margin: 26px 0 12px; }
+  .C .poster { border-radius: 3px; box-shadow: 0 14px 34px rgba(0,0,0,.75),
+               0 0 0 1px rgba(255,255,255,.09) inset; }
+  .C .fb { border-radius: 3px; background: #15171c; box-shadow: 0 0 0 1px rgba(255,255,255,.07) inset;
+           font: 400 13px/1.35 'Archivo'; color: #9aa0aa; }
+  .C .t { font: 600 14px/1.25 'Archivo'; margin-top: 9px; max-width: 132px; }
+  .C .m { font: 400 11px/1.4 'Archivo'; color: #6f747d; margin-top: 3px; }
+
+  /* ---------- D · derived from artwork ---------- */
+  .D { background: #1d1410; font-family: 'Archivo', sans-serif; color: #f6efe6; }
+  .D h2 { font: 600 30px/1 'Archivo'; letter-spacing: -.02em; }
+  .D .sub { font: 400 12px/1 'Archivo'; color: #b09a86; margin-top: 7px; }
+  .D .swatches { display: flex; gap: 4px; margin-top: 12px; }
+  .D .swatches i { width: 30px; height: 7px; display: block; }
+  .D .day { font: 600 11px/1 'Archivo'; letter-spacing: .16em; text-transform: uppercase;
+            color: #d98b3a; margin: 24px 0 12px; }
+  .D .poster { border-radius: 2px; }
+  .D .fb { border-radius: 2px; background: #2a1d16; border: 1px solid #4a3323;
+           font: 400 13px/1.35 'Archivo'; color: #c2a68f; }
+  .D .t { font: 600 14px/1.25 'Archivo'; margin-top: 9px; max-width: 132px; }
+  .D .m { font: 400 11px/1.4 'Archivo'; color: #a08a76; margin-top: 3px; }
+</style>
+
+<div class="label">A · Printed listings <span>— ink on stock, hairline rules, one spot colour</span></div>
+<div class="panel A">
+  <div class="mast"><h2>This Week on Stream</h2><div class="iss">IND · 12–21 AUG 2026</div></div>
+  <div class="day"><b>Wed 12 Aug</b><i>1 title</i></div>
+  <div class="row">
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/f1VCQIG2iCyOookdgOzwtUpwWC0.jpg">
+      <div class="t">Reacher <span class="spot">S4</span></div><div class="m">Series · Prime Video</div></div>
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/1GboWZREUaFkx11V4DtkLpQsiOs.jpg">
+      <div class="t">Bigg Boss Agnipareeksha</div><div class="m">Series · JioHotstar</div></div>
+    <div><div class="fb">108 Base Hospital: Uri</div>
+      <div class="t">108 Base Hospital: Uri</div><div class="m">Series · <span class="spot">no artwork</span></div></div>
+  </div>
+</div>
+
+<div class="label">B · Achromatic <span>— zero accent; the posters are the only colour</span></div>
+<div class="panel B">
+  <h2>What&rsquo;s new in India</h2><div class="sub">13 titles · 12–21 August 2026</div>
+  <div class="day">Wednesday 12 August</div>
+  <div class="row">
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/f1VCQIG2iCyOookdgOzwtUpwWC0.jpg">
+      <div class="t">Reacher S4</div><div class="m">Series · Prime Video</div></div>
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/1GboWZREUaFkx11V4DtkLpQsiOs.jpg">
+      <div class="t">Bigg Boss Agnipareeksha</div><div class="m">Series · JioHotstar</div></div>
+    <div><div class="fb">108 Base<br>Hospital: Uri</div>
+      <div class="t">108 Base Hospital: Uri</div><div class="m">Series · JioHotstar</div></div>
+  </div>
+</div>
+
+<div class="label">C · Cinema dark <span>— posters glow, chrome recedes</span></div>
+<div class="panel C">
+  <h2>What&rsquo;s new in India</h2><div class="sub">13 titles · 12–21 August 2026</div>
+  <div class="day">Wednesday 12 August</div>
+  <div class="row">
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/f1VCQIG2iCyOookdgOzwtUpwWC0.jpg">
+      <div class="t">Reacher S4</div><div class="m">Series · Prime Video</div></div>
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/1GboWZREUaFkx11V4DtkLpQsiOs.jpg">
+      <div class="t">Bigg Boss Agnipareeksha</div><div class="m">Series · JioHotstar</div></div>
+    <div><div class="fb">108 Base<br>Hospital: Uri</div>
+      <div class="t">108 Base Hospital: Uri</div><div class="m">Series · JioHotstar</div></div>
+  </div>
+</div>
+
+<div class="label">D · Derived from the week&rsquo;s artwork <span>— palette sampled from this week&rsquo;s posters</span></div>
+<div class="panel D">
+  <h2>What&rsquo;s new in India</h2><div class="sub">13 titles · 12–21 August 2026</div>
+  <div class="swatches"><i style="background:#d98b3a"></i><i style="background:#8e3b2e"></i>
+    <i style="background:#2a1d16"></i><i style="background:#c2a68f"></i></div>
+  <div class="day">Wednesday 12 August</div>
+  <div class="row">
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/f1VCQIG2iCyOookdgOzwtUpwWC0.jpg">
+      <div class="t">Reacher S4</div><div class="m">Series · Prime Video</div></div>
+    <div><img class="poster" src="https://image.tmdb.org/t/p/w500/1GboWZREUaFkx11V4DtkLpQsiOs.jpg">
+      <div class="t">Bigg Boss Agnipareeksha</div><div class="m">Series · JioHotstar</div></div>
+    <div><div class="fb">108 Base<br>Hospital: Uri</div>
+      <div class="t">108 Base Hospital: Uri</div><div class="m">Series · JioHotstar</div></div>
+  </div>
+</div>

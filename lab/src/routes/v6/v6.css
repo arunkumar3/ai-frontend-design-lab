@@ -1,0 +1,535 @@
+/* v6 — v4's card craft on a restored chronological spine, in a palette
+   derived from the week's own artwork.
+
+   Plain CSS only: this file is imported from a component, not from index.css,
+   so an @theme block here would ship as inert text (v1's failure). All tokens
+   are custom properties scoped to .v6-page.
+
+   Palette provenance — quantised from the seven IN posters that have artwork
+   (60x90 downsample, saturation-weighted 4x4x4 histogram, 2026-08-16):
+     dominant hue band  10-40deg  12,757px   (amber / rust / brown)
+     secondary band    180-210deg  5,476px   (cyan — Aakhri Sawal, Mr. WFH)
+     mean saturation 52, mean lightness 39
+   Bigg Boss: The Common Man is 54% #FEC60D gold; Bigg Boss Agnipareeksha is
+   44% #23160E warm brown; Lanterns carries #5A331B rust. The canvas is that
+   brown deepened, the accent sits mid-band between the gold and the rust. The
+   cyan minority is deliberately left to the posters — the chrome takes the
+   majority hue so the accent never competes with the artwork it frames.
+
+   Every text/background pair below was computed, not eyeballed (constitution:
+   4.5:1 body, 3:1 large). Tightest pair in the file is muted-on-surface-b in
+   light mode at 4.53:1. */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+.v6-page {
+  /* ---- light: warm paper, the same hue family read at high lightness ---- */
+  /* The three fallback tones sit in a band *beside* the canvas, never at the
+     extremes: a near-white or near-black panel reads as a hole in the page
+     rather than as the designed surface six of thirteen IN titles need. */
+  --canvas: #F4EDE2;
+  --surface-a: #E8DECE;
+  --surface-b: #DBCDB6;
+  --surface-c: #EFE2CD;
+  --text: #211610;
+  --text-muted: #6A5443;
+  --hairline: rgba(33, 22, 16, 0.16);
+  --hairline-strong: rgba(33, 22, 16, 0.30);
+
+  /* ---- accent: interactive state, month markers, focus. Exactly one, and
+     it is the slate's own hue darkened until it carries text (5.97:1). ---- */
+  --accent: #8C4711;
+  --accent-ink: #FFF7EC;
+
+  --shadow-rest: 0 1px 2px rgba(45, 28, 14, 0.16), 0 8px 18px -12px rgba(45, 28, 14, 0.34);
+  --shadow-lift: 0 2px 5px rgba(45, 28, 14, 0.22), 0 18px 34px -16px rgba(45, 28, 14, 0.44);
+
+  /* Square-ish corners: this is a schedule, not a carousel. */
+  --radius-art: 3px;
+  --radius-pill: 999px;
+
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Four sizes on screen, no more. */
+  --fs-0: 0.8125rem;
+  --fs-1: 1rem;
+  --fs-2: 1.75rem;
+  --fs-3: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  --shell-max: 1220px;
+
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- dark: the canvas is Bigg Boss Agnipareeksha's #23160E deepened one
+   step; surfaces climb the same hue toward the rust the posters share. ---- */
+@media (prefers-color-scheme: dark) {
+  .v6-page {
+    --canvas: #1D1410;
+    --surface-a: #2A1D16;
+    --surface-b: #3A281D;
+    --surface-c: #33251B;
+    --text: #F6EFE6;
+    --text-muted: #B39C87;
+    --hairline: rgba(246, 239, 230, 0.14);
+    --hairline-strong: rgba(246, 239, 230, 0.28);
+
+    --accent: #E0983F;
+    --accent-ink: #21140A;
+
+    --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.50), 0 10px 22px -12px rgba(0, 0, 0, 0.60);
+    --shadow-lift: 0 3px 8px rgba(0, 0, 0, 0.58), 0 20px 40px -18px rgba(0, 0, 0, 0.74);
+  }
+}
+
+.v6-page, .v6-page * {
+  box-sizing: border-box;
+}
+
+.v6-page h1, .v6-page h2, .v6-page h3, .v6-page p, .v6-page figure {
+  margin: 0;
+}
+
+.v6-page :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.v6-page ::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.v6-shell {
+  max-width: var(--shell-max);
+  margin: 0 auto;
+  padding: var(--sp-7) var(--sp-5) var(--sp-8);
+}
+
+/* ---------------------------------------------------------------- head */
+
+.v6-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  padding-bottom: var(--sp-6);
+  margin-bottom: var(--sp-7);
+  border-bottom: 2px solid var(--hairline-strong);
+}
+
+.v6-head-copy {
+  max-width: 40rem;
+}
+
+/* Measure caps belong on the text element, not the wrapper: `ch` resolves
+   against the element's own font-size, so a cap set on the 16px wrapper was
+   sizing the 56px headline at ~190px and breaking it over three lines. */
+.v6-h1 {
+  font-size: var(--fs-3);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  max-width: 14ch;
+  text-wrap: balance;
+}
+
+.v6-sub {
+  margin-top: var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  /* Fits the longer of the two region strings on one line — the US slate's
+     "9 new titles · 6 platforms · Jul 2 – Aug 28, 2026" is 49 characters and
+     was orphaning "2026" onto a second line at 46ch. */
+  max-width: 52ch;
+}
+
+/* Carries the accent because it changes what the page is claiming: without it
+   an archive week reads as this week's slate. */
+.v6-sub-flag {
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ------------------------------------------------------------ toggle */
+
+.v6-toggle {
+  position: relative;
+  display: inline-flex;
+  padding: 4px;
+  gap: 2px;
+  background: var(--surface-a);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.v6-toggle-btn {
+  position: relative;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--fs-0);
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  z-index: 1;
+  transition: color 160ms ease;
+}
+
+.v6-toggle-btn.is-active {
+  color: var(--accent-ink);
+}
+
+.v6-toggle-pill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  z-index: 0;
+}
+
+.v6-toggle-label {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------- week picker */
+
+/* The page shows one week, so the week is named once — here, by the control
+   that changes it — instead of by a rail labelling a single group. */
+
+.v6-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-3);
+  flex-shrink: 0;
+}
+
+.v6-weekpick {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.v6-weekpick-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.v6-weekpick-field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.v6-weekpick-select {
+  appearance: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  color: var(--text);
+  background: var(--surface-a);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-art);
+  /* Right padding clears the arrow rather than sitting under it. */
+  padding: var(--sp-3) var(--sp-7) var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  transition: border-color 160ms ease;
+}
+
+.v6-weekpick-select:hover {
+  border-color: var(--accent);
+}
+
+/* Drawn, not a glyph: an emoji or a "▾" character inherits font metrics and
+   sits off-centre. A rotated square keeps its own geometry. */
+.v6-weekpick-arrow {
+  position: absolute;
+  right: var(--sp-4);
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: translateY(-2px) rotate(45deg);
+  pointer-events: none;
+}
+
+/* The native option list is drawn by the OS, so it keeps the platform's own
+   colours — the one surface on this page the palette cannot reach. */
+
+/* ---------------------------------------------------------------- grid */
+
+.v6-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 200px));
+  gap: var(--sp-6) var(--sp-5);
+  align-content: start;
+}
+
+/* Above the breakpoint the week gets exactly as many columns as it has titles
+   (`--cols`, set inline, capped at 5), each free to shrink. `auto-fill` sizes
+   columns from available width instead, so a 5-title week broke 4+1 and left
+   one card marooned on its own line — the orphan-row defect three earlier
+   drills shipped. Below the breakpoint there isn't width for that, and
+   `auto-fill`'s honest 2-up wrap takes over. */
+@media (min-width: 1200px) {
+  .v6-grid {
+    grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+    /* Bound the track box to its own column count, or `1fr` columns divide the
+       full content width and a 2-title week flings its two cards to opposite
+       ends of the page. Columns land at 200px when there's room and shrink
+       together when there isn't. */
+    max-width: calc(var(--cols, 4) * 200px + (var(--cols, 4) - 1) * var(--sp-5));
+  }
+}
+
+/* --------------------------------------------------------------- card */
+
+.v6-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.v6-poster-frame {
+  position: relative;
+  border-radius: var(--radius-art);
+  box-shadow: var(--shadow-rest);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+/* A drawn edge rather than a mat: poster art with its own pale background
+   needs a boundary against warm paper, and the dark canvas needs one against
+   pale art. Inset so it sits on the artwork, not around it. */
+.v6-poster-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-art);
+  pointer-events: none;
+}
+
+/* :hover gated behind pointer:fine — on touch it fires on tap and never
+   releases, leaving the lift stuck until the next tap elsewhere. Keyboard
+   focus stays ungated. */
+@media (hover: hover) and (pointer: fine) {
+  .v6-poster-frame:hover,
+  .v6-fallback:hover {
+    box-shadow: var(--shadow-lift), 0 0 0 2px var(--accent);
+    transform: translateY(-2px);
+  }
+}
+
+.v6-poster-frame:focus-within,
+.v6-fallback:focus-visible {
+  box-shadow: var(--shadow-lift), 0 0 0 2px var(--accent);
+  transform: translateY(-2px);
+}
+
+.v6-poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-art);
+}
+
+/* Six of thirteen IN titles ship without artwork, so this is a primary
+   surface, not an edge case: it holds the real title (never a monogram) at a
+   size that fills the panel the way a poster would. */
+.v6-fallback {
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-art);
+  box-shadow: var(--shadow-rest);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--sp-4);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+/* Says what the surface is instead of leaving the reader to infer it from an
+   absence — the panel is a stated gap in the data, not a broken image. */
+.v6-fallback-flag {
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.v6-fallback.v6-tone-a { background: var(--surface-a); }
+.v6-fallback.v6-tone-b { background: var(--surface-b); }
+.v6-fallback.v6-tone-c { background: var(--surface-c); }
+
+.v6-fallback-title {
+  font-size: clamp(var(--fs-1), 5cqi + 0.3rem, 1.375rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.v6-card figcaption {
+  margin-top: var(--sp-3);
+}
+
+.v6-title {
+  font-size: var(--fs-1);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.v6-approx {
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: help;
+}
+
+/* The exact release day, promoted to its own line at full text contrast: with
+   the week as the section unit this is the page's primary answer, so it
+   outranks the descriptive metadata under it. */
+.v6-when {
+  margin-top: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  line-height: 1.5;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.v6-meta {
+  margin-top: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  line-height: 1.5;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--sp-2);
+}
+
+/* Separator trails the item it belongs to, so a wrap never opens a line with
+   an orphaned dot. */
+.v6-meta > *:not(:last-child)::after {
+  content: '\00b7';
+  margin-left: var(--sp-2);
+}
+
+.v6-cross-region {
+  margin-top: var(--sp-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* -------------------------------------------------------------- foot */
+
+.v6-foot {
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-5);
+  border-top: 2px solid var(--hairline-strong);
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  line-height: 1.6;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* Measure caps the prose, not the rule above it — a border-top on a 62ch box
+   stops a third of the way across the page and reads as a broken divider. */
+.v6-foot p {
+  max-width: 62ch;
+}
+
+/* Movement out, colour and shadow fades kept — gentler, not zero. The JS
+   entrance has its own reduced-motion branch in V6.jsx. */
+@media (prefers-reduced-motion: reduce) {
+  .v6-poster-frame,
+  .v6-fallback {
+    transition: box-shadow 220ms ease;
+  }
+
+  .v6-poster-frame:hover,
+  .v6-poster-frame:focus-within,
+  .v6-fallback:hover,
+  .v6-fallback:focus-visible {
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .v6-shell {
+    padding: var(--sp-6) var(--sp-4) var(--sp-7);
+  }
+
+  .v6-head {
+    align-items: flex-start;
+  }
+
+  .v6-head-copy {
+    max-width: none;
+  }
+
+  /* Controls go full-width and left-aligned: a right-aligned stack on a phone
+     reads as debris pushed against the edge, and the select needs the room to
+     show a full week range. */
+  .v6-controls {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .v6-weekpick {
+    width: 100%;
+  }
+
+  .v6-weekpick-field {
+    flex: 1;
+  }
+
+  .v6-weekpick-select {
+    width: 100%;
+  }
+
+  .v6-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}

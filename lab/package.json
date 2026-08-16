@@ -8,7 +8,10 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "shoot": "node scripts/shoot.mjs"
+    "shoot": "node scripts/shoot.mjs",
+    "verify:v6": "node scripts/verify-v6.mjs",
+    "contrast:v6": "node scripts/contrast-v6.mjs",
+    "palette:v6": "node scripts/sample-palette.mjs"
   },
   "dependencies": {
     "motion": "^13.1.0",

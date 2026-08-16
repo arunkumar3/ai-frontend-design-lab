@@ -7,6 +7,7 @@ const DRILLS = [
   ['v3', 'reference pipeline'],
   ['v4', 'screenshot loop'],
   ['v5', 'community skills'],
+  ['v6', 'derived palette + restored date axis'],
 ]
 
 export default function Index() {
