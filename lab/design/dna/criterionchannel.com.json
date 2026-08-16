@@ -1,0 +1,79 @@
+{
+  "source": "https://www.criterionchannel.com",
+  "note": "DOM/CSS extraction was unavailable for this domain — the shared Playwright browser session was under contention from a concurrent process for the full capture window. All values below are ~approx, read directly from three verified screenshots (marketing hero, /browse hero, /browse shelves) rather than computed styles. Screenshot is the only ground truth available for this run.",
+  "tokens": {
+    "spacing": {
+      "scale": ["~approx: 16px, 24px, 32px, 48px"],
+      "base_unit": "~approx 16px (not confirmed via DOM)"
+    },
+    "typography": {
+      "families": ["~approx: a grotesque/DIN-style bold sans for chrome and headlines; per-collection custom lettering baked into artwork (not a live web font)"],
+      "scale": [
+        { "role": "marketing-headline", "size": "~approx 44-48px", "weight": "bold", "note": "'Great movies take you there'" },
+        { "role": "collection-hero-title", "size": "not a live text element", "weight": "n/a", "note": "'DESERT TRIPS' is baked into the hero image as custom lettering with a tiled star-pattern texture, not CSS type" },
+        { "role": "shelf-section-label", "size": "~approx 14-16px", "weight": "bold, tracked, all-caps", "note": "WATCH LIVE / NEW COLLECTIONS / POPULAR COLLECTIONS / FRESH FROM THEATERS — all render at the same size regardless of position" },
+        { "role": "tile-caption", "size": "~approx 15-16px", "weight": "regular, sentence case", "note": "e.g. 'Starring Harry Dean Stanton'" },
+        { "role": "nav-label", "size": "~approx 13px", "weight": "regular, tracked, all-caps" }
+      ]
+    },
+    "colors": [
+      { "role": "background", "value": "~approx #141414", "note": "near-black, not pure #000" },
+      { "role": "text-primary", "value": "#FFFFFF" },
+      { "role": "text-secondary", "value": "~approx #9A9A9A", "note": "captions, VIEW ALL links" },
+      { "role": "accent-cta", "value": "~approx #A9812F", "note": "warm gold/mustard fill, used only on the primary subscribe CTA ('TRY 7 DAYS FREE') — the single saturated solid-fill chrome element across all three captured views" },
+      { "role": "live-indicator", "value": "~approx #E0212F", "note": "red pill badge, confined to the 'LIVE' status tag only" }
+    ],
+    "radius": ["~approx 4-6px on tiles and CTA button — not confirmed via DOM"],
+    "shadows": ["not confirmed via DOM — no strong shadow visible in screenshots; depth comes from image content and dark background, not elevation"],
+    "image_ratios": [
+      { "usage": "collection-tile", "ratio": "~approx 3:2 (landscape)", "note": "custom-lettered curatorial art, e.g. Southern Gothic, Rock Biopics" },
+      { "usage": "premiere-poster-tile", "ratio": "~approx 2:3 (portrait)", "note": "Fresh From Theaters shelf — standard poster crop with an EXCLUSIVE PREMIERE ribbon and an overlaid critic pull-quote" },
+      { "usage": "hero-still", "ratio": "~approx 21:9 to full-bleed", "note": "marketing hero and per-collection browse hero" }
+    ],
+    "grid": { "max_width": "not confirmed", "columns": "4 visible per shelf at ~1200px viewport, horizontal-scroll carousel (chevron control), not a wrapping grid", "gutter": "~approx 16-20px" }
+  },
+  "taste": [
+    {
+      "name": "Editorial Voice Lives in the Artwork, Not the UI Type System",
+      "trigger": "Needing a distinct curatorial personality for each weekly collection while still running a scalable, repeatable shelf template",
+      "decision": "Baked bespoke lettering and graphic treatment into each collection's thumbnail image itself (Desert Trips' tiled-star block caps, Southern Gothic's yellow serif, Rock Biopics' red script) rather than expressing personality through the live CSS type system",
+      "reason": "A single reusable shelf component can't carry curatorial voice on its own. Putting the voice in the artwork lets every collection look hand-designed while the surrounding grid, captions, and section labels stay completely uniform and quiet",
+      "evidence": [
+        "Section headers (WATCH LIVE, NEW COLLECTIONS, POPULAR COLLECTIONS, FRESH FROM THEATERS) are small, uniform, tracked caps at one consistent size",
+        "Captions beneath tiles are plain sentence-case white text with no styling variation",
+        "Only the tile artwork itself varies in typeface, color, and composition per collection"
+      ]
+    },
+    {
+      "name": "Two Tile Grammars for Two Kinds of Content",
+      "trigger": "Displaying both curated collections (an editorial argument, e.g. 'Southern Gothic') and individual new theatrical releases (a single film needing critical credibility) in the same scrolling-shelf format",
+      "decision": "Used a landscape ~3:2 tile with custom collection typography for curated shelves, and a portrait poster tile with an 'EXCLUSIVE PREMIERE' ribbon plus an overlaid critic pull-quote for the Fresh From Theaters shelf, instead of forcing every shelf into one poster-grid shape",
+      "reason": "A collection is a curatorial statement and reads better as a wide cover; a single new film needs the vertical one-sheet plus critical praise to make its case for a subscription decision. The two content types have different jobs, so they get different card shapes",
+      "evidence": [
+        "New Collections and Popular Collections tiles are landscape with typographic art",
+        "Fresh From Theaters tiles are portrait poster crops carrying an EXCLUSIVE PREMIERE label bar and an italic critic quote overlaid directly on the image"
+      ]
+    },
+    {
+      "name": "Chrome Stays Grayscale So Content Photography Supplies All Color",
+      "trigger": "Displaying decades of film stills and hand-designed collection art that already carry enormous inherent color variety (Southern Gothic's yellow, Desert Trips' blue, Rock Biopics' red)",
+      "decision": "Kept nav, section labels, captions, and body chrome entirely black/white/gray, with exactly one warm gold accent reserved for the primary subscribe CTA",
+      "reason": "If the interface introduced additional brand colors, it would compete with the film stills and hand-lettered collection art for attention. A neutral frame lets the already-colorful content be the only color source, and reserves the single accent for the one action that matters commercially",
+      "evidence": [
+        "Header/nav bar reads as near-black with white type only across all three captured views",
+        "Section headers and captions are white/gray with no color",
+        "The gold-filled CTA button is the only saturated, solid-fill chrome element visible in the entire capture"
+      ]
+    },
+    {
+      "name": "Restraint: A Flat, Quiet Type Scale Despite Having Room for a Loud One",
+      "trigger": "With several shelf sections stacked vertically (Watch Live, New Collections, Popular Collections, Fresh From Theaters), a typical streaming UI would use escalating, oversized shelf headers to build scannable hierarchy",
+      "decision": "Rendered every section header at the same small, tracked, all-caps size regardless of position or importance — none competes in size with the collection artwork above it",
+      "reason": "The collection artwork above the fold has already spent the page's typographic drama (huge custom lettering, a tiled star-pattern texture on 'DESERT TRIPS'). A second layer of big display headers below would fight it; keeping shelf labels uniformly quiet lets the hand-designed hero art remain the only loud typography on the page",
+      "evidence": [
+        "WATCH LIVE, NEW COLLECTIONS, POPULAR COLLECTIONS, and FRESH FROM THEATERS all render at the same small caps size/weight across the captured screenshots",
+        "The DESERT TRIPS hero treatment is roughly an order of magnitude taller than any shelf label"
+      ]
+    }
+  ]
+}

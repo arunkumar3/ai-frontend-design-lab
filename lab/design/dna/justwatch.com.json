@@ -1,0 +1,79 @@
+{
+  "source": "https://www.justwatch.com/us/new",
+  "tokens": {
+    "spacing": {
+      "scale": [5, 8, 10, 16, 25, 30, 64],
+      "base_unit": 10
+    },
+    "typography": {
+      "families": ["Lato"],
+      "scale": [
+        { "role": "h1", "size": "20px", "weight": "600", "family": "Lato" },
+        { "role": "tab-label", "size": "14px", "weight": "700", "family": "Lato", "note": "uppercase, e.g. MOVIES / TV SHOWS" },
+        { "role": "body", "size": "16px", "weight": "400", "family": "Lato" },
+        { "role": "label-small", "size": "14px", "weight": "400", "family": "Lato" },
+        { "role": "caption", "size": "12px", "weight": "400", "family": "Lato", "note": "most frequent size in the DOM sample (30 occurrences) — group counts, filter chips" }
+      ]
+    },
+    "colors": [
+      { "role": "background", "value": "#060D17" },
+      { "role": "surface-elevated", "value": "#0A151F", "note": "23.4% of visible area — poster-row background, distinguished from page bg by luminance step only, no shadow" },
+      { "role": "text-primary", "value": "#B9BDCC" },
+      { "role": "text-onwhite", "value": "#FFFFFF" },
+      { "role": "text-secondary", "value": "#999C9F" },
+      { "role": "text-tertiary", "value": "#4C5A67" },
+      { "role": "accent-link", "value": "#78A6B8", "note": "dominant accent by frequency (392 occurrences) — muted teal, used for inline links, not brand yellow" },
+      { "role": "brand-accent", "value": "#FBC500", "note": "logo wordmark + single CTA (cookie-consent 'I agree' button) only — not used in nav/tabs/filters" }
+    ],
+    "radius": ["20%", "5px", "4px", "2px"],
+    "shadows": ["none detected — depth conveyed via #060D17 → #0A151F luminance step, not box-shadow"],
+    "image_ratios": [
+      { "usage": "poster", "ratio": "2:3" },
+      { "usage": "provider-logo-icon", "ratio": "1:1", "note": "fixed 50x50px render, source 100x100, radius 20%" }
+    ],
+    "grid": { "max_width": "1752px", "columns": "none — horizontal-scroll flex rows per provider group, not CSS grid", "gutter": "~10px" }
+  },
+  "taste": [
+    {
+      "name": "Platform Identity Without Poster Contamination",
+      "trigger": "Showing which of a dozen-plus streaming services (each with its own saturated brand color and logo) a title belongs to, across hundreds of new titles per day",
+      "decision": "Chose to stamp platform identity once per group header — a single 50x50 icon plus a title count — over overlaying a platform badge on every individual poster",
+      "reason": "A badge on every poster would multiply a dozen competing brand colors across the same viewport at once; grouping the badge lets the poster stay pure artwork instead of becoming a logo carrier",
+      "evidence": [
+        "provider icons fixed at 50x50px, border-radius 20% (366 occurrences in DOM sample), confined to icon-only elements",
+        "zero comparable badge/logo overlays detected on poster card elements",
+        "screenshot: one platform icon + '‘N titles’' precedes each horizontally-scrolling poster row, never repeated per-card"
+      ]
+    },
+    {
+      "name": "Two-Tier Darkness Instead of Shadow Depth",
+      "trigger": "Separating the poster-grid surface from page chrome (nav, filters) without a lifted 'card' background that would compete with the posters' own contrast",
+      "decision": "Chose a two-step near-black luminance system (#060D17 page / #0A151F row surface) over drop-shadow cards",
+      "reason": "A shadow implies a light source and a lifted plane, which reads as app chrome; a flat luminance step reads as a dim room where the only color in the frame is the poster art and the provider logos",
+      "evidence": [
+        "domData.effects.shadows returned empty for this page",
+        "backgroundColors areaPct: #060D17 at 75.8%, #0A151F at 23.4% — the entire surface is built from two flat neutrals"
+      ]
+    },
+    {
+      "name": "Base-10 Spacing Over the Web-Standard Base-8",
+      "trigger": "Building a dense, filter-heavy interface (7 filter dropdowns, per-group counts, per-row carousels) that still needed to read as hand-tuned rather than mechanical",
+      "decision": "Standardized on a 10px spacing unit over the more conventional 8px web grid",
+      "reason": "10px divides into round, human-legible steps (5, 10, 20, 25, 30) that suit chip padding and icon gaps in a data-dense filter bar better than 8/16/24/32 would",
+      "evidence": [
+        "spacingDistribution dominated by 10px (729 occurrences) with 5px (27) and 25px (8) as secondary steps",
+        "no comparable frequency at the classic 8/16/24/32px marks"
+      ]
+    },
+    {
+      "name": "Restraint: One Accent Color, Rationed to a Single Surface",
+      "trigger": "Owning a bright, recognizable brand yellow (#FBC500) that could have been used throughout the UI to compensate for an otherwise monochrome navy palette",
+      "decision": "Chose to keep yellow off every persistent UI element — nav, tabs, and filters all render in gray or teal — reserving it for the logo wordmark and one CTA (the cookie-consent 'I agree' button)",
+      "reason": "A page whose entire job is hosting a dozen strangers' brand colors can't also compete with its own brand color for attention; withholding yellow keeps the provider logos as the only 'colorful' elements a user has to parse",
+      "evidence": [
+        "accentCandidates top value by frequency is #78A6B8 (392 occurrences), not the brand yellow",
+        "#FBC500 appears only as a single low-count background color tied to the consent button in the captured sample"
+      ]
+    }
+  ]
+}

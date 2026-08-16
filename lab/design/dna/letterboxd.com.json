@@ -1,0 +1,65 @@
+{
+  "source": "https://letterboxd.com",
+  "tokens": {
+    "spacing": {
+      "scale": [5, 10, 15, 16, 20, 24, 32],
+      "base_unit": 5
+    },
+    "typography": {
+      "families": ["GraphikWeb", "TiemposHeadlineWeb", "TiemposTextWeb"],
+      "scale": [
+        { "role": "hero headline (editorial)", "size": "36px", "weight": "700", "family": "TiemposHeadlineWeb" },
+        { "role": "h1 (product)", "size": "24px", "weight": "400", "family": "GraphikWeb" },
+        { "role": "h3 (list/card title)", "size": "16px", "weight": "700", "family": "GraphikWeb" },
+        { "role": "body", "size": "16px", "weight": "400", "family": "GraphikWeb" },
+        { "role": "review/list meta", "size": "13px", "weight": "400", "family": "GraphikWeb" },
+        { "role": "secondary label", "size": "12px", "weight": "400", "family": "GraphikWeb" }
+      ]
+    },
+    "colors": [
+      { "role": "page-background", "value": "#14181C" },
+      { "role": "panel-background", "value": "#202830" },
+      { "role": "text-primary", "value": "#FFFFFF" },
+      { "role": "text-secondary", "value": "#99AABB" },
+      { "role": "text-tertiary", "value": "#667788" },
+      { "role": "rating-accent", "value": "#00AC1C" }
+    ],
+    "radius": ["clamp(2px, 2.66667%, 8px) — fluid poster radius", "3px", "4px", "100% (avatars)", "20px (pills)"],
+    "shadows": ["rgba(0,0,0,0.25) 0px 1px 5px 0px, rgba(0,0,0,0.35) 0px 1px 10px 0px — 2-layer poster elevation", "rgba(221,238,255,0.25) 0px 0px 0px 1px inset — 1px rim-light on dark cards"],
+    "image_ratios": [
+      { "usage": "poster (carousel + review-feed)", "ratio": "2:3 (0.67:1), 150x225px source" },
+      { "usage": "editorial card (Showdowns/News)", "ratio": "16:9, distinct from poster content" }
+    ],
+    "grid": { "max_width": "1200px viewport-observed", "columns": 6, "gutter": "10px" }
+  },
+  "taste": [
+    {
+      "name": "Give Posters Real Weight on a Near-Black Field",
+      "trigger": "Placing small, densely-packed poster thumbnails against a near-black page (#14181C) where a flat image would visually merge with its own background",
+      "decision": "Chose a genuine 2-layer drop shadow plus a 1px light inset rim over flat, borderless poster tiles",
+      "reason": "On a dark canvas, the eye needs a physical cue — light catching an edge — to separate 'this poster' from 'the void behind it'; on a light canvas that cue is unnecessary because contrast against white does the separating for free",
+      "evidence": ["shadow rgba(0,0,0,0.25) 0px 1px 5px 0px, rgba(0,0,0,0.35) 0px 1px 10px 0px at count 44", "inset highlight rgba(221,238,255,0.25) 0px 0px 0px 1px inset at count 56"]
+    },
+    {
+      "name": "One Radius Rule, Fluid Across Every Size",
+      "trigger": "Reusing the same poster image at wildly different rendered sizes across the product — a 60px thumbnail in a review row, a 150px tile in a carousel",
+      "decision": "Chose a single clamp(2px, 2.66667%, 8px) percentage-based radius formula over a fixed px value or per-context radius overrides",
+      "reason": "A fixed 4px radius looks sharp on a 150px poster but chunky on a 60px thumbnail; a fluid formula keeps the rounding feeling proportionally identical no matter where the same poster gets reused",
+      "evidence": ["clamp(2px, 2.66667%, 8px) / clamp(2px, 1.77778%, 8px) at count 189, the single most frequent radius value site-wide, vs. 3px:24 and 4px:22"]
+    },
+    {
+      "name": "Product Voice vs. Editorial Voice, Told Through Typeface Alone",
+      "trigger": "Needing to distinguish 'the app talking to you' (feature list, nav, buttons) from 'Letterboxd's editorial voice' (marketing headline, trend pieces) without extra visual chrome",
+      "decision": "Chose to reserve the serif family exclusively for headline/editorial moments and keep the sans family for everything else, rather than one font throughout or serif mixed into UI labels",
+      "reason": "A reader can tell instantly, without reading a word, whether they're looking at the product or something Letterboxd wrote — the typeface carries that signal so copy doesn't need a label or color change to announce its register",
+      "evidence": ["GraphikWeb count 1131 vs. TiemposHeadlineWeb count 1 (36px/700, hero-only) vs. TiemposTextWeb count 68 (editorial body only)", "zero serif occurrences in nav, buttons, or review-feed UI"]
+    },
+    {
+      "name": "Restraint: No Wrapping Card Around the Poster",
+      "trigger": "Every poster needs elevation and rounding — the obvious solution is a card wrapper div with its own background, padding, and border containing the image",
+      "decision": "Chose to apply shadow and radius directly to the poster image/link itself, over wrapping every poster in a background-color card container",
+      "reason": "A wrapping card adds a second layer of background color and padding that, on a page showing hundreds of posters per screen, would either force extra whitespace around every tile or introduce a visible color mismatch between card-bg and page-bg; skipping the wrapper keeps the poster as large as possible in the same footprint",
+      "evidence": ["cards: [] — the extractor's card-detection heuristic found zero matches despite shadow (count 44) and radius (count 189) being clearly present and visually confirmed on poster tiles in every screenshot"]
+    }
+  ]
+}
