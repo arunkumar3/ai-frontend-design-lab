@@ -1,0 +1,453 @@
+/* v5 — copied verbatim from v4. Plain CSS only: this file is imported from a
+   component, not from index.css, so an @theme block here would be inert
+   (see task brief). All tokens are scoped custom properties on .v5-page. */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap');
+
+.v5-page {
+  /* ---- canvas + surfaces: deliberate non-white, cool-neutral so it does
+     not compete with warm saturated poster art (checked against the
+     Bigg Boss: The Common Man poster — solid saturated gold). ---- */
+  --canvas: #ECEDF0;
+  --surface-a: #E2E4E8;
+  --surface-b: #CBCED4;
+  --surface-c: #F4F5F7;
+  --text: #16181C;
+  --text-muted: #5B6270;
+  --hairline: rgba(20, 22, 28, 0.10);
+
+  /* ---- accent: interactive state only, never content. teal — no
+     platform brand color in the data set sits in this hue. Darkened one
+     step from v4's #0E8C86: that value put --accent-ink text on the active
+     toggle pill at 4.03:1, under the 4.5:1 body-text floor (14px/600 isn't
+     "large text" under WCAG). #0A6E69 clears it at 5.98:1 — impeccable's
+     craft-floor contrast check, not a taste-pack judgment call. ---- */
+  --accent: #0A6E69;
+  --accent-ink: #F5FFFE;
+
+  /* ---- elevation: on the poster itself, always-on baseline + a
+     stronger, accent-free lift on hover/focus. ---- */
+  --shadow-rest: 0 1px 2px rgba(15, 17, 20, 0.14), 0 10px 22px -12px rgba(15, 17, 20, 0.30);
+  --shadow-lift: 0 2px 5px rgba(15, 17, 20, 0.20), 0 20px 38px -16px rgba(15, 17, 20, 0.42);
+  --rim: inset 0 0 0 1px rgba(255, 255, 255, 0.40);
+
+  /* ---- radius: percentage clamp per axis, tuned so the arc stays
+     circular against a 2:3 poster (3/2 = 1.5x ratio between the two
+     percentages, matching Letterboxd's technique, not its numbers). ---- */
+  --radius-poster: clamp(4px, 4%, 14px) / clamp(4px, 2.6667%, 14px);
+  --radius-pill: 999px;
+
+  /* ---- type: serif for editorial moments only; sans for everything
+     functional. ---- */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --fs-0: 0.875rem;
+  --fs-1: 1rem;
+  --fs-2: 1.5rem;
+  --fs-3: clamp(2.25rem, 1.6rem + 3vw, 3.5rem);
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  --shell-max: 1360px;
+
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  .v5-page {
+    --canvas: #17181C;
+    --surface-a: #1F2126;
+    --surface-b: #2E323B;
+    --surface-c: #131418;
+    --text: #F1F2F4;
+    --text-muted: #9AA0AC;
+    --hairline: rgba(255, 255, 255, 0.08);
+
+    --accent: #4FD9CE;
+    --accent-ink: #06211F;
+
+    --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.45), 0 10px 24px -12px rgba(0, 0, 0, 0.55);
+    --shadow-lift: 0 3px 8px rgba(0, 0, 0, 0.55), 0 22px 44px -18px rgba(0, 0, 0, 0.72);
+    --rim: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+  }
+}
+
+.v5-page, .v5-page * {
+  box-sizing: border-box;
+}
+
+.v5-page h1, .v5-page h2, .v5-page h3, .v5-page p, .v5-page figure {
+  margin: 0;
+}
+
+.v5-page :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Browser surfaces theming (impeccable craft-floor): the parts nobody
+   explicitly draws still carry the design instead of falling back to the
+   browser's blue/gray default. */
+.v5-page ::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Drop movement, keep the box-shadow/color fades (review-animations
+   criterion 8: "gentler, not zero"). The 2px hover lift is the only
+   transform-based CSS transition on this page; the JS-driven card entrance
+   handles its own reduced-motion branch in V5.jsx. */
+@media (prefers-reduced-motion: reduce) {
+  .v5-poster-frame, .v5-fallback {
+    transition: box-shadow 220ms ease;
+  }
+  .v5-poster-frame:hover, .v5-poster-frame:focus-within,
+  .v5-fallback:hover, .v5-fallback:focus-visible {
+    transform: none;
+  }
+}
+
+.v5-shell {
+  max-width: var(--shell-max);
+  margin: 0 auto;
+  padding: var(--sp-7) var(--sp-5) var(--sp-8);
+}
+
+/* ---------------------------------------------------------------- head */
+
+.v5-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  padding-bottom: var(--sp-7);
+  margin-bottom: var(--sp-7);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.v5-head-copy {
+  max-width: 640px;
+}
+
+.v5-eyebrow {
+  font-size: var(--fs-0);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-3);
+}
+
+.v5-h1 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-3);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.v5-sub {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-1);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------ toggle */
+
+.v5-toggle {
+  position: relative;
+  display: inline-flex;
+  padding: 4px;
+  gap: 2px;
+  background: var(--surface-a);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.v5-toggle-btn {
+  position: relative;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--fs-0);
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  z-index: 1;
+  transition: color 160ms ease;
+}
+
+.v5-toggle-btn.is-active {
+  color: var(--accent-ink);
+}
+
+.v5-toggle-pill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  z-index: 0;
+}
+
+.v5-toggle-label {
+  position: relative;
+  z-index: 1;
+}
+
+/* -------------------------------------------------------------- group */
+
+/* Groups size to their own content (flex, not a forced 100%-width block) so
+   a platform with one or two releases sits beside its neighbors instead of
+   claiming a full-width row that's mostly empty (R1 D1/D6). Dense groups
+   (e.g. a 6-title week) wrap onto their own row because they're given a
+   wide flex-basis up front. The basis is set inline per-group from JS
+   (`basisFor`) rather than left at `auto`: `.v5-grid`'s `auto-fit` column
+   count is ambiguous under intrinsic sizing (no definite width to divide
+   by), so an `auto` basis made every group — regardless of item count —
+   report a one-column max-content width, squeezing dense groups into a
+   single narrow lane once laid out (R2 D7/D8). An explicit basis sidesteps
+   that ambiguity entirely. */
+main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--sp-8) var(--sp-7);
+}
+
+.v5-group {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
+.v5-group-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+
+.v5-group-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.v5-group-header h2 {
+  font-size: var(--fs-2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  /* A platform name must never wrap: it sets the group's automatic
+     flex-shrink minimum, so the group box can't be squeezed narrower than
+     its own title regardless of the target flex-basis (R3 D12). */
+  white-space: nowrap;
+}
+
+.v5-group-count {
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.v5-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 190px));
+  gap: var(--sp-6) var(--sp-5);
+}
+
+/* --------------------------------------------------------------- card */
+
+.v5-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* A themed mat around every poster, not just a 1px highlight, so artwork
+   with its own light/white background doesn't cut a stark hole in the
+   near-black dark canvas (R2 D11 — the Round 1 rim-opacity bump alone
+   wasn't enough to read as a frame). */
+.v5-poster-frame {
+  padding: 5px;
+  background: var(--surface-a);
+  border-radius: var(--radius-poster);
+  box-shadow: var(--shadow-rest), var(--rim);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+/* :hover is gated behind pointer:fine — on touch, :hover fires on tap and
+   never releases, leaving the lift stuck until the next tap elsewhere
+   (review-animations escalation trigger: "ungated :hover motion"). Keyboard
+   focus stays ungated: focus-within has to work on every input method. */
+@media (hover: hover) and (pointer: fine) {
+  .v5-poster-frame:hover {
+    box-shadow: var(--shadow-lift), var(--rim), 0 0 0 2px var(--accent);
+    transform: translateY(-2px);
+  }
+}
+
+.v5-poster-frame:focus-within {
+  box-shadow: var(--shadow-lift), var(--rim), 0 0 0 2px var(--accent);
+  transform: translateY(-2px);
+}
+
+.v5-poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-poster);
+}
+
+.v5-fallback {
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-poster);
+  box-shadow: var(--shadow-rest), var(--rim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-5);
+  text-align: center;
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .v5-fallback:hover {
+    box-shadow: var(--shadow-lift), var(--rim), 0 0 0 2px var(--accent);
+    transform: translateY(-2px);
+  }
+}
+
+.v5-fallback:focus-visible {
+  box-shadow: var(--shadow-lift), var(--rim), 0 0 0 2px var(--accent);
+  transform: translateY(-2px);
+}
+
+.v5-fallback.v5-tone-a { background: var(--surface-a); }
+.v5-fallback.v5-tone-b { background: var(--surface-b); }
+.v5-fallback.v5-tone-c { background: var(--surface-c); }
+
+.v5-fallback-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(var(--fs-1), 4cqi + 0.4rem, var(--fs-2));
+  line-height: 1.15;
+  color: var(--text);
+}
+
+.v5-card figcaption {
+  margin-top: var(--sp-3);
+}
+
+.v5-title {
+  font-size: var(--fs-1);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.v5-approx {
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  font-weight: 400;
+  font-style: normal;
+  white-space: nowrap;
+  margin-left: 2px;
+  cursor: help;
+}
+
+.v5-meta {
+  margin-top: 2px;
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--sp-2);
+}
+
+/* Dot trails the item it belongs to (not leads the next one), so a wrap
+   never opens a new line with an orphaned separator (R1 D3). */
+.v5-meta > *:not(:last-child)::after {
+  content: '\00b7';
+  margin-left: var(--sp-2);
+}
+
+.v5-range {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Surfaces the handful of titles (Reacher S4, Lanterns) that release in both
+   catalogs on different platforms/dates — without this, toggling regions and
+   landing on the same poster again reads as a bug, not a real overlap. Own
+   line rather than folded into .v5-meta: that row already wraps tightly at
+   150px card widths, and the label is longer than the metadata it sits near. */
+.v5-cross-region {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-0);
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* -------------------------------------------------------------- foot */
+
+.v5-foot {
+  margin-top: var(--sp-8);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--hairline);
+  font-size: var(--fs-0);
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-width: 720px;
+}
+
+@media (max-width: 600px) {
+  .v5-shell {
+    padding: var(--sp-6) var(--sp-4) var(--sp-7);
+  }
+
+  .v5-head {
+    align-items: flex-start;
+  }
+
+  /* Not enough width for groups to sit side by side; keep the original
+     single-column stack. */
+  main {
+    display: block;
+  }
+
+  .v5-group {
+    max-width: none;
+  }
+
+  .v5-group + .v5-group {
+    margin-top: var(--sp-8);
+  }
+
+  /* Desktop's 200px cap (needed so auto-fit sizes groups predictably, see
+     R2 D7/D8) makes cards needlessly large on a phone, where vertical
+     space is scarce. Restore roughly the original ~167px mobile size
+     (R2 D9). */
+  .v5-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 170px));
+  }
+}

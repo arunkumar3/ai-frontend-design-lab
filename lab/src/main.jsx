@@ -8,8 +8,9 @@ import V1 from './routes/v1/V1.jsx'
 import V2 from './routes/v2/index.jsx'
 import V3 from './routes/v3/V3.jsx'
 import V4 from './routes/v4/V4.jsx'
+import V5 from './routes/v5/V5.jsx'
 
-const DRILLS = ['v5']
+const DRILLS = []
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/v2" element={<V2 />} />
         <Route path="/v3" element={<V3 />} />
         <Route path="/v4" element={<V4 />} />
+        <Route path="/v5" element={<V5 />} />
         {DRILLS.map((d) => (
           <Route key={d} path={`/${d}`} element={<div>{d} — not built yet</div>} />
         ))}
