@@ -1,0 +1,101 @@
+/* v1 — This Week on OTT
+   Design tokens for this route only. Light is the default; dark is defined
+   explicitly (not inherited) via prefers-color-scheme. Exactly one accent
+   hue is used across the page (a tangerine), chosen because it doesn't
+   collide with any PLATFORMS.color in data/releases.js. */
+
+@theme {
+  --font-display: 'Georgia', 'Iowan Old Style', 'Times New Roman', serif;
+}
+
+.v1-page {
+  /* light (default) */
+  --paper: #faf9f6;
+  --surface: #ffffff;
+  --surface-sunken: #f2f0ea;
+  --ink: #17171a;
+  --ink-soft: #63636b;
+  --ink-faint: #9a9aa1;
+  --border: #e6e3da;
+  --border-strong: #d3cfc2;
+  --accent: #ff5a1f;
+  --accent-ink: #2a1000;
+  --shadow-color: 15 10% 10%;
+
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  .v1-page {
+    --paper: #0c0b0a;
+    --surface: #161513;
+    --surface-sunken: #1e1c19;
+    --ink: #f4f2ec;
+    --ink-soft: #b0aca2;
+    --ink-faint: #726e65;
+    --border: #2c2a26;
+    --border-strong: #3c3934;
+    --accent: #ff6a35;
+    --accent-ink: #1a0800;
+  }
+}
+
+.v1-shell {
+  width: 100%;
+  max-width: 1360px;
+  padding-left: clamp(1.25rem, 4vw, 4.5rem);
+  padding-right: clamp(1.25rem, 3vw, 6.5rem);
+}
+
+.v1-rule {
+  height: 1px;
+  background: var(--border);
+}
+
+/* Deliberate 4-step type scale for the whole route. Every piece of text on
+   the page maps to exactly one of these — no ad hoc text-sm/text-xs mixing. */
+.v1-text-display { font-size: 2.25rem; line-height: 1.1; letter-spacing: -0.02em; }
+.v1-text-heading { font-size: 1rem; line-height: 1.3; }
+.v1-text-body { font-size: 0.8125rem; line-height: 1.4; }
+.v1-text-caption { font-size: 0.6875rem; line-height: 1.3; letter-spacing: 0.04em; }
+
+@media (min-width: 768px) {
+  .v1-text-display { font-size: 3rem; }
+}
+
+.v1-focusable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Fallback artwork for releases with no poster. A restrained diagonal
+   weave in the platform's brand color, well short of a photo, so the
+   card still reads as "designed" rather than "broken image". */
+.v1-fallback {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--fallback-tint) 0px,
+    var(--fallback-tint) 1px,
+    transparent 1px,
+    transparent 10px
+  );
+  background-color: var(--fallback-wash);
+}
+
+.v1-card {
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.v1-card:hover,
+.v1-card:focus-within {
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .v1-card:hover {
+    transform: translateY(-2px);
+  }
+}
