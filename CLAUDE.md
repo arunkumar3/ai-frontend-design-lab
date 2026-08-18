@@ -15,8 +15,8 @@ Phase 1 (`v0`–`v5`) is complete and scored. The current work is `v6`.
 2. `playbook/findings/RANKING.md` — why the best-scoring page was not the best product.
 3. `playbook/findings/v6.md` — what the `v6` build proved about the toolkit.
 
-`v6` lives on branch `v6-weekly-radar`, unmerged. Before trusting any change to it, run all
-four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
+`v6` was built on branch `v6-weekly-radar` and has since landed on `main`. Before trusting
+any change to it, run all four checks in `PHASE-2.md` §3.
 
 ## Banned outright
 
@@ -92,6 +92,14 @@ four checks in `PHASE-2.md` §3 — they were green at commit `d82fbf9`.
 - **(v6)** When a check fails, confirm the check before changing the page. A `v6` assertion
   reported a real page as broken because it searched `textContent` for `·` separators that
   are CSS `::after` content. The mirror of the trap above: a failing test that means nothing.
+- **(v6)** A check that re-derives a formatted string in a second engine is asserting on
+  that engine, not on the page. `verify:v6` formatted dates with Node's `Intl` and compared
+  them to text Chromium rendered; the two ICU versions disagree by one comma, so the suite
+  went 25/27 on an untouched page the first time the container was rebuilt. Format inside
+  the page's own engine, and keep only the *claim* — which date belongs on which card — on
+  the script's side.
+- **(v6)** A check restored to green proves nothing until you have watched it go red on
+  purpose. Break the input deliberately and confirm the failure names the mismatch.
 - **(v6)** Removing a structural element removes everything it silently carried. Deleting
   the week rail also deleted the page's only `<h2>`, leaving `h1` → `h3`; four screenshot
   passes could not see it and the live audit caught it immediately.

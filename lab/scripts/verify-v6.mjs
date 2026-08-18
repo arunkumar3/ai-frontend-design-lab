@@ -5,12 +5,6 @@ import { chromium } from 'playwright'
 import { RELEASES, PLATFORMS } from '../src/data/releases.js'
 
 const RUN_DAY = 4 // Thursday
-const entryFmt = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-})
-const entryNoMonthFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' })
 
 const asDate = (iso) => new Date(`${iso}T00:00:00`)
 const isoOf = (d) =>
@@ -20,15 +14,6 @@ function weekStart(iso) {
   const d = asDate(iso)
   d.setDate(d.getDate() - ((d.getDay() - RUN_DAY + 7) % 7))
   return d
-}
-
-function expectedWhen(r) {
-  const start = asDate(r.date)
-  if (!r.endDate) return entryFmt.format(start)
-  const end = asDate(r.endDate)
-  const sameMonth =
-    start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()
-  return `${(sameMonth ? entryNoMonthFmt : entryFmt).format(start)} – ${entryFmt.format(end)}`
 }
 
 const weeksFor = (region) => {
@@ -53,6 +38,33 @@ const check = (ok, label, detail = '') => {
   if (!ok) failures++
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}${detail ? `  ${detail}` : ''}`)
 }
+
+// Node and Chromium ship different ICU data: Node 22 renders en-GB with a
+// weekday as "Thu 6 Aug", Chromium 141 as "Thu, 6 Aug". Formatting the expected
+// string in the same engine that rendered the page keeps this check about
+// whether the card shows the right release's date, which is the claim, rather
+// than about whose ICU is newer. The dates themselves still come from the data.
+const expectedWhen = (releases) =>
+  page.evaluate((list) => {
+    const entryFmt = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    })
+    const entryNoMonthFmt = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+    })
+    const at = (iso) => new Date(`${iso}T00:00:00`)
+    return list.map(([date, endDate]) => {
+      const start = at(date)
+      if (!endDate) return entryFmt.format(start)
+      const end = at(endDate)
+      const sameMonth =
+        start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()
+      return `${(sameMonth ? entryNoMonthFmt : entryFmt).format(start)} – ${entryFmt.format(end)}`
+    })
+  }, releases.map((r) => [r.date, r.endDate ?? null]))
 
 const readCards = () =>
   page.$$eval('.v6-card', (nodes) =>
@@ -143,11 +155,15 @@ for (const region of ['IN', 'US']) {
     check(sub2.includes(expectFlag), `a non-current week is flagged "${expectFlag}"`, sub2.trim())
 
     // every card still carries its own exact date
-    const wrong = cards.filter((c) => {
-      const rel = want.find((r) => r.title === c.title)
-      return !rel || c.when !== expectedWhen(rel)
-    })
-    check(wrong.length === 0, 'cards still show their own exact release date')
+    const whenFor = new Map(
+      (await expectedWhen(want)).map((formatted, i) => [want[i].title, formatted]),
+    )
+    const wrong = cards.filter((c) => whenFor.get(c.title) !== c.when)
+    check(
+      wrong.length === 0,
+      'cards still show their own exact release date',
+      wrong.map((c) => `${c.title}: got "${c.when}" want "${whenFor.get(c.title)}"`).join(' / '),
+    )
 
     const noPlatform = cards.filter((c) => {
       const rel = want.find((r) => r.title === c.title)

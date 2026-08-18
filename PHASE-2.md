@@ -5,7 +5,8 @@ frontend, then built `v6` from what the measurements said. This document is the 
 point for the next conversation. Read this, `CLAUDE.md`, and `playbook/findings/RANKING.md`
 first.
 
-**State:** branch `v6-weekly-radar`, commit `d82fbf9`, not merged to `main`.
+**State:** `v6` is merged to `main`. It was built on `v6-weekly-radar` at `d82fbf9`; that
+branch is gone and the history is on `main`.
 Route `/v6` at `http://localhost:5173/v6` (`pnpm dev` in `lab/`).
 
 ---
@@ -57,7 +58,10 @@ pnpm verify:v6 && pnpm contrast:v6 && npx impeccable detect http://localhost:517
   worthless here (see RANKING.md §1); always audit the running page.
 - `pnpm shoot v6` — captures 3 widths × 2 themes into `shots/v6/`. Then *look at them*.
 
-All four were green at `d82fbf9`.
+All four were green at `d82fbf9`, and `verify:v6` and `contrast:v6` are green again after
+the ICU portability fix (see `playbook/findings/v6.md` §6). **The live audit and the
+screenshot loop cannot be re-run on a network that blocks `image.tmdb.org`** — the page
+renders, but with six blank posters.
 
 ## 4. Traps this project has already paid for
 
@@ -91,10 +95,11 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
 2. **No empty state.** Every week in the data has at least one title, so the "no releases
    this week" surface has never rendered. The constitution requires it to be designed, not
    inherited. A real feed will hit this.
-3. **No `playbook/findings/v6.md`.** Every other drill has one, and `RANKING.md` predicted
-   `v6` explicitly — the write-up against that prediction is unwritten. The interesting
-   result: the screenshot loop still could not see the missing axis; only reading the data
-   could.
+3. **Poster artwork depends on `image.tmdb.org` being reachable.** Cards are `<img>` tags
+   pointed at TMDB. On a network that blocks it every poster renders blank, which silently
+   disables the screenshot loop — the lab's highest-value instrument — without failing any
+   check. `pnpm verify:v6` and `pnpm contrast:v6` both pass on a page with six broken
+   images. There is no designed no-artwork state; see §5.2.
 4. **Tablet wrap.** At 768px an 11-title week wraps into rows of 2. It stays under its own
    week so nothing is stranded, but the breakpoint has not been tuned.
 5. **The native select's option list** is drawn by the OS and is the one surface the
@@ -104,7 +109,6 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
 
 ## 6. Open questions for the next session
 
-- Merge `v6-weekly-radar` into `main`, or keep drills on branches from here?
 - Is `v6` a seventh drill to be scored against the 17-item tell list like the others, or is
   it the product the drills were for? It was not built under a single lever, so it is not
   a like-for-like measurement.
