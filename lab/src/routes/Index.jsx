@@ -8,6 +8,7 @@ const DRILLS = [
   ['v4', 'screenshot loop'],
   ['v5', 'community skills'],
   ['v6', 'derived palette + restored date axis'],
+  ['v7', 'filmhood.in visual language, data-shaped layout'],
 ]
 
 export default function Index() {

@@ -58,6 +58,13 @@ any change to it, run all four checks in `PHASE-2.md` §3.
 - **(v6)** Never use `opacity` to make text recede. It stacks a second reduction the token
   values cannot see: the computed pair passes 4.5:1 and the rendered pixels fail. Recede
   with type size or a designed muted token.
+- **(v7)** A reference's *container* encodes its data's shape, not yours. Copy the card
+  craft, the palette, the type pairing; re-derive the layout. `filmhood.in`'s horizontal
+  strips are right for its open-ended browse categories and showed 3 of 11 titles when
+  applied to a closed weekly slate — `v3`'s platform-grouping mistake in a new costume.
+- **(v7)** An entrance animation must never be what makes content visible. Default to the
+  finished state and let the class add the animation; if the observer never fires, the page
+  is merely un-animated rather than empty.
 - **(v6)** Restoring what an earlier version did is a hypothesis, not an instruction. `v0`'s
   date grouping was the missing axis, but re-implemented literally it put the 9-title US
   slate into nine groups of one — the orphan defect `v4` had already fixed.
@@ -70,6 +77,16 @@ any change to it, run all four checks in `PHASE-2.md` §3.
   containing `@import "tailwindcss"`. Elsewhere it ships as inert text and every token
   silently resolves to `""`, with no dev-time error. Use plain CSS custom properties scoped
   to the route's root class.
+- **(v7)** Self-host web fonts. When the review instrument is a screenshot, an unreachable
+  font host does not fail — it silently renders the fallback face, and every review pass
+  approves typography that is not the typography.
+- **(v7)** Anything sized by a grid column will stretch to full width when that column
+  collapses. A 300px calendar became 736px with 105px cells; a 2:3 poster became 1100px
+  tall. Cap them at the breakpoint that removes the column.
+- **(v7)** `overflow-wrap: anywhere` also drives min-content sizing, so it breaks words
+  eagerly even where they would have fit. Use `break-word`.
+- **(v7)** Lint must enable `no-undef`. oxlint ships with it off, and a component calling a
+  hook it no longer imports is a blank page with a green lint.
 - **(measured)** No `loading="lazy"` on images. The capture harness waits for network idle
   at a pre-expansion viewport, so lazy images below the fold capture blank.
 
@@ -100,6 +117,15 @@ any change to it, run all four checks in `PHASE-2.md` §3.
   the script's side.
 - **(v6)** A check restored to green proves nothing until you have watched it go red on
   purpose. Break the input deliberately and confirm the failure names the mismatch.
+- **(v7)** A defect count is a reading of one tool at one version. `impeccable` scored `v6`
+  at 0 and `v1` at 28 when they were built; the same routes on the same server score 5 and
+  13 today, because rules were added and removed. Only a comparison where every page was
+  scanned in the same run means anything — never quote a number a document recorded months
+  ago as if it were current.
+- **(v7)** A design reference is a set of measurements. If you cannot load the page
+  yourself, get `getComputedStyle` output, a colour histogram with counts, and the
+  `@font-face` src URLs — not adjectives. "Warm off-white with a bold serif" cannot be
+  built from; `#F7F7F1` and `Abril Fatface 400` can.
 - **(v6)** Removing a structural element removes everything it silently carried. Deleting
   the week rail also deleted the page's only `<h2>`, leaving `h1` → `h3`; four screenshot
   passes could not see it and the live audit caught it immediately.

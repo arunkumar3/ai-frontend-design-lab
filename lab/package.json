@@ -11,7 +11,9 @@
     "shoot": "node scripts/shoot.mjs",
     "verify:v6": "node scripts/verify-v6.mjs",
     "contrast:v6": "node scripts/contrast-v6.mjs",
-    "palette:v6": "node scripts/sample-palette.mjs"
+    "palette:v6": "node scripts/sample-palette.mjs",
+    "contrast:v7": "node scripts/contrast-v7.mjs",
+    "verify:v7": "node scripts/verify-v7.mjs"
   },
   "dependencies": {
     "motion": "^13.1.0",

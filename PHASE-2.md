@@ -6,8 +6,9 @@ point for the next conversation. Read this, `CLAUDE.md`, and `playbook/findings/
 first.
 
 **State:** `v6` is merged to `main`. It was built on `v6-weekly-radar` at `d82fbf9`; that
-branch is gone and the history is on `main`.
-Route `/v6` at `http://localhost:5173/v6` (`pnpm dev` in `lab/`).
+branch is gone and the history is on `main`. `v7` is the current work — the weekly radar
+rebuilt in the visual language of `filmhood.in`; see `playbook/findings/v7.md`.
+Routes `/v6` and `/v7` at `http://localhost:5173/` (`pnpm dev` in `lab/`).
 
 ---
 
@@ -48,7 +49,12 @@ cd lab && pnpm dev
 
 ```bash
 pnpm verify:v6 && pnpm contrast:v6 && npx impeccable detect http://localhost:5173/v6
+pnpm verify:v7 && pnpm contrast:v7 && npx impeccable detect http://localhost:5173/v7
 ```
+
+`v7` adds 42 render-vs-data checks and 32 computed contrast pairs. Unlike `contrast:v6`,
+`contrast:v7` reads the palette out of the running page rather than keeping its own copy,
+so the check cannot drift away from the stylesheet.
 
 - `pnpm verify:v6` — 27 render-vs-data checks across both regions: landing week, picker
   contents and ordering, archive switching, per-card dates, region-switch fallback.
@@ -87,6 +93,11 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
 
 ## 5. Known gaps — start here
 
+0. **`v7` has never rendered a poster.** `image.tmdb.org` is blocked on this network, so
+   all fourteen titles with artwork fall through to the designed no-artwork tile and every
+   shot in `lab/shots/v7/` shows that state. The composition and density of the real,
+   poster-led page are unreviewed. **A poster pass is owed** the moment the host is
+   reachable — start there.
 1. **The data is frozen and dated `2026-08`.** `pickDefaultWeek` resolves against the real
    clock, so once today drifts past the table the landing view falls back to the most
    recent week that has releases and every week reads `archive`. Verified as intended
@@ -113,5 +124,11 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
   it the product the drills were for? It was not built under a single lever, so it is not
   a like-for-like measurement.
 - Does the region toggle survive contact with a real feed, or does region become a route?
-- Where does the weekly run actually execute, and does it publish static HTML per week —
-  which would change the archive from client-side state to real URLs?
+- Where does the weekly run actually execute, and does it publish static HTML per week?
+  **Partly answered by `v7`:** its week and region live in the query string (`?week=`,
+  `?region=`), so an archive week is already a real, linkable URL rather than client-side
+  state — and that is also what makes the empty state reachable and testable. Static HTML
+  per week would be the next step, not a redesign.
+- `v7` declines the reference's horizontal strips for the featured week. If a real feed
+  carries far more than 22 titles, does the grid still hold, or does the strip become right
+  after all for the weeks that overflow?
