@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { REGIONS, releasesForRegion } from '../../lib/regions.js'
-import { PLATFORMS, posterUrl } from '../../data/releases.js'
+import { forRegion, loadFeed, regionsIn } from '../../feed/index.js'
+import { posterUrl } from '../../data/releases.js'
 import {
   addDays,
   formatLongDay,
@@ -18,6 +18,23 @@ import {
 import './v7.css'
 
 const TYPE_LABEL = { movie: 'Movie', series: 'Series', sport: 'Live sport' }
+const REGION_LABEL = { IN: 'India', US: 'United States' }
+
+/* v0-v6 read `RELEASES` straight out of the data file. v7 goes through
+   `src/feed/`, which validates every record before a route sees it — so the
+   boundary a live source will land on is the one exercised on every page load,
+   rather than a code path that only runs the day someone wires up TMDB.
+
+   Read once at module scope: the snapshot is a static import, and re-validating
+   22 rows on every render would be work with no cause. A network-backed source
+   would move this behind state. */
+const FEED = loadFeed()
+
+/* The nav offers the regions the feed actually carries. Hardcoding both would
+   render a United States button that opens an empty page the moment a source
+   returns one region — the kind of control that looks fine in a screenshot and
+   is broken the first time it is pressed. */
+const REGIONS_PRESENT = regionsIn(FEED)
 const REGION_OF = { IN: 'India', US: 'the United States' }
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -33,7 +50,7 @@ function toneFor(id) {
 /* ------------------------------------------------------------------ poster */
 
 /* Two different absences, one designed surface. `poster: null` is a title the
-   scrape never found artwork for — eight of twenty-two. A load failure is a
+   scrape never found artwork for — six of twenty-two. A load failure is a
    title whose artwork lives on a host this reader cannot reach, which is not
    hypothetical: image.tmdb.org is blocked on plenty of networks, and before
    this handler existed those cards rendered as a broken-image glyph.
@@ -43,7 +60,7 @@ function toneFor(id) {
    size, the caption repeating it underneath is not redundancy, it is two
    overlapping copies of the same words — which is exactly how round one
    rendered. */
-function Card({ release }) {
+function Card({ release, platforms }) {
   const src = posterUrl(release)
   const [failed, setFailed] = useState(false)
   const hasArt = Boolean(src) && !failed
@@ -87,7 +104,7 @@ function Card({ release }) {
       <p className="v7-card__tags">
         <span>{TYPE_LABEL[release.type]}</span>
         {release.language && <span>{release.language}</span>}
-        <span>{PLATFORMS[release.platform].label}</span>
+        <span>{platforms[release.platform].label}</span>
       </p>
     </article>
   )
@@ -120,12 +137,12 @@ function colsFor(count, max) {
   return max
 }
 
-function Slate({ items }) {
+function Slate({ items, platforms }) {
   return (
     <ul className="v7-slate__grid" style={{ '--cols': colsFor(items.length, 3) }}>
       {items.map((r) => (
         <li key={r.id}>
-          <Card release={r} />
+          <Card release={r} platforms={platforms} />
         </li>
       ))}
     </ul>
@@ -211,7 +228,7 @@ function Calendar({ anchor, byDay, todayIso, onPick }) {
 /* Filmhood's magnetic link and travelling pill, with two guards it does not
    need but this page does: the effect only arms on a real hover device, and it
    never arms under reduced motion. */
-function Nav({ region, onRegion }) {
+function Nav({ region, regions, onRegion }) {
   const ref = useRef(null)
 
   const onMove = (e) => {
@@ -248,15 +265,15 @@ function Nav({ region, onRegion }) {
       </a>
       <nav className="v7-nav__links" ref={ref} onPointerMove={onMove} onPointerLeave={onLeave}>
         <ul>
-          {REGIONS.map((r) => (
-            <li className="v7-nav__item" key={r.code}>
+          {regions.map((code) => (
+            <li className="v7-nav__item" key={code}>
               <button
                 type="button"
                 className="v7-nav__link"
-                aria-pressed={region === r.code}
-                onClick={() => onRegion(r.code)}
+                aria-pressed={region === code}
+                onClick={() => onRegion(code)}
               >
-                <span>{r.label}</span>
+                <span>{REGION_LABEL[code]}</span>
               </button>
             </li>
           ))}
@@ -266,13 +283,49 @@ function Nav({ region, onRegion }) {
   )
 }
 
+/* ------------------------------------------------------------------ notice */
+
+function FeedNotice({ feed }) {
+  const dropped = feed.rejected.length + feed.duplicates.length
+  if (!dropped && !feed.derived.length) return null
+
+  return (
+    <details className="v7-notice">
+      <summary>
+        {dropped > 0
+          ? `${dropped} record${dropped === 1 ? '' : 's'} from the feed could not be shown`
+          : `${feed.derived.length} platform${feed.derived.length === 1 ? '' : 's'} in this feed are unrecognised`}
+      </summary>
+      <ul>
+        {feed.rejected.map((r) => (
+          <li key={`r-${r.index}`}>
+            <b>{r.title || r.id || `record ${r.index}`}</b> — {r.reasons.join('; ')}
+          </li>
+        ))}
+        {feed.duplicates.map((d) => (
+          <li key={`d-${d.id}`}>
+            <b>{d.title}</b> — duplicate id <code>{d.id}</code>, kept &ldquo;{d.keptTitle}&rdquo;
+          </li>
+        ))}
+        {feed.derived.map((p) => (
+          <li key={`p-${p.key}`}>
+            <b>{p.label}</b> — platform not in the curated list, label derived from{' '}
+            <code>{p.key}</code>
+          </li>
+        ))}
+      </ul>
+    </details>
+  )
+}
+
 /* -------------------------------------------------------------------- page */
 
 export default function V7() {
   const [params, setParams] = useSearchParams()
-  const region = params.get('region') === 'US' ? 'US' : 'IN'
+  const asked = params.get('region')
+  const region = REGIONS_PRESENT.includes(asked) ? asked : (REGIONS_PRESENT[0] ?? 'IN')
 
-  const releases = useMemo(() => releasesForRegion(region), [region])
+  const releases = useMemo(() => forRegion(FEED, region), [region])
   const weeks = useMemo(() => groupByWeek(releases), [releases])
   const todayIso = useMemo(() => isoOf(new Date()), [])
   const currentStart = weekStartIso(todayIso)
@@ -309,7 +362,7 @@ export default function V7() {
 
   return (
     <div className="v7-page" id="v7-top">
-      <Nav region={region} onRegion={(code) => setParam('region', code)} />
+      <Nav region={region} regions={REGIONS_PRESENT} onRegion={(code) => setParam('region', code)} />
 
       <section className="v7-hero">
         <h1 className="v7-hero__title">Every drop, by the week.</h1>
@@ -333,8 +386,16 @@ export default function V7() {
               </p>
             </div>
 
+            {/* A partial feed is a designed state, not a console warning. If
+                records were dropped at the boundary the page says so where the
+                list is, because the alternative is a reader counting eleven
+                titles on a week that had thirteen and having no way to know.
+                Collapsed by default: the reasons are for whoever maintains the
+                source, the count is for everyone. */}
+            <FeedNotice feed={FEED} />
+
             {week.items.length > 0 ? (
-              <Slate items={week.items} />
+              <Slate items={week.items} platforms={FEED.platforms} />
             ) : (
               /* A designed surface, not an edge case. It names the week that
                  is empty, says which catalog it checked, and hands back the
@@ -415,7 +476,7 @@ export default function V7() {
         <section className="v7-next">
           <div className="v7-next__inner">
             <div className="v7-next__art">
-              <Card release={nextRun.items[0]} />
+              <Card release={nextRun.items[0]} platforms={FEED.platforms} />
             </div>
             <div className="v7-next__copy">
               {/* Eyebrow and date are one heading, not a stray <p> above an

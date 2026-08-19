@@ -416,7 +416,7 @@
   transform: scale(1.08);
 }
 
-/* The designed no-artwork surface. Eight of twenty-two titles have no poster,
+/* The designed no-artwork surface. Six of twenty-two titles have no poster,
    and the constitution is explicit: if the data has a title, show the title —
    no monogram, no invented abbreviation.
 
@@ -947,4 +947,36 @@
     animation: none;
   }
 
+}
+
+/* ---------------------------------------------------------------- notice --- */
+
+/* Shown only when the boundary dropped something. Quiet by construction — it
+   is a report about the source, not a warning to the reader — but it sits with
+   the list it describes rather than in a console nobody opens. */
+.v7-notice {
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+.v7-notice summary {
+  cursor: pointer;
+  color: var(--text);
+}
+
+.v7-notice ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.v7-notice code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
 }

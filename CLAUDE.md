@@ -85,6 +85,13 @@ any change to it, run all four checks in `PHASE-2.md` §3.
   tall. Cap them at the breakpoint that removes the column.
 - **(v7)** `overflow-wrap: anywhere` also drives min-content sizing, so it breaks words
   eagerly even where they would have fit. Use `break-word`.
+- **(v7)** Never index a lookup with a value that came from data you do not control.
+  `PLATFORMS[release.platform].label` is a TypeError the first time a feed carries a
+  platform nobody curated. Validate at the boundary and guarantee the lookup resolves —
+  a derived label is a visible prompt to curate it properly; a crash is not.
+- **(v7)** An empty result and a total failure look identical downstream. A fetch where
+  every request 403'd and a week that genuinely has no releases both end in zero records.
+  Separate them at the source, and refuse to write the second as if it were the first.
 - **(v7)** Lint must enable `no-undef`. oxlint ships with it off, and a component calling a
   hook it no longer imports is a blank page with a green lint.
 - **(measured)** No `loading="lazy"` on images. The capture harness waits for network idle
@@ -122,6 +129,14 @@ any change to it, run all four checks in `PHASE-2.md` §3.
   13 today, because rules were added and removed. Only a comparison where every page was
   scanned in the same run means anything — never quote a number a document recorded months
   ago as if it were current.
+- **(v7)** Data shapes are a render concern, not a parser concern. Unit tests on a
+  normaliser prove it parses; they cannot show that a 50-title week lays out or that an
+  unknown platform reaches the card as a label. Give the page a dev-only seam to inject a
+  feed and drive the real render against the shapes a live source will bring — empty,
+  huge, malformed, missing fields, one region.
+- **(v7)** Every test file needs a documented command that runs it. `releases.test.js`
+  sat in this repo through six drills with ten passing tests and no `test` script — worse
+  than a green suite that misleads, a suite nobody could run at all.
 - **(v7)** A design reference is a set of measurements. If you cannot load the page
   yourself, get `getComputedStyle` output, a colour histogram with counts, and the
   `@font-face` src URLs — not adjectives. "Warm off-white with a bold serif" cannot be

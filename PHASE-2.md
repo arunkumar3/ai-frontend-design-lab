@@ -48,8 +48,10 @@ cd lab && pnpm dev
 ```
 
 ```bash
+pnpm test          # 35 unit tests, no browser needed
 pnpm verify:v6 && pnpm contrast:v6 && npx impeccable detect http://localhost:5173/v6
 pnpm verify:v7 && pnpm contrast:v7 && npx impeccable detect http://localhost:5173/v7
+pnpm feed:shapes   # 10 adversarial feed shapes through the real page
 ```
 
 `v7` adds 42 render-vs-data checks and 32 computed contrast pairs. Unlike `contrast:v6`,
@@ -94,23 +96,28 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
 ## 5. Known gaps — start here
 
 0. **`v7` has never rendered a poster.** `image.tmdb.org` is blocked on this network, so
-   all fourteen titles with artwork fall through to the designed no-artwork tile and every
+   all sixteen titles with artwork fall through to the designed no-artwork tile and every
    shot in `lab/shots/v7/` shows that state. The composition and density of the real,
    poster-led page are unreviewed. **A poster pass is owed** the moment the host is
    reachable — start there.
-1. **The data is frozen and dated `2026-08`.** `pickDefaultWeek` resolves against the real
+1. **The data is frozen and dated `2026-08`.** *(Groundwork done — see §7. The boundary,
+   the source adapter and the fetch script exist; what is missing is a reachable TMDB and
+   a decision about where the run executes.)* `pickDefaultWeek` resolves against the real
    clock, so once today drifts past the table the landing view falls back to the most
    recent week that has releases and every week reads `archive`. Verified as intended
    behaviour, but it means **the page needs a live feed to be real**. `releases.js` is a
    hand-scraped snapshot of 22 titles.
-2. **No empty state.** Every week in the data has at least one title, so the "no releases
-   this week" surface has never rendered. The constitution requires it to be designed, not
-   inherited. A real feed will hit this.
+2. ~~**No empty state.**~~ *(Closed by `v7`.* It is a designed surface that names the week
+   and the catalog and hands back the nearest week that is not empty. Reachable at
+   `/v7?week=2027-03-11`, asserted in `verify:v7`, and driven from three different feed
+   shapes in `feed:shapes`.)
 3. **Poster artwork depends on `image.tmdb.org` being reachable.** Cards are `<img>` tags
    pointed at TMDB. On a network that blocks it every poster renders blank, which silently
    disables the screenshot loop — the lab's highest-value instrument — without failing any
    check. `pnpm verify:v6` and `pnpm contrast:v6` both pass on a page with six broken
-   images. There is no designed no-artwork state; see §5.2.
+   images. *`v7` handles the load failure — `onError` falls through to the same designed
+   tile the six artwork-less titles use — but `v0`–`v6` still render a broken-image glyph,
+   and no check anywhere fails when the artwork is gone.*
 4. **Tablet wrap.** At 768px an 11-title week wraps into rows of 2. It stays under its own
    week so nothing is stranded, but the breakpoint has not been tuned.
 5. **The native select's option list** is drawn by the OS and is the one surface the
@@ -118,7 +125,69 @@ Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they e
 6. **`lab/public/directions.html`** is the static four-way colour comparison used to choose
    the direction (D). Keep or delete deliberately — it ships in `dist`.
 
-## 6. Open questions for the next session
+## 6. The feed boundary (built)
+
+`src/feed/` is the layer a live source lands on. Routes `v0`–`v6` still import `RELEASES`
+directly and are unchanged; `v7` reads through the boundary, so the code path a real feed
+will use is the one exercised on every page load rather than one that first runs the day
+someone wires up an API.
+
+| File | What it is |
+|---|---|
+| `feed/schema.js` | `validateRelease` — one record in, `{ok, value}` or `{ok:false, reasons}`. Reasons are plural so fixing a feed is one round trip, not six. |
+| `feed/normalise.js` | `normaliseFeed` — validate, dedupe by id, sort, and **guarantee every release's platform resolves**. |
+| `feed/sources/snapshot.js` | The frozen 22 rows, presented as a source so they go through the same checks as anything off the network. |
+| `feed/sources/tmdb.js` | Discover-by-watch-provider. A pure mapper (covered) and a fetch (not — see below). |
+| `feed/index.js` | `loadFeed()`, `forRegion`, `regionsIn`, `titlesInBothRegions`. |
+
+```bash
+pnpm test          # 35 unit tests — the boundary, the normaliser, the TMDB mapper
+pnpm feed:shapes   # 10 feed shapes driven through the real page in a browser
+pnpm feed:fetch    # TMDB_TOKEN=... — fetch, validate, report, write
+```
+
+### What a live feed actually breaks
+
+Four things, found by building it rather than by reasoning about it:
+
+1. **`PLATFORMS[key].label` is a TypeError waiting for its first unknown platform.** Every
+   route indexes that map with a value that comes from the data. The snapshot is safe
+   because a person wrote both sides. `normaliseFeed` now registers any unseen platform
+   with a derived label, so the lookup always resolves — a slightly wrong label on a card
+   is a visible prompt to curate it properly; a crash is not.
+2. **A malformed record must be rejected loudly, not rendered partially.** A backwards date
+   range prints "Sat 15 – Fri 7 Aug" and nothing downstream notices. `v7` shows a
+   collapsed notice naming what was dropped and why — a partial feed is a designed state,
+   not a console warning.
+3. **"The week is empty" and "every request failed" both end in zero records.** `feed:fetch`
+   separates them and refuses to write a file for the second, because a broken pipeline
+   that ships as a quiet week is the failure that costs the most to notice.
+4. **One source does not cover the page.** TMDB has no fixtures, and two of the snapshot's
+   22 rows are cricket and football with date ranges. `normaliseFeed` takes a concatenated
+   array so sources can be mixed; `feed:fetch` says so on every run where sport is absent.
+
+### What is *not* covered, and why
+
+`api.themoviedb.org` is blocked on this network, so **no assertion in this repo has ever run
+against the real service.** The mapper, the URL builder and the provider table are pure and
+tested against a recorded payload; `fetchTmdbFeed` is not. Both `feed:fetch` failure paths
+were exercised — no token, and every request 403 — and it explains the second rather than
+writing an empty file. That is as far as it can be taken from here.
+
+`feed.generated.json` is gitignored and **not wired as the app's source.** Whether the
+weekly run publishes a static file per week or the page fetches at runtime is §7's open
+question, and answering it as a side effect of this script would be the wrong way to
+decide it.
+
+### A test suite nobody could run
+
+`src/data/releases.test.js` has existed since phase 1 with 10 passing tests and **no `test`
+script in `package.json`.** It was not in the four verification commands, not in the README,
+and not runnable by any documented command. This is the repo's own "a green suite actively
+misleads" trap one turn further on: a suite that was never even green, because it was never
+run. `pnpm test` now exists and is part of the check list.
+
+## 7. Open questions for the next session
 
 - Is `v6` a seventh drill to be scored against the 17-item tell list like the others, or is
   it the product the drills were for? It was not built under a single lever, so it is not

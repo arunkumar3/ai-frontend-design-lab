@@ -67,7 +67,7 @@ Three more caveats worth stating before anyone quotes these numbers:
   each isolated one variable, unsupervised. Both later routes were directed by a human
   across several rounds. They are included because their *findings about the tools* transfer.
 - **`v7` has never rendered a poster.** `image.tmdb.org` is blocked on the network it was
-  built on, so its fourteen titles with artwork all fall through to the designed no-artwork
+  built on, so its sixteen titles with artwork all fall through to the designed no-artwork
   tile. For a design whose chrome is deliberately achromatic *so the artwork can be the
   colour*, that is a real gap, not a footnote.
 
@@ -105,13 +105,21 @@ Writes six PNGs to `lab/shots/v7/` — 390 / 768 / 1440px, light and dark.
 `v6` ships the checks phase 1 lacked. Each answers a question inspection cannot:
 
 ```bash
+pnpm test           # 35 unit tests — the feed boundary; no browser needed
+
 pnpm verify:v6      # 27 render-vs-data checks, both regions
 pnpm contrast:v6    # 20 computed contrast pairs, both themes
 pnpm palette:v6     # re-derives the palette from the live poster art
 
 pnpm verify:v7      # 42 render-vs-data checks, incl. the empty state and the calendar
 pnpm contrast:v7    # 32 computed pairs, read from the running page rather than a copy
+pnpm feed:shapes    # 10 adversarial feed shapes driven through the real page
 ```
+
+`src/feed/` is the boundary a live source lands on — validate, dedupe, and guarantee every
+platform lookup resolves before a route sees a record. `v7` reads through it; `v0`–`v6`
+still import the frozen table directly and are unchanged. See
+[`PHASE-2.md`](PHASE-2.md) §6.
 
 Plus the live audit, which must be pointed at the running URL, not at `src/`:
 
