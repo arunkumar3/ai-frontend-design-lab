@@ -8,15 +8,19 @@ See `playbook/05-troubleshooting.md` and `playbook/findings/v6.md` for evidence.
 
 ## Start here
 
-Phase 1 (`v0`–`v5`) is complete and scored. The current work is `v6`.
+Phase 1 (`v0`–`v5`) is complete and scored. `v6` and `v7` are built. The current work is
+making the feed real.
 
-1. **`PHASE-2.md`** (repo root) — current state, the four verification commands, known gaps,
-   open questions. Read this first in a new session.
+1. **`HANDOFF.md`** (repo root) — current state, every verification command, what is
+   blocked, gaps ranked, open decisions. **Read this first in a new session.**
 2. `playbook/findings/RANKING.md` — why the best-scoring page was not the best product.
-3. `playbook/findings/v6.md` — what the `v6` build proved about the toolkit.
+3. `playbook/findings/v7.md` — building from a reference nobody could load.
+4. `PHASE-2.md` — why each `v6` decision was made (§2) and the trap list with evidence (§4).
+   Superseded by `HANDOFF.md` on anything to do with current state.
+5. `docs/sessions/` — what happened in each working session.
 
-`v6` was built on branch `v6-weekly-radar` and has since landed on `main`. Before trusting
-any change to it, run all four checks in `PHASE-2.md` §3.
+Before trusting any change, run the commands in `HANDOFF.md` §3. Never quote a check count
+or a defect count from a document without re-running it — both have gone stale here.
 
 ## Banned outright
 

@@ -107,11 +107,11 @@ Writes six PNGs to `lab/shots/v7/` — 390 / 768 / 1440px, light and dark.
 ```bash
 pnpm test           # 35 unit tests — the feed boundary; no browser needed
 
-pnpm verify:v6      # 27 render-vs-data checks, both regions
+pnpm verify:v6      # 26 render-vs-data checks, both regions
 pnpm contrast:v6    # 20 computed contrast pairs, both themes
 pnpm palette:v6     # re-derives the palette from the live poster art
 
-pnpm verify:v7      # 42 render-vs-data checks, incl. the empty state and the calendar
+pnpm verify:v7      # 38 render-vs-data checks, incl. the empty state and the calendar
 pnpm contrast:v7    # 32 computed pairs, read from the running page rather than a copy
 pnpm feed:shapes    # 10 adversarial feed shapes driven through the real page
 ```
@@ -153,7 +153,9 @@ captured at `deviceScaleFactor: 2` — **device pixels**, twice CSS pixels. Chec
 - [`playbook/findings/v7.md`](playbook/findings/v7.md) — building from a reference nobody
   could load: why the 3D everyone assumed was there was two gradients and an easing curve,
   and why a reference's layout is the one thing not to copy
-- [`PHASE-2.md`](PHASE-2.md) — current state and what's next
+- [`HANDOFF.md`](HANDOFF.md) — current state, every check, what's blocked, what's next
+- [`PHASE-2.md`](PHASE-2.md) — why each `v6` decision was made, and the trap list
+- [`docs/sessions/`](docs/sessions/) — what happened in each working session
 - [`CLAUDE.md`](CLAUDE.md) — the constitution, including the rules the drills forced into it
 
 ## Scope and honesty

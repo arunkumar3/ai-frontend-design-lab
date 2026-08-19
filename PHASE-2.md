@@ -1,5 +1,11 @@
 # Phase 2 — handoff
 
+> **Superseded on state by [`HANDOFF.md`](HANDOFF.md).** That document is the current entry
+> point: branch, commands, what is blocked, gaps and open decisions. This one is kept for
+> what it uniquely holds — §2, the reasoning behind every `v6` decision, and §4, the trap
+> list with the evidence for each. Where the two disagree about state, `HANDOFF.md` is
+> right.
+
 Phase 1 ran six drills (`v0`–`v5`) to measure which lever most improves AI-generated
 frontend, then built `v6` from what the measurements said. This document is the starting
 point for the next conversation. Read this, `CLAUDE.md`, and `playbook/findings/RANKING.md`
@@ -54,11 +60,17 @@ pnpm verify:v7 && pnpm contrast:v7 && npx impeccable detect http://localhost:517
 pnpm feed:shapes   # 10 adversarial feed shapes through the real page
 ```
 
-`v7` adds 42 render-vs-data checks and 32 computed contrast pairs. Unlike `contrast:v6`,
+**These totals move.** Both verify suites skip blocks the current data cannot reach — a
+region with only one week runs no archive-switch check, a month with no fixture runs no
+multi-day check — so the count is a function of the clock, not a constant. `verify:v6` was
+written with 27 assertions and executes 26 today; `verify:v7` executes 38. Read the
+`0 failing check(s)` line, not the total.
+
+`v7` adds 38 render-vs-data checks and 32 computed contrast pairs. Unlike `contrast:v6`,
 `contrast:v7` reads the palette out of the running page rather than keeping its own copy,
 so the check cannot drift away from the stylesheet.
 
-- `pnpm verify:v6` — 27 render-vs-data checks across both regions: landing week, picker
+- `pnpm verify:v6` — 26 render-vs-data checks across both regions: landing week, picker
   contents and ordering, archive switching, per-card dates, region-switch fallback.
 - `pnpm contrast:v6` — 20 computed contrast pairs, both themes. Tightest is 4.53:1, so
   **any palette edit needs a re-run**.
