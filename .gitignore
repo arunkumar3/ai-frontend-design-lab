@@ -4,3 +4,6 @@ dist/
 .superpowers/
 lab/src/data/feed.generated.json
 lab/.posters-cache/
+
+# harvested poster files, served locally so screenshot review sees real artwork
+lab/public/tmdb/

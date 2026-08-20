@@ -13,6 +13,7 @@
 import { chromium } from 'playwright'
 import { RELEASES, PLATFORMS } from '../src/data/releases.js'
 import { CURATED } from '../src/feed/sources/curated.js'
+import { ARTWORK } from '../src/feed/sources/artwork.js'
 
 // The page renders the combined feed (snapshot + curated week), so the model
 // must too, or every count drifts the day a source is added.
@@ -94,6 +95,25 @@ const whenFor = (releases) =>
     })
   }, releases.map((r) => [r.date, r.endDate ?? null]))
 
+/** What the data says a row's artwork is, source row or overlay. */
+const artFor = (r) => r.poster ?? ARTWORK[r.id]?.poster ?? null
+const approxFor = (r) => Boolean(r.posterApprox || ARTWORK[r.id]?.posterApprox)
+
+/** Artwork as drawn: the file, whether it decoded, and the approximate mark. */
+const readArt = () =>
+  page.$$eval('.v7-slate__grid .v7-card', (nodes) =>
+    nodes.map((c) => {
+      const img = c.querySelector('img.v7-poster')
+      const name = c.querySelector('.v7-tile__name') ?? c.querySelector('.v7-card__name')
+      return {
+        title: name.childNodes[0].textContent.trim(),
+        src: img ? img.getAttribute('src') : null,
+        loaded: img ? img.naturalWidth > 0 : null,
+        approx: Boolean(c.querySelector('.v7-card__approx')),
+      }
+    }),
+  )
+
 /** Cards in the featured week only — the next-run block renders one too. */
 const readSlate = () =>
   page.$$eval('.v7-slate__grid .v7-card', (nodes) =>
@@ -153,6 +173,62 @@ for (const region of ['IN', 'US']) {
     return !rel || !c.tags.includes(PLATFORMS[rel.platform].label)
   })
   check(noPlatform.length === 0, 'every card names its platform')
+
+  // --- artwork --------------------------------------------------------------
+  // The claim is per title: this row has artwork, so this card must draw that
+  // file — and a row without artwork must draw the designed tile rather than a
+  // broken image. Filenames are compared as suffixes because the base is
+  // swappable (image.tmdb.org, or a local mirror when the CDN is unreachable).
+  //
+  // What it cannot do is tell whether the artwork is the RIGHT film: this
+  // script and the page read the same overlay, so a wrong entry satisfies
+  // both. Breaking the overlay to negative-test this went green for exactly
+  // that reason, and only sabotaging the page caught it. Choosing the poster
+  // stays a job for eyes and a contact sheet.
+  const art = await readArt()
+  const wrongArt = want
+    .map((r) => {
+      const card = art.find((c) => c.title === r.title)
+      const file = artFor(r)
+      if (!card) return `${r.title}: no card`
+      if (file && !card.src) return `${r.title}: expected ${file}, drew the tile`
+      if (!file && card.src) return `${r.title}: no artwork in the data, drew ${card.src}`
+      if (file && !card.src.endsWith(file)) return `${r.title}: drew ${card.src}, want ${file}`
+      return null
+    })
+    .filter(Boolean)
+  check(wrongArt.length === 0, 'every card draws the artwork its row names', wrongArt.join(' / '))
+
+  const wrongApprox = want
+    .map((r) => {
+      const card = art.find((c) => c.title === r.title)
+      const approx = approxFor(r)
+      if (!card || !card.src) return null
+      if (approx !== card.approx) return `${r.title}: marked ${card.approx}, data says ${approx}`
+      return null
+    })
+    .filter(Boolean)
+  check(
+    wrongApprox.length === 0,
+    'approximate artwork says so on the card',
+    wrongApprox.join(' / '),
+  )
+
+  // Whether the bytes actually arrive is a property of the network, not of the
+  // page, so it is only a failure when the artwork is served from this origin.
+  // Left unguarded it would go red in a sandbox that cannot reach the CDN —
+  // the same environment-shaped red that made three earlier checks lie.
+  const drawn = art.filter((c) => c.src)
+  const local = drawn.length > 0 && drawn.every((c) => c.src.startsWith('/'))
+  const blank = drawn.filter((c) => !c.loaded)
+  if (local) {
+    check(blank.length === 0, 'every drawn poster decoded', blank.map((c) => c.title).join(' / '))
+  } else {
+    console.log(
+      `  ---  ${drawn.length - blank.length}/${drawn.length} posters decoded ` +
+        `(remote host; set VITE_POSTER_BASE to make this a check)`,
+    )
+  }
 
   // --- the grid never strands a single card on its own row ------------------
   const cols = await page.$eval('.v7-slate__grid', (n) =>

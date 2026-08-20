@@ -25,8 +25,14 @@
 //   cw-eggshells six "Eggshells", none of them a 2026 Telugu film.
 //   cw-raajaraja The Rajasaab, Run Raja Run, Seemaraja, Rajakili, Rajavamsam —
 //                a shelf of near-rhymes and no match.
-//   cw-ghosts    TMDB rate-limited the runner (429) before this one; retried.
-//   cw-outerbanks same.
+//   cw-ghosts    Ghost in the Shell twice, Ghost in the Cell, two haunted-
+//                tower films. Nothing that is this title.
+//
+// The first pass recorded `cw-ghosts` and `cw-outerbanks` as "no results at
+// all" when TMDB had in fact answered 429 with an empty body. A throttle and
+// an absence are the same shape downstream — the same trap as a fetch where
+// every request failed reading as a week with no releases — so the runner now
+// backs off and retries, and Outer Banks turned out to be there all along.
 //
 // The two sport fixtures are not searched at all: a cricket tour has no poster
 // to find, and the tile is the honest surface for it.
@@ -42,6 +48,10 @@ export const ARTWORK = {
   'cw-jungle': { tmdbId: 1169516, poster: '1JlfUuvvX5xLP2LIDah4JhWUtTx.jpg' },
   // exact title, exact date, and the artwork itself reads "prime video"
   'cw-cleanup': { tmdbId: 332299, poster: 'sVMcco0EdfDvFpyPlHU9n6RPrQj.jpg' },
+  // the show, not the season — TMDB indexes "Outer Banks", and the row is its
+  // fifth season. The key art carries no date to argue with the card, which
+  // is the line an approximation has to clear; the card labels it as one.
+  'cw-outerbanks': { tmdbId: 100757, poster: 'ovDgO2LPfwdVRfvScAqo9aMiIW.jpg', posterApprox: true },
 }
 
 /**

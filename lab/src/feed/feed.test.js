@@ -4,6 +4,7 @@ import { validateRelease, isRealDate, humanisePlatform } from './schema.js'
 import { normaliseFeed, derivedPlatforms } from './normalise.js'
 import { loadFeed, forRegion, titlesInBothRegions, regionsIn } from './index.js'
 import { CURATED } from './sources/curated.js'
+import { ARTWORK, applyArtwork } from './sources/artwork.js'
 import { mapTmdbRecord, discoverUrl, PROVIDERS } from './sources/tmdb.js'
 
 const valid = {
@@ -164,6 +165,55 @@ test('forRegion is date-ordered and covers both catalogs', () => {
 
 test('cross-region titles are found through the feed, not the raw table', () => {
   expect(titlesInBothRegions(loadFeed())).toContain('Lanterns')
+})
+
+/* -------------------------------------------------------------- artwork --- */
+
+test('the overlay fills artwork the sources never carried', () => {
+  const feed = loadFeed()
+  for (const [id, art] of Object.entries(ARTWORK)) {
+    const release = feed.releases.find((r) => r.id === id)
+    expect(release, id).toBeDefined()
+    expect(release.poster, id).toBe(art.poster)
+    expect(release.tmdbId, id).toBe(art.tmdbId)
+  }
+  // and the frozen table v0–v6 render is untouched by all of it
+  for (const id of Object.keys(ARTWORK)) {
+    const row = RELEASES.find((r) => r.id === id)
+    if (row) expect(row.poster, `${id} must stay null in the snapshot`).toBe(null)
+  }
+})
+
+test('the overlay adds, never overwrites', () => {
+  const { records } = applyArtwork(
+    [{ id: 'a', poster: 'already.jpg' }, { id: 'b', poster: null }],
+    { a: { poster: 'overlay.jpg' }, b: { poster: 'overlay.jpg' } },
+  )
+  expect(records.map((r) => r.poster)).toEqual(['already.jpg', 'overlay.jpg'])
+})
+
+test('an overlay entry for an id the feed no longer has is reported, not silent', () => {
+  const { unused } = applyArtwork([{ id: 'a', poster: null }], {
+    a: { poster: 'x.jpg' },
+    gone: { poster: 'y.jpg' },
+  })
+  expect(unused).toEqual(['gone'])
+  // the live overlay has to be clean, or the page is carrying dead data
+  expect(loadFeed().artworkUnused).toEqual([])
+})
+
+test('an injected feed is passed through untouched by the overlay', () => {
+  const id = Object.keys(ARTWORK)[0]
+  globalThis.__FEED__ = [
+    { id, title: 'Injected', platform: 'netflix', region: 'IN', date: '2026-08-21', type: 'movie' },
+  ]
+  try {
+    const feed = loadFeed()
+    expect(feed.sourceId).toBe('injected')
+    expect(feed.releases[0].poster).toBe(null)
+  } finally {
+    delete globalThis.__FEED__
+  }
 })
 
 /* ---------------------------------------------------------------- tmdb --- */

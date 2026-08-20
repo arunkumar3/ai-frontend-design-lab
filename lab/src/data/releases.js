@@ -16,6 +16,19 @@ export const PLATFORMS = {
 
 export const POSTER_BASE = 'https://image.tmdb.org/t/p/w500'
 
+/**
+ * Where poster files are read from. `VITE_POSTER_BASE` points it somewhere
+ * else — the reason it exists is that this development sandbox cannot reach
+ * image.tmdb.org at all, so every screenshot review ran against a page whose
+ * artwork had silently fallen back to the designed tile. Serving the harvested
+ * files locally (`VITE_POSTER_BASE=/tmdb pnpm dev`) is what makes `pnpm shoot`
+ * show the page a reader with an ordinary network sees. Same class of trap as
+ * the unreachable font host: the review instrument cannot tell "absent" from
+ * "designed that way".
+ */
+const posterBase = () =>
+  (typeof import.meta.env !== 'undefined' && import.meta.env.VITE_POSTER_BASE) || POSTER_BASE
+
 /** Full poster URL, or null when no artwork exists. Cards must handle null.
  *  A poster that is already a resolved URI (data: or https:) passes through —
  *  the published sandbox preview embeds artwork as data URIs at bundle time,
@@ -25,7 +38,7 @@ export function posterUrl(release) {
   if (release.poster.startsWith('data:') || release.poster.startsWith('http')) {
     return release.poster
   }
-  return `${POSTER_BASE}/${release.poster}`
+  return `${posterBase()}/${release.poster}`
 }
 
 // Week of 15–21 Aug 2026. Sources: FilmiBeat, myvi.in, FilmyChill, Boston.com.
