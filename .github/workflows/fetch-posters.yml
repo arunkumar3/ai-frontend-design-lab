@@ -5,7 +5,14 @@
 # so poster bytes never enter any long-lived history (NOTICE keeps its
 # hotlink-only stance for the repository).
 name: fetch-posters
-on: workflow_dispatch
+# workflow_dispatch only registers once this file reaches the default branch;
+# until then, a push that touches the trigger marker starts a run from this
+# branch. Bump .poster-trigger to fire it.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.poster-trigger'
 
 permissions:
   contents: write
