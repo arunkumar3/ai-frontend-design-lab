@@ -4,7 +4,7 @@
 reading for *why* `v6` is the way it is and for the trap list, but where the two disagree
 about state, this document is right.
 
-Last updated: 2026-08-20, after the week-of-20-26-Aug curation and the calendar rollover fixes.
+Last updated: 2026-08-20, after PR #1 merged and the artwork harvest.
 
 ---
 
@@ -24,20 +24,21 @@ argument.
 
 ## 2. State
 
-Branch `claude/continue-discussion-w580hz`, six commits ahead of `main`, open as
-[PR #1](https://github.com/arunkumar3/ai-frontend-design-lab/pull/1):
+**[PR #1](https://github.com/arunkumar3/ai-frontend-design-lab/pull/1) is merged**, so
+`main` carries `/v0`–`/v7`, the feed boundary and every check script. A plain clone runs the
+site with no branch step. Work since the merge sits on `claude/continue-discussion-w580hz`:
 
 | | |
 |---|---|
-| *(latest)* | ETV Win + the hand-curated week of 20–26 Aug as a second feed source |
-| `7a330ce` | Aha; survived the first run-day past the frozen data (four latent defects) |
-| `c52706e` | `HANDOFF.md`, session record, corrected check counts |
-| `2ad0753` | the feed boundary — `src/feed/`, `pnpm test`, `pnpm feed:shapes` |
-| `e354ca2` | `/v7` — the radar in filmhood.in's visual language |
-| `600814d` | fixed `verify:v6`, which was failing on a page that was correct |
+| *(latest)* | artwork for five artless rows + `VITE_POSTER_BASE` + the artwork checks |
+| `4d422f7` | the merge — everything below this line is on `main` |
+| | ETV Win + the hand-curated week of 20–26 Aug as a second feed source |
+| | Aha; survived the first run-day past the frozen data (four latent defects) |
+| | the feed boundary — `src/feed/`, `pnpm test`, `pnpm feed:shapes` |
+| | `/v7` — the radar in filmhood.in's visual language |
 
-Not merged to `main`. Nothing is uncommitted. Run the checks — never trust this table's
-notion of "green" without re-running.
+Nothing is uncommitted. Run the checks — never trust this table's notion of "green"
+without re-running.
 
 ## 3. Running it
 
@@ -45,24 +46,39 @@ notion of "green" without re-running.
 cd lab && pnpm install && pnpm dev     # http://localhost:5173/, routes /v0 … /v7
 ```
 
+`pnpm` is not required — the lockfile is pnpm's but nothing in `package.json` is
+pnpm-specific, so `npm install && npm run dev` resolves the same tree. On Windows,
+`corepack enable pnpm` is the no-install route to pnpm itself.
+
+**Posters need a reachable `image.tmdb.org`.** On an ordinary network they just work. In
+this sandbox they never load, which silently made every screenshot review a review of the
+fallback tiles. `VITE_POSTER_BASE` points the poster base somewhere else, so a harvest can
+be served locally — both `public/tmdb/` and `.posters-cache/` are gitignored, so a fresh
+clone has no files to serve until the harvest in §4 has been run:
+
+```bash
+mkdir -p public/tmdb && cp <harvest>/*.jpg public/tmdb/
+VITE_POSTER_BASE=/tmdb pnpm dev        # now shoot/verify see what a reader sees
+```
+
 With the dev server up, in a second shell:
 
 ```bash
 cd lab
-pnpm test          # 35 unit tests — the feed boundary. No browser, no server needed.
+pnpm test          # 41 unit tests — the feed boundary. No browser, no server needed.
 pnpm lint
 
 pnpm verify:v6     # 26 render-vs-data checks
 pnpm contrast:v6   # 20 computed contrast pairs
-pnpm verify:v7     # 38 render-vs-data checks
-pnpm contrast:v7   # 32 computed pairs, read from the running page
-pnpm feed:shapes   # 67 checks across 10 adversarial feed shapes
+pnpm verify:v7     # 54 render-vs-data checks
+pnpm contrast:v7   # 34 computed pairs, read from the running page
+pnpm feed:shapes   # 68 checks across 10 adversarial feed shapes
 
 npx impeccable detect http://localhost:5173/v7    # live audit — never point it at src/
 pnpm shoot v7      # 6 PNGs into lab/shots/v7/ — then look at them
 ```
 
-All green as of `2ad0753`.
+All green as of the artwork commit, counted in one run on 2026-08-20.
 
 **The verify totals move with the calendar.** Both suites skip blocks the current data
 cannot reach, so the number is not a constant. Read the `0 failing check(s)` line.
@@ -84,25 +100,32 @@ enter long-lived history. Fire it by bumping `.poster-trigger`; clean up by bump
 embedded as data URIs into the published preview at bundle time (NOTICE records this
 exception).
 
-**The preview artifact now renders real artwork** — 18 posters embedded, poster pass done
-against it. The local sandbox dev server still shows tiles (hotlinks stay blocked), and
-runner search results must be VISUALLY verified before acceptance: 4 of 8 first-results
-were title collisions (Jumanji for "Welcome to the Jungle", Ghost in the Shell for
-"Ghosts in the Hell"). A wrong poster is worse than none — the rejects keep their tiles.
+The workflow now registers `workflow_dispatch` (it reached `main` with the merge), so it
+can be fired from the Actions tab or the API — the `.poster-trigger` bump is no longer the
+only route.
 
-**A poster pass is the first thing to do** once `image.tmdb.org` is reachable, and the
-pipeline is already built — the pass is now:
+**25 of the 32 rows carry artwork** (the seven without are named in §7). Five were resolved on 2026-08-20 into
+`src/feed/sources/artwork.js`, an overlay keyed by release id: filling them into
+`data/releases.js` would change six scored pages that render that table directly. `v7`
+reads through the boundary, so the overlay lands there alone, and `loadFeed` reports
+overlay entries whose id has disappeared instead of letting them rot.
+
+**Nothing is accepted on a title match.** The runner saves TMDB's search pages verbatim
+and downloads what they reference; the parse and the judgement happen here, against a
+contact sheet. That order is not fussiness — the first harvest's textual check asserted on
+TMDB's empty-state template and reported a hit for every miss, and half of what it accepted
+was a collision (Jumanji for "Welcome to the Jungle", Ghost in the Shell for "Ghosts in the
+Hell"). The second guessed at card markup and returned nothing for titles TMDB certainly
+has. The third was rate-limited into recording 429s as absences. Read `artwork.js`'s header
+for what was rejected and why — a wrong poster is worse than none.
+
+The remaining pass, once `image.tmdb.org` is reachable from here:
 
 1. `pnpm posters:fetch` — caches every referenced poster at w342 (refuses partial caches)
-2. rebuild the artifact bundle with the cached files as data URIs (`posterUrl` passes
-   resolved URIs through; NOTICE records the embed-in-preview-only exception)
+2. serve them (`VITE_POSTER_BASE=/tmdb`, §3) or embed them in the artifact bundle as data
+   URIs (`posterUrl` passes resolved URIs through; NOTICE records that exception)
 3. `pnpm shoot v7` and **look** — scrim over bright art, density, lime vs. loud posters
 4. fix, re-verify, republish the artifact, push
-
-The 10 curated rows have `poster: null` — their TMDB filenames need a lookup from outside
-this network (prompt prepared in the 2026-08-20 session), or a `TMDB_TOKEN` +
-`api.themoviedb.org` so `feed:fetch` resolves them. Until then only the 16 snapshot
-titles can carry artwork.
 
 The same block means no assertion in this repo has ever run against the real TMDB API. The
 mapper, URL builder and provider table are pure and tested against a recorded payload;
@@ -145,6 +168,7 @@ on every page load.
 | `normalise.js` | validate, dedupe by id, sort, **guarantee every platform lookup resolves** |
 | `sources/snapshot.js` | the frozen 22, through the same checks as anything off the network |
 | `sources/curated.js` | the hand-curated week of 20–26 Aug — the mixed-source design, used for real |
+| `sources/artwork.js` | posters found after the fact, layered on by id so the frozen table stays frozen |
 | `sources/tmdb.js` | discover-by-watch-provider: a pure mapper (covered) and a fetch (not) |
 | `index.js` | `loadFeed`, `forRegion`, `regionsIn`, `titlesInBothRegions` |
 
@@ -153,10 +177,13 @@ see the open decision in §8.
 
 ## 7. Gaps, ranked
 
-1. **Local dev still renders tiles for artworked titles** (hotlinks blocked); the preview
-   artifact embeds real posters — §4 has the runner pipeline. Five titles still lack any
-   verified artwork: the four rejected collisions plus Clean Up Company and Outer Banks
-   (the runner queried "Outer Banks S5" literally — fix the query on the next harvest).
+1. **Five rows have no artwork and probably cannot get any from TMDB.** Egg Shells, Raaja
+   Raja and Ghosts in the Hell have no TMDB record at all; Bharat Bhagya Vidhaata matches
+   only a 2002 film; Bigg Boss Agnipariksha's key art has a conflicting date set into the
+   image. They render the designed tile, which is the honest surface — but if artwork for
+   them matters, it needs a source that is not TMDB. (The two sport fixtures are not a gap:
+   a cricket tour has no poster.) Local dev shows real artwork wherever the network can
+   reach `image.tmdb.org`; in this sandbox it cannot, so use `VITE_POSTER_BASE` (§3).
 2. **The data still ends where the curation ends.** The clock crossed the frozen snapshot
    on 2026-08-20 and the week of 20–26 Aug was hand-curated the same day
    (`src/feed/sources/curated.js` — a second source mixed in through the boundary, so
@@ -180,7 +207,6 @@ These are yours, not mine. Each changes what gets built next.
   the blocker on making the feed real. Static-per-week turns the archive into cacheable
   pages and kills the runtime fetch; runtime-fetch keeps one deploy and needs a loading and
   an error state the page does not have. `?week=` already makes either viable.
-- **Merge this branch to `main`, or keep going on the branch?**
 - **Is `v7` scored as a drill?** It was human-directed across several rounds, like `v6`, so
   it is not a like-for-like measurement against `v0`–`v5`. The README says so; the levers
   table has never been updated with what `v6` and `v7` proved.
