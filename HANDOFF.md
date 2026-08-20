@@ -82,8 +82,19 @@ the designed no-artwork tile, and every committed screenshot shows that state. F
 whose chrome is deliberately achromatic *so the artwork can be the colour*, the composition,
 the density and the caption-over-artwork contrast are unreviewed.
 
-**A poster pass is the first thing to do** once `image.tmdb.org` is reachable. Roughly
-thirty minutes: `pnpm shoot v7`, look at all six images, fix what the artwork exposes.
+**A poster pass is the first thing to do** once `image.tmdb.org` is reachable, and the
+pipeline is already built — the pass is now:
+
+1. `pnpm posters:fetch` — caches every referenced poster at w342 (refuses partial caches)
+2. rebuild the artifact bundle with the cached files as data URIs (`posterUrl` passes
+   resolved URIs through; NOTICE records the embed-in-preview-only exception)
+3. `pnpm shoot v7` and **look** — scrim over bright art, density, lime vs. loud posters
+4. fix, re-verify, republish the artifact, push
+
+The 10 curated rows have `poster: null` — their TMDB filenames need a lookup from outside
+this network (prompt prepared in the 2026-08-20 session), or a `TMDB_TOKEN` +
+`api.themoviedb.org` so `feed:fetch` resolves them. Until then only the 16 snapshot
+titles can carry artwork.
 
 The same block means no assertion in this repo has ever run against the real TMDB API. The
 mapper, URL builder and provider table are pure and tested against a recorded payload;
