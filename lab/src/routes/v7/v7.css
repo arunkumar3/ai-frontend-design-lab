@@ -134,6 +134,15 @@
   box-sizing: border-box;
 }
 
+/* This stylesheet must stand without Tailwind's preflight: the published
+   preview bundles only route CSS, and the day the card frame became an <a>,
+   every tile title rendered UA-default blue with underlines there — invisible
+   on localhost, where index.css's preflight was quietly covering for us. */
+.v7-page a {
+  color: inherit;
+  text-decoration: none;
+}
+
 .v7-page :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
