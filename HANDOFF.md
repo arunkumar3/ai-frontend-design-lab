@@ -4,7 +4,7 @@
 reading for *why* `v6` is the way it is and for the trap list, but where the two disagree
 about state, this document is right.
 
-Last updated: 2026-08-19, after the `v7` build and the feed boundary.
+Last updated: 2026-08-20, after the week-of-20-26-Aug curation and the calendar rollover fixes.
 
 ---
 
@@ -24,15 +24,20 @@ argument.
 
 ## 2. State
 
-Branch `claude/continue-discussion-w580hz`, three commits ahead of `main`:
+Branch `claude/continue-discussion-w580hz`, six commits ahead of `main`, open as
+[PR #1](https://github.com/arunkumar3/ai-frontend-design-lab/pull/1):
 
 | | |
 |---|---|
+| *(latest)* | ETV Win + the hand-curated week of 20–26 Aug as a second feed source |
+| `7a330ce` | Aha; survived the first run-day past the frozen data (four latent defects) |
+| `c52706e` | `HANDOFF.md`, session record, corrected check counts |
 | `2ad0753` | the feed boundary — `src/feed/`, `pnpm test`, `pnpm feed:shapes` |
 | `e354ca2` | `/v7` — the radar in filmhood.in's visual language |
 | `600814d` | fixed `verify:v6`, which was failing on a page that was correct |
 
-Not merged to `main`. Nothing is uncommitted.
+Not merged to `main`. Nothing is uncommitted. Run the checks — never trust this table's
+notion of "green" without re-running.
 
 ## 3. Running it
 
@@ -116,6 +121,7 @@ on every page load.
 | `schema.js` | `validateRelease` — one record in, `{ok, value}` or `{ok:false, reasons}` |
 | `normalise.js` | validate, dedupe by id, sort, **guarantee every platform lookup resolves** |
 | `sources/snapshot.js` | the frozen 22, through the same checks as anything off the network |
+| `sources/curated.js` | the hand-curated week of 20–26 Aug — the mixed-source design, used for real |
 | `sources/tmdb.js` | discover-by-watch-provider: a pure mapper (covered) and a fetch (not) |
 | `index.js` | `loadFeed`, `forRegion`, `regionsIn`, `titlesInBothRegions` |
 
