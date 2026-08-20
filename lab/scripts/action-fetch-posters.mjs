@@ -16,6 +16,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { RELEASES } from '../src/data/releases.js'
 import { CURATED } from '../src/feed/sources/curated.js'
+import { ARTWORK } from '../src/feed/sources/artwork.js'
 
 const OUT = new URL('../../posters-out/', import.meta.url)
 await mkdir(new URL('html/', OUT), { recursive: true })
@@ -38,7 +39,7 @@ async function grab(file) {
 // --- 1. everything the feed already points at -------------------------------
 const known = [
   ...new Set(
-    [...RELEASES, ...CURATED]
+    [...RELEASES, ...CURATED, ...Object.values(ARTWORK)]
       .map((r) => r.poster)
       .filter((p) => p && !p.startsWith('data:') && !p.startsWith('http')),
   ),
@@ -74,8 +75,22 @@ const postersIn = (html) => [
   ...new Set([...html.matchAll(/\/t\/p\/w\d+[^"']*?\/([A-Za-z0-9_-]{8,}\.(?:jpg|png))/g)].map((m) => m[1])),
 ]
 
+const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+
+// TMDB rate-limited the second harvest partway through and the last three
+// titles came back 429 with an empty body — which reads downstream exactly
+// like "this title does not exist". Back off and retry rather than record a
+// throttle as an absence.
+const BACKOFF = [20_000, 45_000, 90_000]
+
 async function fetchPage(url, name) {
-  const res = await fetch(url, { headers: UA })
+  let res = await fetch(url, { headers: UA })
+  for (const ms of BACKOFF) {
+    if (res.status !== 429) break
+    console.log(`    429 — waiting ${ms / 1000}s`)
+    await wait(ms)
+    res = await fetch(url, { headers: UA })
+  }
   const html = res.ok ? await res.text() : ''
   await writeFile(new URL(`html/${name}.html`, OUT), html)
   const files = postersIn(html).slice(0, POSTERS_PER_PAGE)
@@ -83,7 +98,11 @@ async function fetchPage(url, name) {
   return { status: res.status, bytes: html.length, files }
 }
 
-const missing = [...RELEASES, ...CURATED].filter((r) => !r.poster && !r.endDate)
+// Rows the overlay already answers are done — searching them again just
+// spends requests against the rate limit that throttled the last harvest.
+const missing = [...RELEASES, ...CURATED].filter(
+  (r) => !r.poster && !r.endDate && !ARTWORK[r.id],
+)
 console.log(`${missing.length} titles to search`)
 
 for (const row of missing) {
@@ -107,8 +126,9 @@ for (const row of missing) {
   } catch (err) {
     report.searched[row.id] = { queried: query, error: String(err).slice(0, 120) }
   }
-  // be polite: one request in flight, a beat between them
-  await new Promise((r) => setTimeout(r, 800))
+  // be polite: one request in flight, a longer beat between them than the
+  // harvest that got throttled
+  await wait(2500)
 }
 
 await writeFile(new URL('report.json', OUT), JSON.stringify(report, null, 2))

@@ -4,6 +4,7 @@
 import { normaliseFeed, derivedPlatforms } from './normalise.js'
 import { snapshotSource } from './sources/snapshot.js'
 import { curatedSource } from './sources/curated.js'
+import { applyArtwork } from './sources/artwork.js'
 
 /**
  * The test seam.
@@ -31,7 +32,13 @@ function injectedRecords() {
  */
 export function loadFeed({ sources = [snapshotSource, curatedSource] } = {}) {
   const injected = injectedRecords()
-  const records = injected ?? sources.flatMap((s) => s.read())
+  const raw = injected ?? sources.flatMap((s) => s.read())
+  // Artwork found after the fact is layered on here rather than edited into
+  // the sources, so the frozen table `v0`–`v6` render stays byte-identical.
+  // An injected feed is left exactly as injected: `feed:shapes` asserts on
+  // what it passed in, and a helpful overlay would be a lie in the middle of
+  // the test seam.
+  const { records, unused } = injected ? { records: raw, unused: [] } : applyArtwork(raw)
   const { releases, platforms, rejected, duplicates } = normaliseFeed(records)
 
   return {
@@ -39,6 +46,7 @@ export function loadFeed({ sources = [snapshotSource, curatedSource] } = {}) {
     platforms,
     rejected,
     duplicates,
+    artworkUnused: unused,
     derived: derivedPlatforms(platforms),
     sourceId: injected ? 'injected' : sources.map((s) => s.id).join('+'),
     sourceLabel: injected
