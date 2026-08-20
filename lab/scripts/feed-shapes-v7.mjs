@@ -73,7 +73,7 @@ const SCENARIOS = [
   {
     name: 'a platform nobody has heard of',
     records: [row({ id: 'p1', title: 'Arthouse Pick', platform: 'mubi' })],
-    expect: { cards: 1, tagIncludes: 'Mubi', notice: true },
+    expect: { cards: 1, tagIncludes: 'Mubi', notice: true, sheet: { id: 'p1', includes: 'Mubi' } },
   },
   {
     name: 'every optional field missing',
@@ -181,6 +181,19 @@ for (const scenario of SCENARIOS) {
       `names the unknown platform as "${scenario.expect.tagIncludes}"`,
       tags.trim(),
     )
+  }
+
+  if (scenario.expect.sheet) {
+    // the derived label must survive all the way into the release sheet
+    await page.goto(`${BASE}/v7?release=${scenario.expect.sheet.id}`, { waitUntil: 'networkidle' })
+    await page.waitForTimeout(200)
+    const body = await page.textContent('.v7-sheet[open]').catch(() => '')
+    check(
+      body.includes(scenario.expect.sheet.includes),
+      `the release sheet names "${scenario.expect.sheet.includes}"`,
+      body.trim().slice(0, 80),
+    )
+    await page.goto(`${BASE}/v7`, { waitUntil: 'networkidle' })
   }
 
   if (scenario.expect.regionButtons !== undefined) {

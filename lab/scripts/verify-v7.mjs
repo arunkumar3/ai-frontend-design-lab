@@ -298,6 +298,59 @@ check(
 const usPressed = await page.$eval('.v7-nav__link[aria-pressed="true"]', (n) => n.textContent.trim())
 check(usPressed === 'United States', 'and the toggle reflects it', usPressed)
 
+// --- the release sheet --------------------------------------------------------
+console.log('\n== release sheet ==')
+// a ?release= URL opens the sheet for exactly that title
+const pick = ALL.find((r) => r.id === 'in-lanterns')
+await go('?release=in-lanterns')
+const sheetOpen = await page.$('.v7-sheet[open]')
+check(Boolean(sheetOpen), 'a ?release= URL opens the sheet')
+if (sheetOpen) {
+  const sheetTitle = await page.textContent('#v7-sheet-title')
+  check(sheetTitle.trim() === pick.title, 'the sheet names that release', sheetTitle.trim())
+  const rows = await page.textContent('.v7-sheet__rows')
+  const fullDate = await page.evaluate(
+    (iso) =>
+      new Intl.DateTimeFormat('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(new Date(`${iso}T00:00:00`)),
+    pick.date,
+  )
+  check(rows.includes(fullDate), 'the sheet carries the full date', fullDate)
+  check(rows.includes(PLATFORMS[pick.platform].label), 'the sheet names the platform')
+  // Lanterns releases in both regions on different platforms — the sheet is
+  // the one surface with room to say so
+  const usTwin = ALL.find((r) => r.title === pick.title && r.region === 'US')
+  check(
+    rows.includes(PLATFORMS[usTwin.platform].label),
+    'a cross-region title shows its other release',
+    `${usTwin.platform} expected in rows`,
+  )
+  // closing clears the URL
+  await page.click('.v7-sheet__close')
+  await page.waitForTimeout(300)
+  check(!(await page.$('.v7-sheet[open]')), 'close closes the sheet')
+  const search = await page.evaluate(() => location.search)
+  check(!search.includes('release='), 'closing clears ?release from the URL', search)
+}
+
+// clicking a card opens the sheet (the frame is a real link)
+await go('')
+await page.click('.v7-slate__grid .v7-card a')
+await page.waitForTimeout(300)
+check(Boolean(await page.$('.v7-sheet[open]')), 'clicking a card opens the sheet')
+check(
+  (await page.evaluate(() => location.search)).includes('release='),
+  'and the open sheet is a URL',
+)
+
+// an id the feed does not carry opens nothing
+await go('?release=not-a-real-id')
+check(!(await page.$('.v7-sheet[open]')), 'an unknown ?release= opens nothing')
+
 // --- the next-run block -----------------------------------------------------
 console.log('\n== next run ==')
 await go('')

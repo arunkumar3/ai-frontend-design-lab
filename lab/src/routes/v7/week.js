@@ -131,3 +131,32 @@ export function monthGrid(anchorIso) {
   }
   return cells
 }
+
+const fullDateFmt = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+})
+
+/** "Friday, 21 August 2026" — the sheet answers the question in full. */
+export const formatFullDate = (iso) => fullDateFmt.format(asDate(iso))
+
+/**
+ * The sheet's one-line answer to "can I watch it yet". Computed against the
+ * clock, phrased against the range: a fixture that is mid-run says so. Dates
+ * here are the SHORT form — this is an eyebrow, and the full date has its own
+ * row directly beneath; the long form wrapped a one-liner onto three lines
+ * and ran it under the close button.
+ */
+export function availability(release, todayIso) {
+  const days = Math.round((asDate(release.date) - asDate(todayIso)) / 86400000)
+  if (days > 1) return `Drops in ${days} days`
+  if (days === 1) return 'Drops tomorrow'
+  if (days === 0) return 'Drops today'
+  if (release.endDate) {
+    if (release.endDate >= todayIso) return `Live now — through ${entryFmt.format(asDate(release.endDate))}`
+    return `Ran ${formatWhen(release)}`
+  }
+  return `Streaming since ${entryFmt.format(asDate(release.date))}`
+}

@@ -1,9 +1,11 @@
-import { useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { forRegion, loadFeed, regionsIn } from '../../feed/index.js'
 import { posterUrl } from '../../data/releases.js'
 import {
   addDays,
+  availability,
+  formatFullDate,
   formatLongDay,
   formatMonth,
   formatWeekRange,
@@ -65,9 +67,20 @@ function Card({ release, platforms }) {
   const [failed, setFailed] = useState(false)
   const hasArt = Boolean(src) && !failed
 
+  // A real href, not an onClick: the sheet is a URL (?release=id) for the
+  // same reason the week and region are — linkable, testable, and the back
+  // button closes it. The rest of the query string rides along.
+  const [params] = useSearchParams()
+  const open = new URLSearchParams(params)
+  open.set('release', release.id)
+
   return (
     <article className="v7-card">
-      <div className={`v7-card__frame${hasArt ? '' : ' v7-card__frame--none'}`}>
+      <Link
+        className={`v7-card__frame${hasArt ? '' : ' v7-card__frame--none'}`}
+        to={`?${open}`}
+        aria-label={`${release.title} — details`}
+      >
         {hasArt ? (
           <>
             {/* No loading="lazy": the capture harness waits for network idle at
@@ -100,7 +113,7 @@ function Card({ release, platforms }) {
             </p>
           </div>
         )}
-      </div>
+      </Link>
       <p className="v7-card__tags">
         <span>{TYPE_LABEL[release.type]}</span>
         {release.language && <span>{release.language}</span>}
@@ -283,6 +296,137 @@ function Nav({ region, regions, onRegion }) {
   )
 }
 
+/* ------------------------------------------------------------------- sheet */
+
+/* The release sheet — filmhood's detail surface, sized to what this data can
+   honestly say. No synopsis, no cast, no filler copy: the sheet answers the
+   questions the data can answer in full — the exact date and whether it is
+   watchable yet, the publishing week it belongs to, the platform, and the
+   same title's release in the other region, which no card has room for.
+
+   A native <dialog> for the same reason v6 used a native <select>: focus
+   trapping, Escape, the top layer and focus restoration come free, and a
+   hand-rolled overlay would have to earn each one back. */
+/* The sheet's artwork: same two-absences contract as the card — no path and a
+   failed load both land on the designed tile, at sheet size. */
+function SheetArt({ release }) {
+  const src = posterUrl(release)
+  const [failed, setFailed] = useState(false)
+  if (!src || failed) {
+    return (
+      <div className={`v7-tile v7-tile--${toneFor(release.id)}`}>
+        <span className="v7-tile__name">{release.title}</span>
+      </div>
+    )
+  }
+  return (
+    <img
+      className="v7-poster"
+      src={src}
+      alt=""
+      width="400"
+      height="600"
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
+  )
+}
+
+function ReleaseSheet({ release, platforms, feed, todayIso, onClose }) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const dialog = ref.current
+    if (!dialog) return
+    if (release && !dialog.open) dialog.showModal()
+    if (!release && dialog.open) dialog.close()
+  }, [release])
+
+  if (!release) return null
+
+  const platform = platforms[release.platform].label
+  const weekOf = formatWeekRange(weekStartIso(release.date))
+  const elsewhere = feed.releases.find(
+    (r) => r.title === release.title && r.region !== release.region,
+  )
+  const tmdbHref = release.tmdbId
+    ? `https://www.themoviedb.org/${release.type === 'movie' ? 'movie' : 'tv'}/${release.tmdbId}`
+    : null
+
+  return (
+    <dialog
+      className="v7-sheet"
+      ref={ref}
+      onClose={onClose}
+      onClick={(e) => {
+        // a click on the backdrop is a click on the dialog element itself
+        if (e.target === e.currentTarget) e.currentTarget.close()
+      }}
+      aria-labelledby="v7-sheet-title"
+    >
+      <div className="v7-sheet__body">
+        <div className="v7-sheet__art">
+          <SheetArt key={release.id} release={release} />
+        </div>
+        <div className="v7-sheet__info">
+          <p className="v7-sheet__standing">{availability(release, todayIso)}</p>
+          <h2 className="v7-sheet__title" id="v7-sheet-title">
+            {release.title}
+          </h2>
+          <dl className="v7-sheet__rows">
+            <div>
+              <dt>Date</dt>
+              <dd>
+                <time dateTime={release.date}>{formatFullDate(release.date)}</time>
+              </dd>
+            </div>
+            <div>
+              <dt>Week</dt>
+              <dd>{weekOf}</dd>
+            </div>
+            <div>
+              <dt>Platform</dt>
+              <dd>{platform}</dd>
+            </div>
+            <div>
+              <dt>Format</dt>
+              <dd>
+                {TYPE_LABEL[release.type]}
+                {release.language ? ` · ${release.language}` : ''}
+              </dd>
+            </div>
+            {elsewhere && (
+              <div>
+                <dt>{REGION_OF[elsewhere.region] === 'India' ? 'In India' : 'In the US'}</dt>
+                <dd>
+                  {platforms[elsewhere.platform].label} ·{' '}
+                  <time dateTime={elsewhere.date}>{formatWhen(elsewhere)}</time>
+                </dd>
+              </div>
+            )}
+          </dl>
+          {release.posterApprox && (
+            <p className="v7-sheet__note">Artwork is a best-effort match, not official.</p>
+          )}
+          {tmdbHref && (
+            <a className="v7-btn" href={tmdbHref} target="_blank" rel="noopener noreferrer">
+              View on TMDB
+            </a>
+          )}
+        </div>
+      </div>
+      <button
+        type="button"
+        className="v7-sheet__close"
+        onClick={() => ref.current?.close()}
+        aria-label="Close details"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </dialog>
+  )
+}
+
 /* ------------------------------------------------------------------ notice */
 
 function FeedNotice({ feed }) {
@@ -347,12 +491,18 @@ export default function V7() {
     return map
   }, [releases])
 
-  const setParam = (key, value) => {
+  const setParam = (key, value, { replace = false } = {}) => {
     const next = new URLSearchParams(params)
     if (value === null) next.delete(key)
     else next.set(key, value)
-    setParams(next, { replace: false })
+    setParams(next, { replace })
   }
+
+  /* The open release sheet, driven by the URL like the week and the region.
+     An id the feed does not carry opens nothing — the page itself is the
+     fallback surface. Closing replaces history rather than pushing, so Back
+     from a closed sheet leaves the page, not reopens the sheet. */
+  const openRelease = FEED.releases.find((r) => r.id === params.get('release')) ?? null
 
   /* The next run that actually carries titles — not simply today + 7. A week
      with nothing in it is not a run worth pointing at. */
@@ -363,6 +513,14 @@ export default function V7() {
   return (
     <div className="v7-page" id="v7-top">
       <Nav region={region} regions={REGIONS_PRESENT} onRegion={(code) => setParam('region', code)} />
+
+      <ReleaseSheet
+        release={openRelease}
+        platforms={FEED.platforms}
+        feed={FEED}
+        todayIso={todayIso}
+        onClose={() => setParam('release', null, { replace: true })}
+      />
 
       <section className="v7-hero">
         <h1 className="v7-hero__title">Every drop, by the week.</h1>

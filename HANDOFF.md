@@ -115,8 +115,12 @@ Four decisions to know before changing it:
    column count follows the group size so 11 titles run 3+3+3+2 with no orphan row.
 2. **There is no 3D, and the reference has none either.** Its two apparently-dimensional
    moments are a `repeating-radial-gradient` and an easing curve that overshoots.
-3. **Week and region live in the query string** — `?week=2026-08-06`, `?region=US`. That
-   makes an archive week a real URL and makes the empty state reachable and testable.
+3. **Week, region and the open release sheet live in the query string** — `?week=`,
+   `?region=`, `?release=<id>`. That makes an archive week and a title's detail sheet real
+   URLs, the empty state reachable, and the Back button close the sheet. The sheet is a
+   native `<dialog>` (same reasoning as `v6`'s native `<select>`) showing only what the
+   data can honestly say: full date, availability against the clock, week, platform,
+   format, the same title's other-region release, and a TMDB link when an id exists.
 4. **Fonts are self-hosted** (`lab/public/fonts/`, OFL, attributed in `NOTICE`). When
    `fonts.googleapis.com` was blocked the `h1` silently rendered in Georgia and four review
    passes would have approved it.
