@@ -6,24 +6,19 @@
 // Two jobs:
 //   1. Download every poster the feed already references, at w342.
 //   2. For every row with `poster: null` (snapshot and curated alike, minus
-//      the sport fixtures, which have no artwork to find), scrape
-//      themoviedb.org's search page and bring back the TOP THREE candidates
-//      with their titles, years and artwork.
+//      the sport fixtures, which have no artwork to find), save TMDB's search
+//      page verbatim and download the first few posters it references.
 //
-// Three candidates, not one, because the first version of this script trusted
-// its own textual match and was wrong half the time: its `<h2>` regex matched
-// TMDB's empty-state template, so every miss reported `matchedTitle: "No
-// Results"` and looked like a hit. Nothing here decides anything. It reports
-// what TMDB returned — title, year, id, file — and the sandbox side lays the
-// downloads out as a contact sheet and judges them by eye. A wrong poster is
-// worse than none.
+// It decides nothing, and that is the point — see the note above `postersIn`.
+// A wrong poster is worse than none, so the judgement happens where there are
+// eyes: the sandbox parses the saved HTML and looks at the artwork.
 
 import { mkdir, writeFile } from 'node:fs/promises'
 import { RELEASES } from '../src/data/releases.js'
 import { CURATED } from '../src/feed/sources/curated.js'
 
 const OUT = new URL('../../posters-out/', import.meta.url)
-await mkdir(OUT, { recursive: true })
+await mkdir(new URL('html/', OUT), { recursive: true })
 
 const UA = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) posters-for-a-design-lab/1.0' }
 const report = { downloaded: [], searched: {}, failed: [] }
@@ -62,31 +57,30 @@ const searchTerm = (title) =>
     .replace(/\s+Season\s+\d+$/i, '')
     .trim()
 
-/** Every result card on a TMDB search page, in page order, parsed as a unit. */
-function parseCards(html, kind) {
-  return html
-    .split('<div class="card v4 tight">')
-    .slice(1)
-    .map((card) => {
-      const link = card.match(/\/(movie|tv)\/(\d+)/)
-      const title = card.match(/<h2>([^<]*)<\/h2>/)
-      const date = card.match(/<span class="release_date">([^<]*)<\/span>/)
-      const poster = card.match(/\/t\/p\/w\d+[^"']*?\/([A-Za-z0-9_-]+\.(?:jpg|png))/)
-      return {
-        kind: link ? link[1] : kind,
-        tmdbId: link ? Number(link[2]) : null,
-        title: title ? title[1].trim() : null,
-        released: date ? date[1].trim() : null,
-        poster: poster ? poster[1] : null,
-      }
-    })
-    .filter((c) => c.tmdbId && c.poster)
-}
+// The parsing happens in the sandbox, not here. A previous version guessed at
+// TMDB's card markup twice and was wrong twice — once silently (an `<h2>`
+// regex that matched the empty-state template) and once loudly (a container
+// class that no longer exists, so every title came back with zero
+// candidates). So the runner's job is reduced to what it is uniquely able to
+// do: reach the network. It saves each search page verbatim and downloads the
+// first few posters the page references, in page order. The sandbox parses
+// the saved HTML against what TMDB actually served, and judges the artwork by
+// eye with the files already in hand.
 
-async function search(url, kind) {
+const POSTERS_PER_PAGE = 6
+
+/** Poster filenames in page order, deduped — whatever the markup around them. */
+const postersIn = (html) => [
+  ...new Set([...html.matchAll(/\/t\/p\/w\d+[^"']*?\/([A-Za-z0-9_-]{8,}\.(?:jpg|png))/g)].map((m) => m[1])),
+]
+
+async function fetchPage(url, name) {
   const res = await fetch(url, { headers: UA })
-  if (!res.ok) return { status: res.status, cards: [] }
-  return { status: res.status, cards: parseCards(await res.text(), kind) }
+  const html = res.ok ? await res.text() : ''
+  await writeFile(new URL(`html/${name}.html`, OUT), html)
+  const files = postersIn(html).slice(0, POSTERS_PER_PAGE)
+  for (const f of files) await grab(f)
+  return { status: res.status, bytes: html.length, files }
 }
 
 const missing = [...RELEASES, ...CURATED].filter((r) => !r.poster && !r.endDate)
@@ -99,22 +93,19 @@ for (const row of missing) {
   // multi covers the rows whose `type` is a guess — several curated ones are
   const multi = `https://www.themoviedb.org/search?query=${encodeURIComponent(query)}`
   try {
-    let { cards } = await search(typed, kind)
-    let via = kind
-    if (!cards.length) {
-      await new Promise((r) => setTimeout(r, 800))
-      ;({ cards } = await search(multi, kind))
-      via = 'multi'
+    const pages = {
+      [kind]: await fetchPage(typed, `${row.id}-${kind}`),
+      multi: await fetchPage(multi, `${row.id}-multi`),
     }
-    const top = cards.slice(0, 3)
-    for (const c of top) c.got = await grab(c.poster)
-    report.searched[row.id] = { queried: query, title: row.title, via, candidates: top }
+    report.searched[row.id] = { queried: query, title: row.title, kind, pages }
     console.log(
-      `  ${top.length ? 'ok  ' : 'MISS'}  ${row.title}  (${query} via ${via}) -> ` +
-        top.map((c) => `${c.title} [${c.released ?? '?'}]`).join(' | '),
+      `  ${row.title} (${query}) -> ` +
+        Object.entries(pages)
+          .map(([k, p]) => `${k}: ${p.status} ${p.bytes}b ${p.files.length} posters`)
+          .join(' | '),
     )
   } catch (err) {
-    report.searched[row.id] = { queried: query, error: String(err).slice(0, 120), candidates: [] }
+    report.searched[row.id] = { queried: query, error: String(err).slice(0, 120) }
   }
   // be polite: one request in flight, a beat between them
   await new Promise((r) => setTimeout(r, 800))
