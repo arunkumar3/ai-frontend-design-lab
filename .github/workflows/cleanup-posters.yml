@@ -14,6 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete transient branch
+        # git push needs to run inside *a* repository — the first version of
+        # this step had no checkout and no init, so the push failed with "not
+        # a git repository" and an `|| echo` swallowed it: a green run that
+        # deleted nothing. The || clause now only forgives a genuinely absent
+        # branch, which the ls-remote guard distinguishes.
         run: |
-          git push "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" \
-            --delete posters-cache-temp || echo "already gone"
+          git init -q scratch && cd scratch
+          REMOTE="https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}"
+          if git ls-remote --exit-code --heads "$REMOTE" posters-cache-temp; then
+            git push "$REMOTE" --delete posters-cache-temp
+          else
+            echo "already gone"
+          fi
