@@ -5,12 +5,6 @@ import { chromium } from 'playwright'
 import { RELEASES, PLATFORMS } from '../src/data/releases.js'
 
 const RUN_DAY = 4 // Thursday
-const entryFmt = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-})
-const entryNoMonthFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric' })
 
 const asDate = (iso) => new Date(`${iso}T00:00:00`)
 const isoOf = (d) =>
@@ -20,15 +14,6 @@ function weekStart(iso) {
   const d = asDate(iso)
   d.setDate(d.getDate() - ((d.getDay() - RUN_DAY + 7) % 7))
   return d
-}
-
-function expectedWhen(r) {
-  const start = asDate(r.date)
-  if (!r.endDate) return entryFmt.format(start)
-  const end = asDate(r.endDate)
-  const sameMonth =
-    start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()
-  return `${(sameMonth ? entryNoMonthFmt : entryFmt).format(start)} – ${entryFmt.format(end)}`
 }
 
 const weeksFor = (region) => {
@@ -54,6 +39,33 @@ const check = (ok, label, detail = '') => {
   console.log(`${ok ? 'PASS' : 'FAIL'}  ${label}${detail ? `  ${detail}` : ''}`)
 }
 
+// Node and Chromium ship different ICU data: Node 22 renders en-GB with a
+// weekday as "Thu 6 Aug", Chromium 141 as "Thu, 6 Aug". Formatting the expected
+// string in the same engine that rendered the page keeps this check about
+// whether the card shows the right release's date, which is the claim, rather
+// than about whose ICU is newer. The dates themselves still come from the data.
+const expectedWhen = (releases) =>
+  page.evaluate((list) => {
+    const entryFmt = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    })
+    const entryNoMonthFmt = new Intl.DateTimeFormat('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+    })
+    const at = (iso) => new Date(`${iso}T00:00:00`)
+    return list.map(([date, endDate]) => {
+      const start = at(date)
+      if (!endDate) return entryFmt.format(start)
+      const end = at(endDate)
+      const sameMonth =
+        start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()
+      return `${(sameMonth ? entryNoMonthFmt : entryFmt).format(start)} – ${entryFmt.format(end)}`
+    })
+  }, releases.map((r) => [r.date, r.endDate ?? null]))
+
 const readCards = () =>
   page.$$eval('.v6-card', (nodes) =>
     nodes.map((c) => ({
@@ -76,14 +88,27 @@ for (const region of ['IN', 'US']) {
   const keys = [...byWeek.keys()].sort()
 
   // --- landing view -------------------------------------------------------
+  // Model pickDefaultWeek, not the raw clock: when the current week has no
+  // releases the page falls back to the most recent week that does, flagged
+  // "archive" — PHASE-2 §5.1's documented ageing behaviour. As first written
+  // this asserted selected === currentStart, which went red on 2026-08-20,
+  // the first run-day past the frozen data, on a page behaving exactly as
+  // specified. Same lesson as the ICU comma: confirm the check first.
+  const expectedStart = byWeek.has(currentStart)
+    ? currentStart
+    : (keys.filter((k) => k < currentStart).at(-1) ?? keys[0])
   const selected = await page.$eval('#v6-week', (n) => n.value)
-  check(selected === currentStart, 'opens on the current week', `selected ${selected}`)
+  check(
+    selected === expectedStart,
+    'opens on the week the clock resolves to',
+    `selected ${selected}, expected ${expectedStart}${expectedStart === currentStart ? ' (current)' : ' (fallback)'}`,
+  )
 
   let cards = await readCards()
-  const wantCurrent = byWeek.get(currentStart) ?? []
+  const wantCurrent = byWeek.get(expectedStart) ?? []
   check(
     cards.length === wantCurrent.length,
-    'landing page renders only the current week',
+    'landing page renders only the resolved week',
     `${cards.length} cards, week has ${wantCurrent.length}, region total ${
       RELEASES.filter((r) => r.region === region).length
     }`,
@@ -100,7 +125,11 @@ for (const region of ['IN', 'US']) {
     'header counts describe the shown week, not the whole feed',
     sub.trim(),
   )
-  check(!/archive|upcoming/.test(sub), 'current week carries no archive flag')
+  if (expectedStart === currentStart) {
+    check(!/archive|upcoming/.test(sub), 'current week carries no archive flag')
+  } else {
+    check(/archive|upcoming/.test(sub), 'the fallback week is flagged as archive', sub.trim())
+  }
 
   // --- the picker ---------------------------------------------------------
   const opts = await page.$$eval('#v6-week option', (ns) =>
@@ -143,11 +172,15 @@ for (const region of ['IN', 'US']) {
     check(sub2.includes(expectFlag), `a non-current week is flagged "${expectFlag}"`, sub2.trim())
 
     // every card still carries its own exact date
-    const wrong = cards.filter((c) => {
-      const rel = want.find((r) => r.title === c.title)
-      return !rel || c.when !== expectedWhen(rel)
-    })
-    check(wrong.length === 0, 'cards still show their own exact release date')
+    const whenFor = new Map(
+      (await expectedWhen(want)).map((formatted, i) => [want[i].title, formatted]),
+    )
+    const wrong = cards.filter((c) => whenFor.get(c.title) !== c.when)
+    check(
+      wrong.length === 0,
+      'cards still show their own exact release date',
+      wrong.map((c) => `${c.title}: got "${c.when}" want "${whenFor.get(c.title)}"`).join(' / '),
+    )
 
     const noPlatform = cards.filter((c) => {
       const rel = want.find((r) => r.title === c.title)
@@ -155,8 +188,8 @@ for (const region of ['IN', 'US']) {
     })
     check(noPlatform.length === 0, 'platform still named on every card')
 
-    // back to current for the next region pass
-    await page.selectOption('#v6-week', currentStart)
+    // back to the landing week for the next region pass
+    await page.selectOption('#v6-week', expectedStart)
     await page.waitForTimeout(300)
   }
   console.log('')

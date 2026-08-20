@@ -6,6 +6,8 @@ export const PLATFORMS = {
   sonyliv:      { label: 'SonyLIV',       color: '#CF2027' },
   sunnxt:       { label: 'Sun NXT',       color: '#D5222B' },
   lionsgate:    { label: 'Lionsgate Play',color: '#F5C518' },
+  aha:          { label: 'Aha',           color: '#FF6C2F' },
+  etvwin:       { label: 'ETV Win',       color: '#7B2E8E' },
   hbomax:       { label: 'HBO Max',       color: '#7B2BF9' },
   disneyplus:   { label: 'Disney+',       color: '#113CCF' },
   hulu:         { label: 'Hulu',          color: '#1CE783' },
@@ -14,9 +16,16 @@ export const PLATFORMS = {
 
 export const POSTER_BASE = 'https://image.tmdb.org/t/p/w500'
 
-/** Full poster URL, or null when no artwork exists. Cards must handle null. */
+/** Full poster URL, or null when no artwork exists. Cards must handle null.
+ *  A poster that is already a resolved URI (data: or https:) passes through —
+ *  the published sandbox preview embeds artwork as data URIs at bundle time,
+ *  and this seam is what lets it do that without touching any route. */
 export function posterUrl(release) {
-  return release.poster ? `${POSTER_BASE}/${release.poster}` : null
+  if (!release.poster) return null
+  if (release.poster.startsWith('data:') || release.poster.startsWith('http')) {
+    return release.poster
+  }
+  return `${POSTER_BASE}/${release.poster}`
 }
 
 // Week of 15–21 Aug 2026. Sources: FilmiBeat, myvi.in, FilmyChill, Boston.com.

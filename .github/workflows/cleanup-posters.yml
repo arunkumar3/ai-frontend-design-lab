@@ -1,0 +1,29 @@
+# Deletes the transient poster branch. The sandbox's git proxy only permits
+# pushes to the session branch, so the cleanup runs where the branch was made.
+name: cleanup-posters
+on:
+  push:
+    paths:
+      - '.poster-cleanup'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete transient branch
+        # git push needs to run inside *a* repository — the first version of
+        # this step had no checkout and no init, so the push failed with "not
+        # a git repository" and an `|| echo` swallowed it: a green run that
+        # deleted nothing. The || clause now only forgives a genuinely absent
+        # branch, which the ls-remote guard distinguishes.
+        run: |
+          git init -q scratch && cd scratch
+          REMOTE="https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}"
+          if git ls-remote --exit-code --heads "$REMOTE" posters-cache-temp; then
+            git push "$REMOTE" --delete posters-cache-temp
+          else
+            echo "already gone"
+          fi

@@ -3,9 +3,9 @@
 Measuring what design-direction techniques actually buy an AI coding agent building a UI
 from scratch — with evidence, not opinion.
 
-Seven builds of the same page. Six of them (`v0`–`v5`) add exactly one lever on top of the
-last, so the difference between any two routes is one variable. The seventh (`v6`) was built
-from what the measurements said.
+Eight builds of the same page. Six of them (`v0`–`v5`) add exactly one lever on top of the
+last, so the difference between any two routes is one variable. `v6` was built from what the
+measurements said; `v7` from a measured spec of a real site nobody here could load.
 
 **The deliverable is [`playbook/`](playbook/).** `lab/` is the apparatus that produced the
 evidence.
@@ -35,27 +35,41 @@ page, never the repository.
 
 ## The routes
 
-| Route | Lever added | Live audit findings |
-|---|---|---|
-| `/v0` | none — naive baseline, bare prompt, default Tailwind | 7 |
-| `/v1` | a standing constitution ([`CLAUDE.md`](CLAUDE.md)) | 28 |
-| `/v2` | a token system committed before any markup | 14 |
-| `/v3` | design references extracted from real sites | 3 |
-| `/v4` | a screenshot-critique loop (render, look, fix, repeat) | 3 |
-| `/v5` | installed community design skill packs | 3 |
-| `/v6` | *not a lever* — built from the verdict | **0** |
+| Route | Lever added | At build time | Re-scanned, same run |
+|---|---|---|---|
+| `/v0` | none — naive baseline, bare prompt, default Tailwind | 7 | 4 |
+| `/v1` | a standing constitution ([`CLAUDE.md`](CLAUDE.md)) | 28 | 13 |
+| `/v2` | a token system committed before any markup | 14 | 1 |
+| `/v3` | design references extracted from real sites | 3 | 3 |
+| `/v4` | a screenshot-critique loop (render, look, fix, repeat) | 3 | 3 |
+| `/v5` | installed community design skill packs | 3 | 3 |
+| `/v6` | *not a lever* — built from the verdict | 0 | 5 |
+| `/v7` | *not a lever* — built from a measured spec of [filmhood.in](https://filmhood.in) | — | **0** |
 
-Routes are append-only: a later drill never edits an earlier one, so all seven stay live
+Routes are append-only: a later drill never edits an earlier one, so all eight stay live
 and directly comparable.
 
-Two caveats worth stating before anyone quotes these numbers:
+**The two columns are the same tool on the same pages, and they disagree.** No route
+changed; `impeccable`'s rule set did. `v2` moves from third-worst to second-best, `v6`
+from a clean sheet to five findings on a rule that did not exist when it was scored, and
+`v1`'s headline 28 is now 13. Nothing in the left column is wrong — it was true when it was
+measured — but **a defect count is a reading of one tool at one version, and only a column
+where every page was scanned in the same run can be ranked.** This is the same lesson as the
+source-versus-live discovery below, arriving from a different direction:
+[`playbook/findings/v7.md`](playbook/findings/v7.md) §5.
+
+Three more caveats worth stating before anyone quotes these numbers:
 
 - **`v1` scoring worse than `v0` is real, not a typo.** `v0` scores well by never trying;
   the audit counts defects, and a page that attempts nothing has few. Ranking by defect
   count and ranking by whether a decision was made at all disagree sharply in the middle.
-- **`v6` is not a seventh lever and must not be scored as one.** The six drills each
-  isolated one variable, unsupervised. `v6` was directed by a human across several rounds.
-  It is included because its *findings about the tools* transfer.
+- **Neither `v6` nor `v7` is a lever, and neither must be scored as one.** The six drills
+  each isolated one variable, unsupervised. Both later routes were directed by a human
+  across several rounds. They are included because their *findings about the tools* transfer.
+- **`v7` has never rendered a poster.** `image.tmdb.org` is blocked on the network it was
+  built on, so its sixteen titles with artwork all fall through to the designed no-artwork
+  tile. For a design whose chrome is deliberately achromatic *so the artwork can be the
+  colour*, that is a real gap, not a footnote.
 
 ## What each lever was worth
 
@@ -76,33 +90,47 @@ thinking could not, and it costs nothing to adopt.
 cd lab && pnpm install && pnpm dev
 ```
 
-Then `http://localhost:5173/` for the index, or jump to `/v0`–`/v6`.
+Then `http://localhost:5173/` for the index, or jump to `/v0`–`/v7`.
 
 With the dev server still running, in a second shell:
 
 ```bash
-cd lab && pnpm shoot v6
+cd lab && pnpm shoot v7
 ```
 
-Writes six PNGs to `lab/shots/v6/` — 390 / 768 / 1440px, light and dark.
+Writes six PNGs to `lab/shots/v7/` — 390 / 768 / 1440px, light and dark.
 
 ### Verifying a change
 
 `v6` ships the checks phase 1 lacked. Each answers a question inspection cannot:
 
 ```bash
-pnpm verify:v6      # 27 render-vs-data checks, both regions
+pnpm test           # 35 unit tests — the feed boundary; no browser needed
+
+pnpm verify:v6      # 26 render-vs-data checks, both regions
 pnpm contrast:v6    # 20 computed contrast pairs, both themes
 pnpm palette:v6     # re-derives the palette from the live poster art
+
+pnpm verify:v7      # 38 render-vs-data checks, incl. the empty state and the calendar
+pnpm contrast:v7    # 32 computed pairs, read from the running page rather than a copy
+pnpm feed:shapes    # 10 adversarial feed shapes driven through the real page
 ```
+
+`src/feed/` is the boundary a live source lands on — validate, dedupe, and guarantee every
+platform lookup resolves before a route sees a record. `v7` reads through it; `v0`–`v6`
+still import the frozen table directly and are unchanged. See
+[`PHASE-2.md`](PHASE-2.md) §6.
 
 Plus the live audit, which must be pointed at the running URL, not at `src/`:
 
 ```bash
-npx impeccable detect http://localhost:5173/v6
+npx impeccable detect http://localhost:5173/v7
 ```
 
-All four were green at commit `d82fbf9`.
+`v6`'s four checks were green at `d82fbf9`; `verify:v6` needed a fix afterwards when Node
+and Chromium turned out to format dates differently ([`v6.md`](playbook/findings/v6.md) §6).
+`v7`'s checks are green as committed, and each was negative-tested — deliberately broken and
+confirmed to go red — before being believed.
 
 ## A note on the numbers
 
@@ -110,8 +138,8 @@ Every page-height figure in the playbook (e.g. "`v4` = 3742px") is measured from
 captured at `deviceScaleFactor: 2` — **device pixels**, twice CSS pixels. Checking
 `scrollHeight` in a browser at 1× gives half that. Different unit, not an error.
 
-`v6`'s height is not comparable to the others at all: it renders one week where `v0`–`v5`
-render the whole slate.
+`v6` and `v7`'s heights are not comparable to the others at all: they render one week where
+`v0`–`v5` render the whole slate.
 
 ## Where to start reading
 
@@ -122,7 +150,12 @@ render the whole slate.
 - [`playbook/findings/RANKING.md`](playbook/findings/RANKING.md) — the verdict pass
 - [`playbook/findings/v6.md`](playbook/findings/v6.md) — what building the predicted page
   proved about the toolkit, including where the verdict's own prescription was wrong
-- [`PHASE-2.md`](PHASE-2.md) — current state and what's next
+- [`playbook/findings/v7.md`](playbook/findings/v7.md) — building from a reference nobody
+  could load: why the 3D everyone assumed was there was two gradients and an easing curve,
+  and why a reference's layout is the one thing not to copy
+- [`HANDOFF.md`](HANDOFF.md) — current state, every check, what's blocked, what's next
+- [`PHASE-2.md`](PHASE-2.md) — why each `v6` decision was made, and the trap list
+- [`docs/sessions/`](docs/sessions/) — what happened in each working session
 - [`CLAUDE.md`](CLAUDE.md) — the constitution, including the rules the drills forced into it
 
 ## Scope and honesty
@@ -133,14 +166,21 @@ different page could rank them differently. Treat the method as the transferable
 isolate one variable, render it, and check the output rather than the intent.
 
 The dataset in `lab/src/data/releases.js` is a frozen hand-scraped snapshot of 22 titles
-dated August 2026. `v6` resolves "this week" against the real clock, so it degrades to the
-most recent week with releases once the clock passes the data. It needs a live feed to be a
-real product; see [`PHASE-2.md`](PHASE-2.md).
+dated August 2026. `v6` and `v7` resolve "this week" against the real clock, so they degrade
+to the most recent week with releases once the clock passes the data. It needs a live feed to
+be a real product; see [`PHASE-2.md`](PHASE-2.md).
+
+`v7` reproduces the *visual language* of [filmhood.in](https://filmhood.in) — palette, type
+pairing, card treatment, section rhythm — from a spec of measured values read off the live
+page. No code, markup or asset was copied, and it is not affiliated with or endorsed by
+Filmhood. See [`NOTICE`](NOTICE).
 
 ## Third-party work
 
 `.agents/skills/` and `.claude/skills/` vendor 24 community skill packs from three projects
-(MIT and Apache-2.0), committed so the `v5` measurement stays reproducible. Attribution,
+(MIT and Apache-2.0), committed so the `v5` measurement stays reproducible. `lab/public/fonts/`
+holds two OFL-licensed webfont subsets, self-hosted so `v7`'s typography does not depend on a
+third-party host being reachable at screenshot time. Attribution,
 licenses and provenance are in [`NOTICE`](NOTICE) and
 [`third_party/licenses/`](third_party/licenses/). Everything else here is this
 repository's own work.

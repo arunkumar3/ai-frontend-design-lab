@@ -88,10 +88,42 @@ If you maintain one of these projects and want the attribution corrected, the
 vendored copy removed, or the framing changed, please open an issue.
 
 --------------------------------------------------------------------------------
+Fonts — SIL Open Font License 1.1
+--------------------------------------------------------------------------------
+
+`lab/public/fonts/` holds two latin-subset woff2 files, redistributed under the
+OFL. They are self-hosted rather than linked from fonts.googleapis.com because
+this lab's primary instrument is a screenshot: when the font host is unreachable
+the page silently renders in a fallback face, and a review pass will approve the
+wrong typography without ever knowing it did.
+
+  Abril Fatface — Copyright (c) 2011 TypeTogether, Reserved Font Names "Abril"
+    and "Abril Fatface". https://fonts.google.com/specimen/Abril+Fatface
+    License text: third_party/licenses/abril-fatface.OFL.txt
+
+  Afacad Flux — Copyright 2023 The Afacad Project Authors.
+    https://github.com/Dicotype/Afacad
+    License text: third_party/licenses/afacad-flux.OFL.txt
+
+Routes `v0`-`v6` still link their faces from fonts.googleapis.com; those drills
+are frozen as measured and are not edited.
+
+--------------------------------------------------------------------------------
 Other credits
 --------------------------------------------------------------------------------
 
+`lab/src/routes/v7/` reproduces the visual language of https://filmhood.in — its
+palette, type pairing, card treatment and section rhythm — as a design exercise.
+No code, markup, stylesheet or asset was copied from that site; the spec it was
+built against was a set of measured values (computed styles and colour counts)
+read off the live page. It is not affiliated with or endorsed by Filmhood.
+
 Poster artwork referenced by `lab/` is served from TMDB (https://www.themoviedb.org)
-by URL and is not redistributed here. This product uses the TMDB API but is not
+by URL and is not redistributed in this repository. One deliberate exception, decided by
+the repository owner on 2026-08-20: the private published sandbox preview (a Claude
+artifact page, whose content-security policy cannot load remote images) embeds low-res
+poster thumbnails as data URIs at bundle time. Those bytes live only in that preview
+page, never in this repository — the local `.posters-cache/` they are built from is
+gitignored. This product uses the TMDB API but is not
 endorsed or certified by TMDB. Release dates were compiled from FilmiBeat, myvi.in,
 FilmyChill and Boston.com; see `lab/src/data/releases.js`.

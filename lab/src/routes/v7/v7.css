@@ -1,0 +1,1173 @@
+/* v7 — the weekly radar in filmhood.in's visual language.
+
+   Plain CSS custom properties scoped to .v7-page. No @theme here: this file is
+   imported from a component rather than from the file holding
+   `@import "tailwindcss"`, so an @theme block would ship as inert text and every
+   token would silently resolve to "" (v1's failure, recorded in CLAUDE.md).
+
+   ---------------------------------------------------------------------------
+   What is taken from the reference, and what is deliberately not
+
+   Taken: one acid-lime accent on an otherwise achromatic ground; Abril Fatface
+   over a variable grotesque; cards that are bordered rather than shadowed, with
+   hover swapping only the border to lime; free-scrolling poster strips; the
+   infinite ticker; the magnetic nav link and its travelling pill; and the
+   single full-bleed inverted block that resolves the page.
+
+   Not taken, with reasons:
+   - The 254-anchor poster depth-field. It is a rAF loop that never idles, it is
+     the one effect on that page with no reduced-motion guard, and its
+     `touch-action: none` band swallows vertical swipes. The spec's own honest
+     read calls it the weakest thing there.
+   - Thirteen type sizes on the first screen, six of them crowded into
+     10.4-13.12px. This page has four, and they are declared once, below.
+   - `rgba(255,255,255,.6)` card dates over poster artwork. Alpha on already
+     muted text is the exact failure v5 and v6 both paid for: the token pair
+     computes as passing and the rendered pixels do not. Every recessive value
+     here is a solid token, and every pair is computed in `pnpm contrast:v7`.
+   - Dark-only. The reference has no light theme and no prefers-color-scheme
+     query at all; this repo requires both to be designed.
+
+   ---------------------------------------------------------------------------
+   Contrast, computed rather than eyeballed (4.5:1 body, 3:1 large)
+
+   Chrome pairs are checked in both themes by `pnpm contrast:v7`. The card
+   caption sits over artwork, so it is checked against the worst case the scrim
+   can present — a pure white poster behind it — not against a convenient one. */
+
+/* Self-hosted rather than pulled from fonts.googleapis.com. Two reasons, and
+   only one of them is preference: a lab whose primary instrument is a
+   screenshot cannot have its typeface depend on a third-party host being
+   reachable — when it is not, the page silently renders in the fallback and
+   four review passes will happily approve the wrong face. Both files are the
+   latin subset, SIL OFL 1.1; see NOTICE. */
+@font-face {
+  font-family: 'Abril Fatface';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/abril-fatface-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Afacad Flux';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/afacad-flux-latin.woff2') format('woff2');
+}
+
+.v7-page {
+  /* ---- light: warm paper. Designed, not an inversion of the dark values. --- */
+  --canvas: #f7f7f1;
+  --surface: #efefe7;
+  --hairline: #d8d8cc;
+  --hairline-strong: #b9b9a8;
+  --text: #16160f;
+  --muted: #5f5f57;
+
+  /* One accent, one hue. The lime carries text only where it is the ground;
+     where it has to *be* text on paper it is the same hue driven down until it
+     clears 4.5:1 (6.99:1 as set). That is one accent rendered at the lightness
+     each theme needs, not two accents. */
+  --field: #e6ff41;
+  --field-ink: #101010;
+  --accent: #4f5a00;
+
+  /* The media band. Poster art is a dark object in both themes by choice: a
+     tile that flips to paper in light mode would read as a missing image, and
+     the eight titles with no artwork have to sit in the same band as the
+     fourteen that have it. */
+  --tile-a: #1c1c1c;
+  --tile-b: #242424;
+  --tile-c: #171717;
+  --tile-text: #f2f2f2;
+  --tile-line: #343434;
+
+  --radius: 12px;
+  --radius-sm: 6px;
+
+  /* Four sizes. That is the whole scale. */
+  --t-display: clamp(2.4rem, 5.2vw, 3.6rem);
+  --t-head: 1.5rem;
+  --t-body: 1rem;
+  --t-meta: 0.8125rem;
+
+  --font-display: 'Abril Fatface', Georgia, 'Times New Roman', serif;
+  --font: 'Afacad Flux', ui-sans-serif, system-ui, sans-serif;
+
+  /* The reference runs a 880px column at 1440 because its groups are
+     horizontal strips: card width is fixed and you scroll for more, so the
+     column can be narrow. This page lays the week out as a grid, so the column
+     width *is* the card width — at 880px minus a 300px calendar the cards came
+     out 160px wide and titles broke mid-word. Held by symmetric padding rather
+     than a max-width container, same as the reference. */
+  --gutter: min(12vw, 168px);
+
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--t-body);
+  line-height: 1.45;
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  .v7-page {
+    --canvas: #121212;
+    --surface: #1b1b1b;
+    --hairline: #2e2e2e;
+    --hairline-strong: #3f3f3f;
+    --text: #f5f5f5;
+    --muted: #a8a8a8;
+    --accent: #e6ff41;
+    --tile-a: #1f1f1f;
+    --tile-b: #272727;
+    --tile-c: #191919;
+    --tile-line: #383838;
+  }
+}
+
+.v7-page *,
+.v7-page *::before,
+.v7-page *::after {
+  box-sizing: border-box;
+}
+
+/* This stylesheet must stand without Tailwind's preflight: the published
+   preview bundles only route CSS, and the day the card frame became an <a>,
+   every tile title rendered UA-default blue with underlines there — invisible
+   on localhost, where index.css's preflight was quietly covering for us. */
+.v7-page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.v7-page :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------------------ nav --- */
+
+.v7-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 60px;
+  padding: 0 var(--gutter);
+  background: color-mix(in srgb, var(--canvas) 90%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.v7-nav__mark {
+  font-family: var(--font-display);
+  font-size: var(--t-head);
+  line-height: 1;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.v7-nav__links {
+  position: relative;
+  --ao: 0;
+}
+
+.v7-nav__links ul {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The travelling pill. It sits behind the labels and moves between them.
+
+   The reference transitions `width`, `height`, `top` and `left` — four
+   properties that all force layout, which the live audit flags. The travel is
+   the part the eye reads, so that runs on `translate` (composited) and the
+   resize lands instantly. Same effect, nothing on the layout path. */
+.v7-nav__links::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--aw, 0);
+  height: var(--ah, 0);
+  translate: var(--al, 0) var(--at, 0);
+  opacity: var(--ao);
+  z-index: 0;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  transition:
+    opacity 0.12s linear,
+    translate 0.22s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.v7-nav__item {
+  position: relative;
+  z-index: 1;
+}
+
+.v7-nav__link {
+  display: block;
+  padding: 6px 12px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  translate: calc(clamp(-1, var(--magnet-x, 0), 1) * 4px)
+    calc(clamp(-1, var(--magnet-y, 0), 1) * 3px);
+  transition:
+    translate 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+    color 0.15s linear;
+}
+
+/* Label and inner span travel at different rates — the cheap parallax that
+   makes the magnet read as depth rather than as a slide. */
+.v7-nav__link span {
+  display: block;
+  translate: calc(clamp(-1, var(--magnet-x, 0), 1) * 2px) 0;
+  transition: translate 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.v7-nav__link:hover {
+  color: var(--text);
+}
+
+.v7-nav__link[aria-pressed='true'] {
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+/* ----------------------------------------------------------------- hero --- */
+
+.v7-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(56px, 8vw, 96px) var(--gutter) clamp(40px, 5vw, 64px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.v7-hero__title {
+  /* The measure cap is on the text element, never on a wrapper: `ch` resolves
+     against the element's own font-size, and a 24ch cap set on a 16px parent
+     sized a 56px headline at ~190px in v6. */
+  max-width: 18ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-display);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: 0.005em;
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------- ticker --- */
+
+.v7-ticker__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.v7-ticker__window {
+  overflow: hidden;
+  max-width: min(64vw, 620px);
+  /* Fade zones in px, not per cent: at 8% of a 620px window the left fade was
+     50px wide and ate the first word of the first title outright. */
+  mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 56px), transparent);
+}
+
+.v7-ticker__track {
+  display: flex;
+  width: max-content;
+  /* Negative delay so the loop never rests at its own origin, where the first
+     title would sit under the left fade. */
+  animation: v7-ticker 34s linear -4s infinite;
+}
+
+.v7-ticker__list {
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+}
+
+/* Padding on the trailing side only: a leading pad on the first item put the
+   ticker 14px right of the headline it sits under. */
+.v7-ticker__list li {
+  white-space: nowrap;
+  padding-right: 28px;
+}
+
+.v7-ticker__list li::after {
+  content: '·';
+  margin-left: 14px;
+  color: var(--accent);
+}
+
+@keyframes v7-ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ------------------------------------------------------------- sections --- */
+
+.v7-section {
+  padding: clamp(48px, 6vw, 80px) var(--gutter) 0;
+}
+
+.v7-section:last-of-type {
+  padding-bottom: clamp(56px, 7vw, 96px);
+}
+
+/* Asymmetric by construction: the slate takes what it needs, the calendar is a
+   fixed 300px object beside it. */
+.v7-section--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+
+.v7-head {
+  margin-bottom: 20px;
+}
+
+.v7-head__label {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-head);
+  font-weight: 400;
+  line-height: 1.24;
+  letter-spacing: 0.012em;
+}
+
+.v7-head__note {
+  max-width: 62ch;
+  margin: 4px 0 0;
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+.v7-flag {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ---------------------------------------------------------------- slate --- */
+
+.v7-slate__grid {
+  display: grid;
+  /* Capped tracks, not bare 1fr. The first run-day past the frozen data left
+     a 1-title current week, and one column of 1fr stretched that lone card to
+     ~720x1080px — a full-bleed black slab. Same trap as the 736px calendar,
+     from the other side: the floor was guarded, the ceiling was not. At three
+     columns the cap never engages (tracks are ~233px at 1440); it exists for
+     the 1- and 2-title weeks. */
+  grid-template-columns: repeat(var(--cols), minmax(0, 250px));
+  gap: 24px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ----------------------------------------------------------------- card --- */
+
+.v7-card {
+  /* Fluid in its grid cell, with a floor: below ~150px the title clamps to two
+     lines of two words and the tag line wraps to three rows. */
+  min-width: 0;
+}
+
+.v7-card__frame {
+  /* The frame became a link when the sheet arrived; anchors are inline by
+     default and an inline box ignores the sizing that kept the poster in its
+     band — feed:shapes caught it within the hour. */
+  display: block;
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--tile-c);
+  /* Bordered, not shadowed. The whole page stays flat and printed; elevation is
+     spent on nothing here, which is what makes the one lime block land. */
+  transition: border-color 0.3s linear;
+}
+
+.v7-card:hover .v7-card__frame,
+.v7-card:focus-within .v7-card__frame {
+  border-color: var(--field);
+}
+
+.v7-poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+}
+
+.v7-card:hover .v7-poster {
+  transform: scale(1.08);
+}
+
+/* The designed no-artwork surface. Six of twenty-two titles have no poster,
+   and the constitution is explicit: if the data has a title, show the title —
+   no monogram, no invented abbreviation.
+
+   It is a whole tile rather than a scrim over an empty box, which is what makes
+   it a surface rather than a hole. It also carries the date itself, so the
+   scrim caption is not layered on top repeating the same words: in round one
+   the tile title and the caption title rendered as two overlapping copies of
+   the same string. */
+.v7-card__frame--none {
+  border-color: var(--tile-line);
+}
+
+.v7-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 100%;
+  padding: 16px 14px 14px;
+  background: var(--tile-a);
+}
+
+.v7-tile--b {
+  background: var(--tile-b);
+}
+
+.v7-tile--c {
+  background: var(--tile-c);
+}
+
+.v7-tile__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-head);
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--tile-text);
+  /* break-word, not anywhere: `anywhere` also drives min-content sizing, so it
+     breaks eagerly and rendered "Agnipareeksha" as "Agniparee / ksha" even
+     where the whole word would have fit. Three columns rather than four is the
+     other half of that fix — the longest title in the data is 13 characters of
+     Abril at 24px, which needs ~210px of measure, and four columns gave 175. */
+  overflow-wrap: break-word;
+}
+
+.v7-tile__when {
+  margin: 0;
+  font-size: var(--t-meta);
+  color: #d2d2d2;
+}
+
+/* Caption over artwork. The scrim's floor is what makes the pair provable: at
+   0.92 over a pure white poster the ground is #1e1e1e, and at the top of the
+   caption band it is still #3b3b3b. Both are computed in contrast:v7. */
+.v7-card__meta {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 28px 12px 10px;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.92) 0%,
+    rgba(10, 10, 10, 0.8) 46%,
+    rgba(10, 10, 10, 0) 100%
+  );
+  transition: transform 0.5s ease-in-out;
+}
+
+.v7-card:hover .v7-card__meta {
+  transform: translateY(-4px);
+}
+
+.v7-card__name {
+  margin: 0;
+  font-size: var(--t-body);
+  font-weight: 600;
+  line-height: 1.28;
+  color: #f5f5f5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.v7-card__approx {
+  font-weight: 400;
+  color: #d2d2d2;
+}
+
+.v7-card__when {
+  margin: 2px 0 0;
+  font-size: var(--t-meta);
+  color: #d2d2d2;
+}
+
+.v7-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  margin: 8px 0 0;
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+.v7-card__tags span + span::before {
+  content: '·';
+  margin-right: 8px;
+}
+
+/* ---------------------------------------------------------------- empty --- */
+
+.v7-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 32px 28px;
+  border: 1px dashed var(--hairline-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.v7-empty__lead {
+  max-width: 46ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--t-head);
+  line-height: 1.24;
+}
+
+.v7-btn {
+  padding: 9px 16px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--t-meta);
+  cursor: pointer;
+  transition:
+    background 0.15s linear,
+    color 0.15s linear;
+}
+
+.v7-btn:hover {
+  background: var(--field);
+  border-color: var(--field);
+  color: var(--field-ink);
+}
+
+/* ------------------------------------------------------------- calendar --- */
+
+/* Sticky rather than parked at the top. Four rows of cards leave most of this
+   column empty otherwise, and a month view that scrolls away is useless exactly
+   when you are scanning the titles it indexes. */
+.v7-cal {
+  position: sticky;
+  top: 76px;
+  width: 300px;
+  padding: 18px 20px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.v7-cal__month {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: var(--t-head);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.v7-cal__head,
+.v7-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.v7-cal__head {
+  gap: 2px;
+  margin-bottom: 6px;
+  font-size: var(--t-meta);
+  color: var(--muted);
+  text-align: center;
+}
+
+.v7-cal__grid {
+  gap: 2px;
+}
+
+.v7-cal__cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  font-size: var(--t-meta);
+  font-variant-numeric: tabular-nums;
+}
+
+.v7-cal__cell--outside {
+  color: var(--muted);
+}
+
+.v7-cal__cell--today .v7-cal__num {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.v7-cal__hit {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--field);
+  color: var(--field-ink);
+  font: inherit;
+  font-size: var(--t-meta);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease-out;
+}
+
+.v7-cal__hit:hover {
+  transform: scale(1.12);
+}
+
+.v7-cal__key {
+  max-width: 34ch;
+  margin: 12px 0 0;
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- weeks --- */
+
+.v7-weeks {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.v7-week {
+  display: grid;
+  grid-template-columns: minmax(0, 13rem) minmax(0, 6.5rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-meta);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s linear,
+    background 0.2s linear;
+}
+
+.v7-week:hover {
+  border-color: var(--hairline-strong);
+  background: var(--surface);
+}
+
+.v7-week--on {
+  border-color: var(--accent);
+}
+
+.v7-week__standing {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.v7-week--on .v7-week__standing {
+  color: var(--accent);
+}
+
+/* The run's shape, on the rows it describes. A track that is always full width
+   and a fill that is the week's share of the busiest week, so a 1-title week
+   next to an 11-title week reads as the outlier it is.
+
+   These two colours were swapped for a day — a negative test's "restore" was a
+   first-occurrence string replace, and the first occurrence of the value it
+   put back was this track rule, not the fill it had broken. Every check stayed
+   green, because a contrast ratio is symmetric: swapping fill and track gives
+   the same number. Restore from a byte-copy, never by re-editing. */
+.v7-week__bar {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--hairline);
+}
+
+.v7-week__bar > span {
+  display: block;
+  width: var(--w);
+  min-width: 3px;
+  height: 100%;
+  border-radius: 3px;
+  /* --muted, not --hairline-strong. A fill one step off its own track measured
+     1.29:1 against it, which is a bar you have to hunt for. */
+  background: var(--muted);
+}
+
+/* --accent, not --field: in dark they are the same lime, but in light the raw
+   lime sits on a light track at ~1.3:1 — invisible exactly where it marks the
+   selected week. The accent token is the same hue driven to the lightness each
+   theme needs; that is what it exists for. Unmeasured until today because the
+   contrast script sampled "the first bar", and the selected row only became
+   the first row when the calendar rolled onto a new current week. */
+.v7-week--on .v7-week__bar > span {
+  background: var(--accent);
+}
+
+.v7-week__count {
+  color: var(--muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------- next run --- */
+
+/* The single inversion. Lime is the ground here, and it is the only place on
+   the page where the accent is a field rather than a mark. */
+.v7-next {
+  margin-top: clamp(72px, 9vw, 128px);
+  padding: 0 var(--gutter) clamp(40px, 5vw, 56px);
+  background: var(--field);
+  color: var(--field-ink);
+}
+
+.v7-next__inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+
+/* The overhang. The poster breaking the boundary is what makes the block read
+   as an object sitting on the page rather than a section with a different
+   background. */
+.v7-next__art {
+  margin-top: clamp(-96px, -7vw, -48px);
+}
+
+.v7-next__copy {
+  padding-top: clamp(40px, 5vw, 56px);
+}
+
+.v7-next__head {
+  margin: 0 0 20px;
+  font-weight: 400;
+}
+
+.v7-next__eyebrow {
+  display: block;
+  font-size: var(--t-meta);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.v7-next__date {
+  display: block;
+  max-width: 14ch;
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: var(--t-display);
+  line-height: 1.02;
+}
+
+.v7-next__list {
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(16, 16, 16, 0.28);
+}
+
+.v7-next__list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(16, 16, 16, 0.28);
+}
+
+.v7-next__name {
+  font-weight: 600;
+}
+
+.v7-next__when {
+  font-size: var(--t-meta);
+  font-variant-numeric: tabular-nums;
+}
+
+.v7-btn--ink {
+  border-color: var(--field-ink);
+  color: var(--field-ink);
+}
+
+.v7-btn--ink:hover {
+  background: var(--field-ink);
+  border-color: var(--field-ink);
+  color: var(--field);
+}
+
+/* The card inside the lime block keeps its dark media frame; only the metadata
+   line beneath it has to change ground. */
+.v7-next__art .v7-card__tags {
+  color: rgba(16, 16, 16, 0.78);
+}
+
+/* --------------------------------------------------------- responsive ----- */
+
+@media (max-width: 1180px) {
+  .v7-page {
+    --gutter: 6vw;
+  }
+
+  
+  }
+
+@media (max-width: 900px) {
+  .v7-section--split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  /* Both of these were sized by the grid column they sat in. Once the split
+     collapses they stretch to the full content width, and a 736px calendar has
+     105px square cells while a 2:3 poster at 736px is 1100px tall. Capped. */
+  .v7-cal {
+    position: static;
+    width: min(100%, 340px);
+  }
+
+  .v7-next__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .v7-next__art {
+    width: min(100%, 232px);
+  }
+
+  .v7-next__copy {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .v7-page {
+    --gutter: 16px;
+    --t-head: 1.15rem;
+  }
+
+  /* At two columns a card is ~155px wide and the longest titles in the data are
+     13 characters of a fat-face display serif. Hyphenation rather than a raw
+     mid-word break: a hyphen tells the reader the word continues, which
+     "Agnipareeksh / a" does not. */
+  .v7-tile__name {
+    hyphens: auto;
+  }
+
+  .v7-nav {
+    height: 54px;
+  }
+
+  .v7-ticker__window {
+    max-width: 100%;
+  }
+
+  .v7-slate__grid {
+    /* Forced to two: an 11-title week is 5 rows and a trailing single card, but
+       at two columns a lone last card reads as the end of the list rather than
+       as the marooned orphan a five-column grid produced in v4. */
+    --cols: 2 !important;
+    gap: 18px 12px;
+  }
+
+  .v7-week {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+  }
+
+  .v7-week__count {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .v7-week__bar {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------------------------------------------------- reduced motion ------ */
+
+/* The reference guards eight blocks and misses the one effect that never
+   idles. Everything that moves on this page is listed here. */
+@media (prefers-reduced-motion: reduce) {
+  .v7-ticker__track {
+    animation: none;
+  }
+
+  .v7-nav__links::after,
+  .v7-nav__link,
+  .v7-nav__link span {
+    transition: none;
+    translate: none;
+  }
+
+  .v7-poster,
+  .v7-card__frame,
+  .v7-card__meta,
+  .v7-cal__hit,
+  .v7-week,
+  .v7-btn {
+    transition: none;
+  }
+
+  .v7-card:hover .v7-poster,
+  .v7-card:hover .v7-card__meta,
+  .v7-cal__hit:hover {
+    transform: none;
+  }
+
+  .v7-chart--in .v7-chart__fill {
+    animation: none;
+  }
+
+  .v7-sheet[open],
+  .v7-sheet[open]::backdrop {
+    animation: none;
+  }
+
+}
+
+/* ---------------------------------------------------------------- notice --- */
+
+/* Shown only when the boundary dropped something. Quiet by construction — it
+   is a report about the source, not a warning to the reader — but it sits with
+   the list it describes rather than in a console nobody opens. */
+.v7-notice {
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+.v7-notice summary {
+  cursor: pointer;
+  color: var(--text);
+}
+
+.v7-notice ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.v7-notice code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+}
+
+/* ---------------------------------------------------------------- sheet --- */
+
+/* The release sheet. Elevation is earned here if anywhere — but the page's
+   language is bordered-not-shadowed, so separation comes from the backdrop
+   scrim and a hairline, not a drop shadow. */
+.v7-sheet {
+  width: min(92vw, 560px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius);
+  background: var(--canvas);
+  color: var(--text);
+}
+
+.v7-sheet::backdrop {
+  background: rgba(10, 10, 10, 0.62);
+}
+
+.v7-sheet__body {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.v7-sheet__art {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--tile-c);
+}
+
+.v7-sheet__art .v7-tile__name {
+  font-family: var(--font-display);
+  font-size: var(--t-body);
+  line-height: 1.2;
+  color: var(--tile-text);
+  overflow-wrap: break-word;
+}
+
+.v7-sheet__standing {
+  /* clear of the absolutely-positioned close button */
+  margin: 0;
+  padding-right: 40px;
+  font-size: var(--t-meta);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.v7-sheet__title {
+  margin: 4px 0 14px;
+  font-family: var(--font-display);
+  font-size: var(--t-head);
+  font-weight: 400;
+  line-height: 1.16;
+  overflow-wrap: break-word;
+}
+
+.v7-sheet__rows {
+  margin: 0 0 16px;
+  border-top: 1px solid var(--hairline);
+}
+
+.v7-sheet__rows > div {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--hairline);
+  font-size: var(--t-meta);
+}
+
+.v7-sheet__rows dt {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  padding-top: 1px;
+}
+
+.v7-sheet__rows dd {
+  margin: 0;
+}
+
+.v7-sheet__note {
+  margin: 0 0 14px;
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+.v7-sheet__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.v7-sheet__close:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+/* Entrance is additive: the dialog's resting state is fully visible, and the
+   animation only plays forward from a lower, transparent start — if it never
+   runs, the sheet is merely un-animated. */
+.v7-sheet[open] {
+  animation: v7-sheet-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.v7-sheet[open]::backdrop {
+  animation: v7-fade-in 0.22s linear;
+}
+
+@keyframes v7-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes v7-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The page must not scroll behind the top layer. */
+body:has(.v7-sheet[open]) {
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .v7-sheet__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .v7-sheet__art {
+    width: min(50%, 168px);
+  }
+}
