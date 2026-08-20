@@ -7,6 +7,7 @@ export const PLATFORMS = {
   sunnxt:       { label: 'Sun NXT',       color: '#D5222B' },
   lionsgate:    { label: 'Lionsgate Play',color: '#F5C518' },
   aha:          { label: 'Aha',           color: '#FF6C2F' },
+  etvwin:       { label: 'ETV Win',       color: '#7B2E8E' },
   hbomax:       { label: 'HBO Max',       color: '#7B2BF9' },
   disneyplus:   { label: 'Disney+',       color: '#113CCF' },
   hulu:         { label: 'Hulu',          color: '#1CE783' },

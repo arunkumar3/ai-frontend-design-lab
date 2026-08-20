@@ -3,6 +3,7 @@ import { RELEASES, PLATFORMS } from '../data/releases.js'
 import { validateRelease, isRealDate, humanisePlatform } from './schema.js'
 import { normaliseFeed, derivedPlatforms } from './normalise.js'
 import { loadFeed, forRegion, titlesInBothRegions, regionsIn } from './index.js'
+import { CURATED } from './sources/curated.js'
 import { mapTmdbRecord, discoverUrl, PROVIDERS } from './sources/tmdb.js'
 
 const valid = {
@@ -133,11 +134,22 @@ test('a non-array source degrades to an empty feed rather than throwing', () => 
 
 /* --------------------------------------------------------------- index --- */
 
-test('loadFeed defaults to the snapshot and reports its source', () => {
+test('loadFeed combines the snapshot with the curated week, nothing rejected', () => {
   const feed = loadFeed()
-  expect(feed.sourceId).toBe('snapshot')
-  expect(feed.releases.length).toBe(22)
+  expect(feed.sourceId).toBe('snapshot+curated-2026-08-20')
+  expect(feed.releases.length).toBe(22 + CURATED.length)
   expect(feed.rejected).toEqual([])
+  expect(feed.duplicates).toEqual([])
+})
+
+test('every curated row passes the same boundary as the snapshot', () => {
+  const feed = loadFeed()
+  for (const row of CURATED) {
+    expect(feed.releases.some((r) => r.id === row.id), row.id).toBe(true)
+    expect(feed.platforms[row.platform], `${row.id} -> ${row.platform}`).toBeDefined()
+  }
+  // and none of them leaked in as a derived platform — curated means curated
+  expect(feed.derived).toEqual([])
 })
 
 test('forRegion is date-ordered and covers both catalogs', () => {

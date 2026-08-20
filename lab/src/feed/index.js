@@ -3,6 +3,7 @@
 
 import { normaliseFeed, derivedPlatforms } from './normalise.js'
 import { snapshotSource } from './sources/snapshot.js'
+import { curatedSource } from './sources/curated.js'
 
 /**
  * The test seam.
@@ -23,14 +24,14 @@ function injectedRecords() {
 }
 
 /**
- * @returns {{
- *   releases: object[], platforms: object, rejected: object[],
- *   duplicates: object[], sourceId: string, sourceLabel: string
- * }}
+ * Sources are an array because no single one covers the page: the frozen
+ * snapshot, this week's hand-curated rows, one day a live fetch — they
+ * concatenate here and the boundary treats the pile as one feed, which is
+ * what `normaliseFeed` was shaped for from the start.
  */
-export function loadFeed({ source = snapshotSource } = {}) {
+export function loadFeed({ sources = [snapshotSource, curatedSource] } = {}) {
   const injected = injectedRecords()
-  const records = injected ?? source.read()
+  const records = injected ?? sources.flatMap((s) => s.read())
   const { releases, platforms, rejected, duplicates } = normaliseFeed(records)
 
   return {
@@ -39,8 +40,10 @@ export function loadFeed({ source = snapshotSource } = {}) {
     rejected,
     duplicates,
     derived: derivedPlatforms(platforms),
-    sourceId: injected ? 'injected' : source.id,
-    sourceLabel: injected ? `Injected (${records.length} records)` : source.label,
+    sourceId: injected ? 'injected' : sources.map((s) => s.id).join('+'),
+    sourceLabel: injected
+      ? `Injected (${records.length} records)`
+      : sources.map((s) => s.label).join(' + '),
   }
 }
 

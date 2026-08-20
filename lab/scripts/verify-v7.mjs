@@ -12,6 +12,11 @@
 // page. The script still decides *which* date belongs where; that is the claim.
 import { chromium } from 'playwright'
 import { RELEASES, PLATFORMS } from '../src/data/releases.js'
+import { CURATED } from '../src/feed/sources/curated.js'
+
+// The page renders the combined feed (snapshot + curated week), so the model
+// must too, or every count drifts the day a source is added.
+const ALL = [...RELEASES, ...CURATED]
 
 const RUN_DAY = 4 // Thursday
 const asDate = (iso) => new Date(`${iso}T00:00:00`)
@@ -30,7 +35,7 @@ function addDays(iso, n) {
 }
 
 const forRegion = (region) =>
-  RELEASES.filter((r) => r.region === region).sort((a, b) => a.date.localeCompare(b.date))
+  ALL.filter((r) => r.region === region).sort((a, b) => a.date.localeCompare(b.date))
 
 const weeksFor = (region) => {
   const map = new Map()

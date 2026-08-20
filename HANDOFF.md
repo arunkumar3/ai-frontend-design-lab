@@ -125,10 +125,12 @@ see the open decision in §8.
 ## 7. Gaps, ranked
 
 1. **No poster has ever rendered.** §4. Blocked on the network, ~30 min once unblocked.
-2. **The data is frozen and dated `2026-08`.** Once the clock passes the table every week
-   reads `archive` and the landing view falls back to the most recent week with releases —
-   correct behaviour, but it means the page needs a live feed to be real. The boundary and
-   the fetch script exist; the decision in §8 does not.
+2. **The data still ends where the curation ends.** The clock crossed the frozen snapshot
+   on 2026-08-20 and the week of 20–26 Aug was hand-curated the same day
+   (`src/feed/sources/curated.js` — a second source mixed in through the boundary, so
+   `v0`–`v6` still render the untouched 22-row table). That buys one week. The page needs
+   the live feed to stay real; the boundary and fetch script exist, the §8 decision does
+   not, and ETV Win's TMDB provider id still needs verifying before a live fetch covers it.
 3. **TMDB cannot supply sport.** Two of the 22 rows are cricket and football fixtures with
    date ranges. A real build needs a second source. `normaliseFeed` takes a concatenated
    array so sources can mix.

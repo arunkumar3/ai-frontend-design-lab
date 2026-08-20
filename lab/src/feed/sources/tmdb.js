@@ -31,6 +31,11 @@ export const PROVIDERS = {
     // above it has never been exercised against the live service. If Aha
     // titles are missing from a real fetch, verify this id first.
     aha: 532,
+    // ETV Win is curated in PLATFORMS but deliberately absent here: its TMDB
+    // provider id could not be verified from this network, and a guessed id
+    // would silently fetch some other service's catalog. Curated rows on
+    // etvwin render fine through the boundary; resolve the id before the
+    // first live fetch is expected to cover it.
   },
   US: {
     netflix: 8,
