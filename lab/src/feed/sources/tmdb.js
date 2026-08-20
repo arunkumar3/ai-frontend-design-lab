@@ -25,6 +25,12 @@ export const PROVIDERS = {
     sonyliv: 237,
     sunnxt: 309,
     lionsgate: 339,
+    // Aha — the Telugu-first OTT, added on request; conspicuous by absence for
+    // a page inspired by filmhood.in. Id 532 is TMDB's published provider id,
+    // but api.themoviedb.org is blocked on this network, so unlike the ids
+    // above it has never been exercised against the live service. If Aha
+    // titles are missing from a real fetch, verify this id first.
+    aha: 532,
   },
   US: {
     netflix: 8,

@@ -200,12 +200,15 @@ for (const scenario of SCENARIOS) {
     ).length,
     frames: [...document.querySelectorAll('.v7-card__frame')].filter((f) => {
       const r = f.getBoundingClientRect()
-      return r.width < 90 || r.height < 130
+      // Floor AND ceiling. The ceiling was missing until a 1-title week
+      // stretched a lone card to ~720px wide; a poster frame past ~320px is a
+      // slab, not a card, whatever the count.
+      return r.width < 90 || r.height < 130 || r.width > 320
     }).length,
   }))
   check(overflow.body <= 0, 'the page does not scroll sideways', `overflow ${overflow.body}px`)
   check(overflow.cells === 0, 'no card overflows its grid cell', `${overflow.cells} overflowing`)
-  check(overflow.frames === 0, 'no poster frame collapses below its floor', `${overflow.frames} collapsed`)
+  check(overflow.frames === 0, 'no poster frame breaks its size band (90-320px wide)', `${overflow.frames} out of band`)
 
   await page.close()
 }

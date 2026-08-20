@@ -372,7 +372,13 @@
 
 .v7-slate__grid {
   display: grid;
-  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  /* Capped tracks, not bare 1fr. The first run-day past the frozen data left
+     a 1-title current week, and one column of 1fr stretched that lone card to
+     ~720x1080px — a full-bleed black slab. Same trap as the 736px calendar,
+     from the other side: the floor was guarded, the ceiling was not. At three
+     columns the cap never engages (tracks are ~233px at 1440); it exists for
+     the 1- and 2-title weeks. */
+  grid-template-columns: repeat(var(--cols), minmax(0, 250px));
   gap: 24px 16px;
   margin: 0;
   padding: 0;
@@ -706,12 +712,18 @@
 
 /* The run's shape, on the rows it describes. A track that is always full width
    and a fill that is the week's share of the busiest week, so a 1-title week
-   next to an 11-title week reads as the outlier it is. */
+   next to an 11-title week reads as the outlier it is.
+
+   These two colours were swapped for a day — a negative test's "restore" was a
+   first-occurrence string replace, and the first occurrence of the value it
+   put back was this track rule, not the fill it had broken. Every check stayed
+   green, because a contrast ratio is symmetric: swapping fill and track gives
+   the same number. Restore from a byte-copy, never by re-editing. */
 .v7-week__bar {
   display: block;
   height: 6px;
   border-radius: 3px;
-  background: var(--muted);
+  background: var(--hairline);
 }
 
 .v7-week__bar > span {
@@ -722,11 +734,17 @@
   border-radius: 3px;
   /* --muted, not --hairline-strong. A fill one step off its own track measured
      1.29:1 against it, which is a bar you have to hunt for. */
-  background: var(--hairline);
+  background: var(--muted);
 }
 
+/* --accent, not --field: in dark they are the same lime, but in light the raw
+   lime sits on a light track at ~1.3:1 — invisible exactly where it marks the
+   selected week. The accent token is the same hue driven to the lightness each
+   theme needs; that is what it exists for. Unmeasured until today because the
+   contrast script sampled "the first bar", and the selected row only became
+   the first row when the calendar rolled onto a new current week. */
 .v7-week--on .v7-week__bar > span {
-  background: var(--field);
+  background: var(--accent);
 }
 
 .v7-week__count {

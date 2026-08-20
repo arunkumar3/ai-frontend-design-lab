@@ -78,8 +78,17 @@ for (const colorScheme of ['light', 'dark']) {
       // taken off the rendered elements rather than the tokens, so an override
       // anywhere in the cascade is caught
       cardWhen: getComputedStyle(document.querySelector('.v7-tile__when')).color,
+      // Selected and unselected sampled EXPLICITLY, never "the first bar".
+      // Which row comes first depends on which week the clock resolves to, so
+      // "the first" silently switched rows the day the calendar rolled — and
+      // the selected row's pair had never been measured at all.
       barTrack: getComputedStyle(document.querySelector('.v7-week__bar')).backgroundColor,
-      barFill: getComputedStyle(document.querySelector('.v7-week__bar > span')).backgroundColor,
+      barFillOn: getComputedStyle(
+        document.querySelector('.v7-week--on .v7-week__bar > span'),
+      ).backgroundColor,
+      barFillOff: getComputedStyle(
+        document.querySelector('.v7-week:not(.v7-week--on) .v7-week__bar > span'),
+      ).backgroundColor,
     }
   })
 
@@ -113,7 +122,8 @@ for (const colorScheme of ['light', 'dark']) {
   // fill touches — the fill sits on the track, and the track sits on the
   // canvas. It reported a failure for the right reason with the wrong numbers;
   // the bar was genuinely too weak, at 1.29:1 against its own track.
-  check('week bar against its track', p.barFill, p.barTrack, 3.0, '(non-text)')
+  check('unselected week bar against its track', p.barFillOff, p.barTrack, 3.0, '(non-text)')
+  check('selected week bar against its track', p.barFillOn, p.barTrack, 3.0, '(non-text)')
 
   // There was a third bar check here — track against canvas — and it failed at
   // 1.38:1. It was removed rather than satisfied, because it asserted something

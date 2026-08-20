@@ -128,6 +128,10 @@ or a defect count from a document without re-running it — both have gone stale
   the script's side.
 - **(v6)** A check restored to green proves nothing until you have watched it go red on
   purpose. Break the input deliberately and confirm the failure names the mismatch.
+- **(v7)** And restore the broken input from a byte-copy, never by re-applying an edit. A
+  negative test's string-replace "restore" matched a different rule that shared the same
+  value and silently swapped a bar's fill and track; every check stayed green for a day,
+  because a contrast ratio is symmetric — the swapped pair computes the same number.
 - **(v7)** A defect count is a reading of one tool at one version. `impeccable` scored `v6`
   at 0 and `v1` at 28 when they were built; the same routes on the same server score 5 and
   13 today, because rules were added and removed. Only a comparison where every page was

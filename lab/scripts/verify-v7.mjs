@@ -111,12 +111,24 @@ for (const region of ['IN', 'US']) {
   await go(region === 'IN' ? '' : '?region=US')
 
   // --- the landing week -----------------------------------------------------
-  const want = byWeek.get(currentStart) ?? []
+  // What the landing view shows is what resolveWeek picks, which is NOT
+  // blindly the current week: when the current week is empty the page falls
+  // back to the most recent week that has titles and flags it "archive" —
+  // documented behaviour, and the exact scenario feed:shapes drives with
+  // synthetic data. As first written this script assumed the current week
+  // always has titles; that was true the day it was written and false the
+  // first Thursday the clock rolled past the frozen data (2026-08-20), when
+  // it reported five failures on a page doing precisely what PHASE-2 §5.1
+  // says it should. The page was right. The check was wrong.
+  const resolved = byWeek.has(currentStart)
+    ? currentStart
+    : (keys.filter((k) => k < currentStart).at(-1) ?? keys[0])
+  const want = byWeek.get(resolved) ?? []
   let cards = await readSlate()
   check(
     cards.length === want.length,
-    'the landing view renders the whole current week',
-    `${cards.length} cards, week has ${want.length}, region total ${forRegion(region).length}`,
+    'the landing view renders the whole resolved week',
+    `${cards.length} cards, week ${resolved} has ${want.length}, region total ${forRegion(region).length}`,
   )
   check(
     cards.map((c) => c.title).sort().join('|') === want.map((r) => r.title).sort().join('|'),
@@ -155,12 +167,19 @@ for (const region of ['IN', 'US']) {
     'the header counts describe the shown week, not the whole feed',
     note.trim(),
   )
+  // A fallback week presented without a flag reads as this week's slate,
+  // which is a lie rather than a gap; the current week must carry no flag.
+  if (resolved === currentStart) {
+    check(!/archive|upcoming/.test(note), 'the current week carries no standing flag', note.trim())
+  } else {
+    check(/archive|upcoming/.test(note), 'the fallback week is flagged, not passed off as now', note.trim())
+  }
 
   // --- the calendar ---------------------------------------------------------
   const marked = await page.$$eval('.v7-cal__hit', (ns) =>
     ns.map((n) => ({ day: Number(n.textContent.trim()), label: n.getAttribute('aria-label') })),
   )
-  const month = currentStart.slice(0, 7)
+  const month = resolved.slice(0, 7)
   const wantDays = [...byDay.keys()]
     .filter((d) => d.startsWith(month))
     .map((d) => Number(d.slice(8)))
