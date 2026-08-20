@@ -16,7 +16,8 @@
     "contrast:v7": "node scripts/contrast-v7.mjs",
     "verify:v7": "node scripts/verify-v7.mjs",
     "feed:fetch": "node scripts/fetch-feed.mjs",
-    "feed:shapes": "node scripts/feed-shapes-v7.mjs"
+    "feed:shapes": "node scripts/feed-shapes-v7.mjs",
+    "posters:fetch": "node scripts/fetch-posters.mjs"
   },
   "dependencies": {
     "motion": "^13.1.0",

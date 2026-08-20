@@ -16,9 +16,16 @@ export const PLATFORMS = {
 
 export const POSTER_BASE = 'https://image.tmdb.org/t/p/w500'
 
-/** Full poster URL, or null when no artwork exists. Cards must handle null. */
+/** Full poster URL, or null when no artwork exists. Cards must handle null.
+ *  A poster that is already a resolved URI (data: or https:) passes through —
+ *  the published sandbox preview embeds artwork as data URIs at bundle time,
+ *  and this seam is what lets it do that without touching any route. */
 export function posterUrl(release) {
-  return release.poster ? `${POSTER_BASE}/${release.poster}` : null
+  if (!release.poster) return null
+  if (release.poster.startsWith('data:') || release.poster.startsWith('http')) {
+    return release.poster
+  }
+  return `${POSTER_BASE}/${release.poster}`
 }
 
 // Week of 15–21 Aug 2026. Sources: FilmiBeat, myvi.in, FilmyChill, Boston.com.

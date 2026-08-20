@@ -253,3 +253,14 @@ test('every provider key maps to a platform the curated table knows', () => {
     }
   }
 })
+
+/* ------------------------------------------------------------- posterUrl --- */
+
+import { posterUrl, POSTER_BASE } from '../data/releases.js'
+
+test('posterUrl builds TMDB paths but passes resolved URIs through untouched', () => {
+  expect(posterUrl({ poster: 'abc.jpg' })).toBe(`${POSTER_BASE}/abc.jpg`)
+  expect(posterUrl({ poster: null })).toBeNull()
+  expect(posterUrl({ poster: 'data:image/jpeg;base64,xyz' })).toBe('data:image/jpeg;base64,xyz')
+  expect(posterUrl({ poster: 'https://elsewhere.example/p.jpg' })).toBe('https://elsewhere.example/p.jpg')
+})

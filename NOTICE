@@ -119,6 +119,11 @@ built against was a set of measured values (computed styles and colour counts)
 read off the live page. It is not affiliated with or endorsed by Filmhood.
 
 Poster artwork referenced by `lab/` is served from TMDB (https://www.themoviedb.org)
-by URL and is not redistributed here. This product uses the TMDB API but is not
+by URL and is not redistributed in this repository. One deliberate exception, decided by
+the repository owner on 2026-08-20: the private published sandbox preview (a Claude
+artifact page, whose content-security policy cannot load remote images) embeds low-res
+poster thumbnails as data URIs at bundle time. Those bytes live only in that preview
+page, never in this repository — the local `.posters-cache/` they are built from is
+gitignored. This product uses the TMDB API but is not
 endorsed or certified by TMDB. Release dates were compiled from FilmiBeat, myvi.in,
 FilmyChill and Boston.com; see `lab/src/data/releases.js`.
