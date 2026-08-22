@@ -15,6 +15,12 @@ on:
   schedule:
     # Thursdays, 06:00 UTC — the app's publish day (see lab/scripts/fetch-feed.mjs).
     - cron: '0 6 * * 4'
+  # workflow_dispatch only registers once this file reaches the default branch — same
+  # limitation the poster workflow hit. Until then, a push that touches the trigger
+  # marker starts a run from this branch. Bump .feed-trigger to fire it.
+  push:
+    paths:
+      - '.feed-trigger'
 
 permissions:
   contents: write
