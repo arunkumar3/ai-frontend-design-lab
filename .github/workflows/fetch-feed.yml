@@ -13,8 +13,9 @@ name: fetch-feed
 on:
   workflow_dispatch:
   schedule:
-    # Thursdays, 06:00 UTC — the app's publish day (see lab/scripts/fetch-feed.mjs).
-    - cron: '0 6 * * 4'
+    # Thursdays, 18:30 UTC = Friday 00:00 IST — Thursday afternoon for the US
+    # side of the group, midnight-into-Friday for the India side, same instant.
+    - cron: '30 18 * * 4'
   # workflow_dispatch only registers once this file reaches the default branch — same
   # limitation the poster workflow hit. Until then, a push that touches the trigger
   # marker starts a run from this branch. Bump .feed-trigger to fire it.
