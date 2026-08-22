@@ -112,6 +112,18 @@
       "poster": "AjaNAeMXOrK9n0YqGqX0Lz5qxYu.jpg",
       "posterApprox": false,
       "tmdbId": 1538273
+    },
+    {
+      "id": "tmdb-us-series-330438",
+      "title": "The Girls: A Khloé Kardashian Project",
+      "date": "2026-08-21",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "8P12ytuz41DKCBSpjX3Ntev177Z.jpg",
+      "posterApprox": false,
+      "tmdbId": 330438
     }
   ]
 }
