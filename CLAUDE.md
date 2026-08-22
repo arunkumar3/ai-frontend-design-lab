@@ -4,6 +4,8 @@ Applies to all frontend work in this repository.
 
 Rules marked **(measured)** were added after `v0`–`v5`, because the original list missed
 them and the drills exposed the gap. Rules marked **(v6)** were added after the `v6` build.
+Rules marked **(posters)** came from the 2026-08-20 artwork harvest — see
+`docs/sessions/2026-08-20-posters-and-the-merge.md`.
 See `playbook/05-troubleshooting.md` and `playbook/findings/v6.md` for evidence.
 
 ## Start here
@@ -149,6 +151,16 @@ or a defect count from a document without re-running it — both have gone stale
   yourself, get `getComputedStyle` output, a colour histogram with counts, and the
   `@font-face` src URLs — not adjectives. "Warm off-white with a bold serif" cannot be
   built from; `#F7F7F1` and `Abril Fatface 400` can.
+- **(posters)** A review instrument that cannot fetch what the page fetches is reviewing the
+  fallback. Every screenshot pass in this repo reviewed the designed poster tiles, because
+  `image.tmdb.org` is blocked here and nothing errors when it is — the same shape as the
+  unreachable font host rendering Georgia. Give the blocked asset a local base the harness
+  can serve, or you are approving a page no reader sees.
+- **(posters)** A check that reads its expectation from the same file the page reads is
+  asserting that two lines agree, not that the page is right. Breaking the artwork overlay
+  left `verify:v7` green because the script imported that overlay too; only breaking the
+  page produced the failure. Negative-test by sabotaging the *render*, and know which half
+  of the claim your check cannot see.
 - **(v6)** Removing a structural element removes everything it silently carried. Deleting
   the week rail also deleted the page's only `<h2>`, leaving `h1` → `h3`; four screenshot
   passes could not see it and the live audit caught it immediately.

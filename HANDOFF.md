@@ -30,15 +30,17 @@ site with no branch step. Work since the merge sits on `claude/continue-discussi
 
 | | |
 |---|---|
-| *(latest)* | artwork for five artless rows + `VITE_POSTER_BASE` + the artwork checks |
-| `4d422f7` | the merge — everything below this line is on `main` |
-| | ETV Win + the hand-curated week of 20–26 Aug as a second feed source |
-| | Aha; survived the first run-day past the frozen data (four latent defects) |
-| | the feed boundary — `src/feed/`, `pnpm test`, `pnpm feed:shapes` |
-| | `/v7` — the radar in filmhood.in's visual language |
+| `d7f6311` | this document — merged `main`, the overlay, every suite re-counted |
+| `106aad6` | delete the transient poster branch after pickup |
+| `a5ed212` | a fifth poster, `VITE_POSTER_BASE`, and the artwork checks |
+| `bb8f392` | the artwork overlay — four verified posters, the rejections written down |
+| `0ca077b` | stop guessing TMDB's markup; harvest raw pages instead |
+| `3b51ef0` | poster harvest, second pass |
+| `4d422f7` | **the merge** — `/v0`–`/v7`, the feed boundary and every check script |
 
-Nothing is uncommitted. Run the checks — never trust this table's notion of "green"
-without re-running.
+Nothing is uncommitted, and **no PR is open for these six commits** — `main` runs the site
+but has none of the artwork work. Merging them is an open call (§8). Run the checks — never
+trust this table's notion of "green" without re-running.
 
 ## 3. Running it
 
@@ -104,8 +106,9 @@ The workflow now registers `workflow_dispatch` (it reached `main` with the merge
 can be fired from the Actions tab or the API — the `.poster-trigger` bump is no longer the
 only route.
 
-**25 of the 32 rows carry artwork** (the seven without are named in §7). Five were resolved on 2026-08-20 into
-`src/feed/sources/artwork.js`, an overlay keyed by release id: filling them into
+**25 of the 32 rows carry artwork** (the seven without are named in §7). Five were
+resolved on 2026-08-20 into `src/feed/sources/artwork.js`, an overlay keyed by release id.
+Filling them into
 `data/releases.js` would change six scored pages that render that table directly. `v7`
 reads through the boundary, so the overlay lands there alone, and `loadFeed` reports
 overlay entries whose id has disappeared instead of letting them rot.
@@ -203,6 +206,9 @@ see the open decision in §8.
 
 These are yours, not mine. Each changes what gets built next.
 
+- **Merge `claude/continue-discussion-w580hz` into `main`, or keep going on the branch?**
+  Six commits, all green. `main` currently renders the artless tiles for five rows that now
+  have artwork.
 - **Where does the weekly run execute, and does it publish static HTML per week?** This is
   the blocker on making the feed real. Static-per-week turns the archive into cacheable
   pages and kills the runtime fetch; runtime-fetch keeps one deploy and needs a loading and
@@ -232,6 +238,9 @@ The full list with evidence is in `CLAUDE.md`. The four that cost the most:
 
 ## 10. Where to read next
 
+- `docs/sessions/2026-08-20-posters-and-the-merge.md` — the most recent session: the
+  artwork harvest, why five titles keep their tiles, and the review instrument that had
+  been reviewing the fallback
 - `playbook/findings/RANKING.md` — the verdict pass, and the repo's central argument
 - `playbook/findings/v7.md` — building from a reference nobody could load
 - `PHASE-2.md` §2 — why each `v6` decision was made; §4 — the trap list with evidence
