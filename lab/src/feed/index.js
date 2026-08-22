@@ -4,6 +4,7 @@
 import { normaliseFeed, derivedPlatforms } from './normalise.js'
 import { snapshotSource } from './sources/snapshot.js'
 import { curatedSource } from './sources/curated.js'
+import { generatedSource } from './sources/generated.js'
 import { applyArtwork } from './sources/artwork.js'
 
 /**
@@ -30,7 +31,7 @@ function injectedRecords() {
  * concatenate here and the boundary treats the pile as one feed, which is
  * what `normaliseFeed` was shaped for from the start.
  */
-export function loadFeed({ sources = [snapshotSource, curatedSource] } = {}) {
+export function loadFeed({ sources = [snapshotSource, curatedSource, generatedSource] } = {}) {
   const injected = injectedRecords()
   const raw = injected ?? sources.flatMap((s) => s.read())
   // Artwork found after the fact is layered on here rather than edited into

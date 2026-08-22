@@ -1,18 +1,23 @@
 // Pull a real feed from TMDB, run it through the same boundary the app uses,
 // and write the result out with a report of what did not survive.
 //
-// This does NOT make the fetched file the app's source. Whether the weekly run
-// publishes a static file per week or the page fetches at runtime is an open
-// question in PHASE-2 §6, and answering it by side effect here would be the
-// wrong way to decide it. The script's job is to prove the pipeline end to end
-// and to show what a real payload does to the boundary.
+// HANDOFF §8 is resolved: the weekly run publishes a static file, committed
+// by `.github/workflows/fetch-feed.yml` on a GitHub runner (open network) and
+// read by `src/feed/sources/generated.js` (the sandbox's egress proxy still
+// blocks `api.themoviedb.org`, so this script has still never run against the
+// live API from inside this repo's own dev environment).
+//
+// Run with `--out` pointed at the tracked file, this MERGES with whatever is
+// already there rather than overwriting it — each weekly run adds a week to
+// the archive instead of replacing the last one. `normaliseFeed`'s dedupe-by-
+// id makes re-running an overlapping window safe.
 //
 //   TMDB_TOKEN=... pnpm feed:fetch -- --from 2026-08-13 --to 2026-08-19
 //
 // The token is a TMDB v4 read access token (Settings -> API -> "API Read
 // Access Token"), not the v3 key.
 
-import { writeFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { fetchTmdbFeed } from '../src/feed/sources/tmdb.js'
 import { normaliseFeed, derivedPlatforms } from '../src/feed/normalise.js'
@@ -68,7 +73,18 @@ if (!records.length && failures.length) {
   process.exit(1)
 }
 
-const { releases, platforms, rejected, duplicates } = normaliseFeed(records)
+// Fold in whatever a previous run already wrote, so the archive accumulates
+// weeks instead of each run discarding the last one. A first run, or a
+// missing/unreadable file, just means an empty history to fold onto.
+let previous = []
+try {
+  const prior = JSON.parse(await readFile(out, 'utf8'))
+  if (Array.isArray(prior.releases)) previous = prior.releases
+} catch {
+  // no prior file — first run
+}
+
+const { releases, platforms, rejected, duplicates } = normaliseFeed([...previous, ...records])
 const derived = derivedPlatforms(platforms)
 
 console.log(`\nfetched   ${records.length} raw records`)
@@ -105,5 +121,4 @@ await writeFile(
   out,
   JSON.stringify({ fetchedFor: { from, to }, source: 'tmdb', releases }, null, 2) + '\n',
 )
-console.log(`\nwrote ${releases.length} releases to ${out}`)
-console.log('This file is not yet wired as the app source — see PHASE-2 §6.')
+console.log(`\nwrote ${releases.length} releases (${previous.length} carried over) to ${out}`)

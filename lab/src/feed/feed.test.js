@@ -4,6 +4,7 @@ import { validateRelease, isRealDate, humanisePlatform } from './schema.js'
 import { normaliseFeed, derivedPlatforms } from './normalise.js'
 import { loadFeed, forRegion, titlesInBothRegions, regionsIn } from './index.js'
 import { CURATED } from './sources/curated.js'
+import { generatedSource } from './sources/generated.js'
 import { ARTWORK, applyArtwork } from './sources/artwork.js'
 import { mapTmdbRecord, discoverUrl, PROVIDERS } from './sources/tmdb.js'
 
@@ -135,9 +136,9 @@ test('a non-array source degrades to an empty feed rather than throwing', () => 
 
 /* --------------------------------------------------------------- index --- */
 
-test('loadFeed combines the snapshot with the curated week, nothing rejected', () => {
+test('loadFeed combines the snapshot, the curated week and the (empty, unrun) live feed, nothing rejected', () => {
   const feed = loadFeed()
-  expect(feed.sourceId).toBe('snapshot+curated-2026-08-20')
+  expect(feed.sourceId).toBe('snapshot+curated-2026-08-20+generated')
   expect(feed.releases.length).toBe(22 + CURATED.length)
   expect(feed.rejected).toEqual([])
   expect(feed.duplicates).toEqual([])
@@ -165,6 +166,11 @@ test('forRegion is date-ordered and covers both catalogs', () => {
 
 test('cross-region titles are found through the feed, not the raw table', () => {
   expect(titlesInBothRegions(loadFeed())).toContain('Lanterns')
+})
+
+test('the generated source is an honest empty result before its first CI run, not a silent failure', () => {
+  expect(generatedSource.read()).toEqual([])
+  expect(generatedSource.label).toBe('TMDB live (no run yet)')
 })
 
 /* -------------------------------------------------------------- artwork --- */

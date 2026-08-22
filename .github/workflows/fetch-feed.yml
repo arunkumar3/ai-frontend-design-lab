@@ -1,0 +1,64 @@
+# Fetches this week's TMDB releases on a GitHub runner, where the network is
+# open — the development sandbox's egress proxy blocks `api.themoviedb.org`,
+# but allows git transport to this repo. Unlike the poster harvest, this
+# writes straight to a tracked file: HANDOFF §8 decided the weekly run
+# publishes static data, committed here, rather than the page fetching TMDB
+# itself at runtime.
+#
+# Needs a repository secret named TMDB_TOKEN — a TMDB v4 read access token
+# (themoviedb.org -> Settings -> API -> "API Read Access Token"). Until that
+# secret exists, this workflow fails fast with instructions instead of
+# failing deep inside the fetch script.
+name: fetch-feed
+on:
+  workflow_dispatch:
+  schedule:
+    # Thursdays, 06:00 UTC — the app's publish day (see lab/scripts/fetch-feed.mjs).
+    - cron: '0 6 * * 4'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require TMDB_TOKEN
+        env:
+          TOKEN_SET: ${{ secrets.TMDB_TOKEN != '' }}
+        run: |
+          if [ "$TOKEN_SET" != "true" ]; then
+            echo "::error::TMDB_TOKEN secret is not set. Add a TMDB v4 read access token at" \
+                 "Settings -> Secrets and variables -> Actions -> New repository secret," \
+                 "named TMDB_TOKEN. Get one free at https://www.themoviedb.org/settings/api" \
+                 "(the API Read Access Token, not the v3 key)."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: lab
+        run: npm install
+
+      - name: Fetch this week's feed
+        working-directory: lab
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: node scripts/fetch-feed.mjs --out src/data/feed.live.json
+
+      - name: Commit if the feed changed
+        run: |
+          git config user.name feed-runner
+          git config user.email actions@invalid
+          git add lab/src/data/feed.live.json
+          if git diff --cached --quiet; then
+            echo "No change to the feed this run."
+          else
+            git commit -m "feed: weekly TMDB fetch $(date -u +%Y-%m-%d)"
+            git push
+          fi
