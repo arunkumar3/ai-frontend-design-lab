@@ -18,7 +18,8 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={<V7 />} />
+        <Route path="/drills" element={<Index />} />
         <Route path="/v0" element={<V0 />} />
         <Route path="/v1" element={<V1 />} />
         <Route path="/v2" element={<V2 />} />
