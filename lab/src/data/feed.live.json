@@ -1,5 +1,117 @@
 {
-  "fetchedFor": null,
+  "fetchedFor": {
+    "from": "2026-08-20",
+    "to": "2026-08-26"
+  },
   "source": "tmdb",
-  "releases": []
+  "releases": [
+    {
+      "id": "tmdb-in-movie-1741201",
+      "title": "Chompoo: Lost​ &​ Forgotten​",
+      "date": "2026-08-20",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": null,
+      "poster": "hrbzPEGyu33JyepFvSe6EkN35yq.jpg",
+      "posterApprox": false,
+      "tmdbId": 1741201
+    },
+    {
+      "id": "tmdb-us-movie-1741201",
+      "title": "Chompoo: Lost​ &​ Forgotten​",
+      "date": "2026-08-20",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": null,
+      "poster": "hrbzPEGyu33JyepFvSe6EkN35yq.jpg",
+      "posterApprox": false,
+      "tmdbId": 1741201
+    },
+    {
+      "id": "tmdb-us-movie-1231624",
+      "title": "He Loves Me Not",
+      "date": "2026-08-20",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "nLGZpK2ShMnwGFBmHRoc1DXV49r.jpg",
+      "posterApprox": false,
+      "tmdbId": 1231624
+    },
+    {
+      "id": "tmdb-in-movie-1626188",
+      "title": "Novak Djokovic: The Wolf in Winter",
+      "date": "2026-08-20",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "4VvaFy9Z5C879akw3XJ31XK4lWO.jpg",
+      "posterApprox": false,
+      "tmdbId": 1626188
+    },
+    {
+      "id": "tmdb-us-movie-1626188",
+      "title": "Novak Djokovic: The Wolf in Winter",
+      "date": "2026-08-20",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "4VvaFy9Z5C879akw3XJ31XK4lWO.jpg",
+      "posterApprox": false,
+      "tmdbId": 1626188
+    },
+    {
+      "id": "tmdb-in-movie-1621552",
+      "title": "Facing El Chapo",
+      "date": "2026-08-21",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": null,
+      "poster": "alpf5v4UqSFawPmG9RX03Or4BDk.jpg",
+      "posterApprox": false,
+      "tmdbId": 1621552
+    },
+    {
+      "id": "tmdb-us-movie-1621552",
+      "title": "Facing El Chapo",
+      "date": "2026-08-21",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": null,
+      "poster": "alpf5v4UqSFawPmG9RX03Or4BDk.jpg",
+      "posterApprox": false,
+      "tmdbId": 1621552
+    },
+    {
+      "id": "tmdb-us-movie-1732625",
+      "title": "LEGO Disney Princess: Magical Mayhem",
+      "date": "2026-08-21",
+      "region": "US",
+      "type": "movie",
+      "platform": "disneyplus",
+      "language": "English",
+      "poster": "xNA3Ub2MsAvbyg1GlDrrUQI2Kru.jpg",
+      "posterApprox": false,
+      "tmdbId": 1732625
+    },
+    {
+      "id": "tmdb-us-movie-1538273",
+      "title": "Pyaar Prema Kalyanam",
+      "date": "2026-08-21",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "Tamil",
+      "poster": "AjaNAeMXOrK9n0YqGqX0Lz5qxYu.jpg",
+      "posterApprox": false,
+      "tmdbId": 1538273
+    }
+  ]
 }
