@@ -136,10 +136,10 @@ test('a non-array source degrades to an empty feed rather than throwing', () => 
 
 /* --------------------------------------------------------------- index --- */
 
-test('loadFeed combines the snapshot, the curated week and the (empty, unrun) live feed, nothing rejected', () => {
+test('loadFeed combines the snapshot, the curated week and the live feed, nothing rejected', () => {
   const feed = loadFeed()
   expect(feed.sourceId).toBe('snapshot+curated-2026-08-20+generated')
-  expect(feed.releases.length).toBe(22 + CURATED.length)
+  expect(feed.releases.length).toBe(22 + CURATED.length + generatedSource.read().length)
   expect(feed.rejected).toEqual([])
   expect(feed.duplicates).toEqual([])
 })
@@ -168,9 +168,16 @@ test('cross-region titles are found through the feed, not the raw table', () => 
   expect(titlesInBothRegions(loadFeed())).toContain('Lanterns')
 })
 
-test('the generated source is an honest empty result before its first CI run, not a silent failure', () => {
-  expect(generatedSource.read()).toEqual([])
-  expect(generatedSource.label).toBe('TMDB live (no run yet)')
+test('the generated source reads whatever fetch-feed.yml last committed, and its label names the state honestly', () => {
+  const releases = generatedSource.read()
+  expect(Array.isArray(releases)).toBe(true)
+  // Empty (no CI run yet) and populated (a run landed) are both legitimate —
+  // the label says which, rather than a blank read looking like a failure.
+  if (releases.length === 0) {
+    expect(generatedSource.label).toBe('TMDB live (no run yet)')
+  } else {
+    expect(generatedSource.label).toMatch(/^TMDB live \(\d{4}-\d{2}-\d{2}\.\.\d{4}-\d{2}-\d{2}\)$/)
+  }
 })
 
 /* -------------------------------------------------------------- artwork --- */

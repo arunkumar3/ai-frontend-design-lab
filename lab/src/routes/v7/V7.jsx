@@ -150,11 +150,28 @@ function colsFor(count, max) {
   return max
 }
 
+/* colsFor's search can still fail: count % c === 1 for every c in [2, max]
+   whenever count leaves remainder 1 against every candidate — e.g. at max 3,
+   count ≡ 1 (mod 6), which a live weekly count will hit eventually (7, 13,
+   19…). --cols is also forced independently at narrow viewports (v7.css),
+   so whatever avoids the orphan has to hold at more than one column count —
+   ruling out picking a different split per breakpoint. */
+function isUnavoidableOrphan(count, cols) {
+  return count > cols && count % cols === 1
+}
+
 function Slate({ items, platforms }) {
+  const cols = colsFor(items.length, 3)
+  const cornered = isUnavoidableOrphan(items.length, cols)
+
   return (
-    <ul className="v7-slate__grid" style={{ '--cols': colsFor(items.length, 3) }}>
-      {items.map((r) => (
-        <li key={r.id}>
+    <ul className="v7-slate__grid" style={{ '--cols': cols }}>
+      {items.map((r, i) => (
+        // The trailing card an unavoidable remainder leaves spans the row
+        // instead of sitting in track 1 beside cols-1 empty ones — true at
+        // any --cols value, so it holds whether the forced-narrow mobile
+        // rule is in play or not.
+        <li key={r.id} className={cornered && i === items.length - 1 ? 'v7-slate__grid-item--wide' : undefined}>
           <Card release={r} platforms={platforms} />
         </li>
       ))}

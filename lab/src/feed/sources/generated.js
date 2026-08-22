@@ -14,7 +14,9 @@
 // TMDB cannot supply sport (see `sources/tmdb.js`), so the frozen snapshot's
 // two fixtures stay the only sport rows until a second live source exists.
 
-import feed from '../../data/feed.live.json'
+// The import attribute is required by plain Node (verify-v7.mjs, feed:fetch)
+// and accepted (ignored) by Vite's own JSON handling — needed either way.
+import feed from '../../data/feed.live.json' with { type: 'json' }
 
 export const generatedSource = {
   id: 'generated',

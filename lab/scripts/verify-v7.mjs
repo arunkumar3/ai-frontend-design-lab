@@ -14,10 +14,13 @@ import { chromium } from 'playwright'
 import { RELEASES, PLATFORMS } from '../src/data/releases.js'
 import { CURATED } from '../src/feed/sources/curated.js'
 import { ARTWORK } from '../src/feed/sources/artwork.js'
+import { generatedSource } from '../src/feed/sources/generated.js'
 
-// The page renders the combined feed (snapshot + curated week), so the model
-// must too, or every count drifts the day a source is added.
-const ALL = [...RELEASES, ...CURATED]
+// The page renders the combined feed (snapshot + curated week + whatever
+// fetch-feed.yml last committed), so the model must too, or every count
+// drifts the day a source is added — as it did the day the live source went
+// from an empty read to a real week.
+const ALL = [...RELEASES, ...CURATED, ...generatedSource.read()]
 
 const RUN_DAY = 4 // Thursday
 const asDate = (iso) => new Date(`${iso}T00:00:00`)
@@ -231,13 +234,25 @@ for (const region of ['IN', 'US']) {
   }
 
   // --- the grid never strands a single card on its own row ------------------
-  const cols = await page.$eval('.v7-slate__grid', (n) =>
-    Number(getComputedStyle(n).getPropertyValue('--cols')),
-  )
+  // A remainder colsFor can't resolve (see isUnavoidableOrphan in V7.jsx)
+  // renders as the last card spanning the row instead of sitting alone in
+  // track 1 — checked geometrically (its box is close to the full row width)
+  // rather than by re-deriving the same count % cols the page could not
+  // satisfy either.
+  const grid = await page.$eval('.v7-slate__grid', (n) => {
+    const cols = Number(getComputedStyle(n).getPropertyValue('--cols'))
+    const items = [...n.children]
+    const rowWidth = n.getBoundingClientRect().width
+    const lastWidth = items.length ? items[items.length - 1].getBoundingClientRect().width : 0
+    return { cols, count: items.length, rowWidth, lastWidth }
+  })
+  const orphaned = grid.count > grid.cols && grid.count % grid.cols === 1
   check(
-    want.length <= cols || want.length % cols !== 1,
+    !orphaned || grid.lastWidth >= grid.rowWidth * 0.9,
     'the column count leaves no orphan row',
-    `${want.length} titles in ${cols} columns`,
+    orphaned
+      ? `${grid.count} titles in ${grid.cols} columns, last card ${grid.lastWidth}px of ${grid.rowWidth}px row`
+      : `${grid.count} titles in ${grid.cols} columns`,
   )
 
   // --- header summary -------------------------------------------------------

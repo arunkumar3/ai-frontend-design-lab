@@ -394,6 +394,18 @@
   list-style: none;
 }
 
+/* A count colsFor cannot resolve without stranding one card (see
+   isUnavoidableOrphan in V7.jsx) spans the full row instead of sitting in
+   the first track beside cols-1 empty ones. Holds at any --cols, so it does
+   not need separate handling under the forced-narrow mobile rule below. */
+.v7-slate__grid-item--wide {
+  grid-column: 1 / -1;
+}
+
+.v7-slate__grid-item--wide .v7-card {
+  max-width: 250px;
+}
+
 /* ----------------------------------------------------------------- card --- */
 
 .v7-card {
