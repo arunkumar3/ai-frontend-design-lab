@@ -275,6 +275,14 @@
   color: var(--accent);
 }
 
+.v7-hero__sub {
+  max-width: 28ch;
+  margin: 0;
+  font-family: var(--font);
+  font-size: var(--t-body);
+  color: var(--muted);
+}
+
 /* --------------------------------------------------------------- ticker --- */
 
 .v7-ticker__sr {

@@ -291,7 +291,7 @@ function Nav({ region, regions, onRegion }) {
   return (
     <header className="v7-nav">
       <a className="v7-nav__mark" href="#v7-top">
-        Radar
+        Cheddy buddy&rsquo;s
       </a>
       <nav className="v7-nav__links" ref={ref} onPointerMove={onMove} onPointerLeave={onLeave}>
         <ul>
@@ -540,7 +540,8 @@ export default function V7() {
       />
 
       <section className="v7-hero">
-        <h1 className="v7-hero__title">Every drop, by the week.</h1>
+        <h1 className="v7-hero__title">Em chustunnaru e vaaram?</h1>
+        <p className="v7-hero__sub">Every OTT drop worth a group chat message.</p>
         <Ticker items={week.items} />
       </section>
 
@@ -549,11 +550,11 @@ export default function V7() {
           <div className="v7-slate">
             <div className="v7-head">
               <h2 className="v7-head__label" id="v7-week">
-                {standing === 'this week' ? 'This week' : formatWeekRange(week.start)}
+                {standing === 'this week' ? 'Ee vaaram' : formatWeekRange(week.start)}
               </h2>
               <p className="v7-head__note">
                 {week.items.length === 0
-                  ? `Nothing scheduled in ${REGION_OF[region]}`
+                  ? `Waste week — nothing dropped in ${REGION_OF[region]}`
                   : `${week.items.length} title${week.items.length === 1 ? '' : 's'} · ${platformCount} platform${platformCount === 1 ? '' : 's'} · ${week.range}`}
                 {standing !== 'this week' && week.items.length > 0 && (
                   <span className="v7-flag"> {standing}</span>
@@ -578,7 +579,8 @@ export default function V7() {
                  is the actual defect. */
               <div className="v7-empty">
                 <p className="v7-empty__lead">
-                  No titles land in {REGION_OF[region]} in the week of {formatWeekRange(week.start)}.
+                  Full waste — nothing landed in {REGION_OF[region]} the week of{' '}
+                  {formatWeekRange(week.start)}.
                 </p>
                 {nextRun ? (
                   <button
@@ -590,7 +592,7 @@ export default function V7() {
                   </button>
                 ) : (
                   <button type="button" className="v7-btn" onClick={() => setParam('week', null)}>
-                    Back to this week
+                    Back to ee vaaram
                   </button>
                 )}
               </div>
