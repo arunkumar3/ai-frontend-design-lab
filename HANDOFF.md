@@ -216,6 +216,10 @@ These are yours, not mine. Each changes what gets built next.
 - **Is `v7` scored as a drill?** It was human-directed across several rounds, like `v6`, so
   it is not a like-for-like measurement against `v0`–`v5`. The README says so; the levers
   table has never been updated with what `v6` and `v7` proved.
+- **Do the three scrollcraft proposals land in `CLAUDE.md`?** Import the fingerprint gate,
+  scope the entrance-animation rule so it is not silently violated by anything scroll-driven,
+  and split the reference rule into craft (measure it) and direction (do not name a site).
+  Argued in `playbook/findings/scrollcraft.md` §6. Nothing has been changed in `CLAUDE.md`.
 - **Does the grid still hold at feed scale?** `feed:shapes` proves 50 titles in a week lay
   out without breaking. Whether 50 cards is a *good* answer to "what dropped this week" is
   a design question nobody has looked at.
@@ -243,6 +247,9 @@ The full list with evidence is in `CLAUDE.md`. The four that cost the most:
   been reviewing the fallback
 - `playbook/findings/RANKING.md` — the verdict pass, and the repo's central argument
 - `playbook/findings/v7.md` — building from a reference nobody could load
+- `playbook/findings/scrollcraft.md` — the constitution diffed against `nateherkai/scroll-craft`,
+  the closest published equivalent: twelve independent agreements, three real conflicts, and
+  the fingerprint gate this repo should probably steal
 - `PHASE-2.md` §2 — why each `v6` decision was made; §4 — the trap list with evidence
 - `CLAUDE.md` — the constitution, including every rule the drills forced into it
 - `docs/sessions/` — what happened in each working session
