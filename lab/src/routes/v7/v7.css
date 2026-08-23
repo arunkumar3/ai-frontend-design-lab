@@ -149,6 +149,57 @@
   border-radius: 2px;
 }
 
+/* The surfaces the browser draws for us. None of these are in any check here —
+   impeccable scores this page 0 with all of them missing — and they are the
+   cheapest signal that a page was designed rather than assembled. */
+.v7-page ::selection {
+  background: var(--accent);
+  color: var(--canvas);
+}
+
+.v7-page {
+  caret-color: var(--accent);
+  scrollbar-color: var(--hairline-strong) var(--canvas);
+}
+
+.v7-page a:not([class]) {
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  text-decoration-thickness: from-font;
+}
+
+/* Free, and it removes the single orphan word that makes a headline look
+   accidental. Applied to the headings, not globally: `balance` is capped at a
+   few lines and costs layout work on long prose. */
+.v7-hero__title,
+.v7-head__label,
+.v7-sheet__title,
+.v7-card__name,
+.v7-tile__name {
+  text-wrap: balance;
+}
+
+.v7-hero__sub,
+.v7-cal__key {
+  text-wrap: pretty;
+}
+
+/* Press feedback. Every pressable acknowledges the press; a control that only
+   has a resting and a hover state is half-built, and on touch — where the
+   hover half above never fires at all — this is the only feedback there is. */
+@media (prefers-reduced-motion: no-preference) {
+  .v7-btn:active,
+  .v7-week:active,
+  .v7-sheet__close:active,
+  .v7-nav__link:active {
+    transform: translateY(1px);
+  }
+
+  .v7-cal__hit:active {
+    transform: scale(1.04);
+  }
+}
+
 /* ------------------------------------------------------------------ nav --- */
 
 .v7-nav {
@@ -242,8 +293,10 @@
   transition: translate 0.2s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.v7-nav__link:hover {
-  color: var(--text);
+@media (hover: hover) and (pointer: fine) {
+  .v7-nav__link:hover {
+    color: var(--text);
+  }
 }
 
 .v7-nav__link[aria-pressed='true'] {
@@ -438,9 +491,14 @@
   transition: border-color 0.3s linear;
 }
 
-.v7-card:hover .v7-card__frame,
 .v7-card:focus-within .v7-card__frame {
   border-color: var(--field);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .v7-card:hover .v7-card__frame {
+    border-color: var(--field);
+  }
 }
 
 .v7-poster {
@@ -448,11 +506,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease-in-out;
+  /* Slower than the buttons because it is a large surface travelling, but off
+     ease-in-out: the in half delays the moment the eye is already on. Same
+     curve the sheet and the chart already use. */
+  transition: transform 0.32s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.v7-card:hover .v7-poster {
-  transform: scale(1.08);
+@media (hover: hover) and (pointer: fine) {
+  .v7-card:hover .v7-poster {
+    transform: scale(1.08);
+  }
 }
 
 /* The designed no-artwork surface. Six of twenty-two titles have no poster,
@@ -520,11 +583,13 @@
     rgba(10, 10, 10, 0.8) 46%,
     rgba(10, 10, 10, 0) 100%
   );
-  transition: transform 0.5s ease-in-out;
+  transition: transform 0.18s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.v7-card:hover .v7-card__meta {
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .v7-card:hover .v7-card__meta {
+    transform: translateY(-4px);
+  }
 }
 
 .v7-card__name {
@@ -599,10 +664,12 @@
     color 0.15s linear;
 }
 
-.v7-btn:hover {
-  background: var(--field);
-  border-color: var(--field);
-  color: var(--field-ink);
+@media (hover: hover) and (pointer: fine) {
+  .v7-btn:hover {
+    background: var(--field);
+    border-color: var(--field);
+    color: var(--field-ink);
+  }
 }
 
 /* ------------------------------------------------------------- calendar --- */
@@ -683,8 +750,10 @@
   transition: transform 0.15s ease-out;
 }
 
-.v7-cal__hit:hover {
-  transform: scale(1.12);
+@media (hover: hover) and (pointer: fine) {
+  .v7-cal__hit:hover {
+    transform: scale(1.12);
+  }
 }
 
 .v7-cal__key {
@@ -724,9 +793,11 @@
     background 0.2s linear;
 }
 
-.v7-week:hover {
-  border-color: var(--hairline-strong);
-  background: var(--surface);
+@media (hover: hover) and (pointer: fine) {
+  .v7-week:hover {
+    border-color: var(--hairline-strong);
+    background: var(--surface);
+  }
 }
 
 .v7-week--on {
@@ -868,10 +939,12 @@
   color: var(--field-ink);
 }
 
-.v7-btn--ink:hover {
-  background: var(--field-ink);
-  border-color: var(--field-ink);
-  color: var(--field);
+@media (hover: hover) and (pointer: fine) {
+  .v7-btn--ink:hover {
+    background: var(--field-ink);
+    border-color: var(--field-ink);
+    color: var(--field);
+  }
 }
 
 /* The card inside the lime block keeps its dark media frame; only the metadata
@@ -966,7 +1039,11 @@
 /* ---------------------------------------------------- reduced motion ------ */
 
 /* The reference guards eight blocks and misses the one effect that never
-   idles. Everything that moves on this page is listed here. */
+   idles. Everything that moves on this page is listed here. The press-feedback
+   transforms are the exception: they are declared inside
+   `prefers-reduced-motion: no-preference` at the top of the file rather than
+   switched off down here, so this inventory stays the list of things that move
+   on their own. */
 @media (prefers-reduced-motion: reduce) {
   .v7-ticker__track {
     animation: none;
@@ -1148,9 +1225,11 @@
   cursor: pointer;
 }
 
-.v7-sheet__close:hover {
-  color: var(--text);
-  background: var(--surface);
+@media (hover: hover) and (pointer: fine) {
+  .v7-sheet__close:hover {
+    color: var(--text);
+    background: var(--surface);
+  }
 }
 
 /* Entrance is additive: the dialog's resting state is fully visible, and the

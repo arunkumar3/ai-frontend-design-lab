@@ -86,15 +86,30 @@ pnpm lint
 
 pnpm verify:v6     # 26 render-vs-data checks
 pnpm contrast:v6   # 20 computed contrast pairs
-pnpm verify:v7     # 54 render-vs-data checks
-pnpm contrast:v7   # 34 computed pairs, read from the running page
-pnpm feed:shapes   # 68 checks across 10 adversarial feed shapes
+pnpm verify:v7     # render-vs-data checks
+pnpm contrast:v7   # computed contrast pairs, read from the running page
+pnpm states:v7     # hover, press, and browser-chrome states, desktop + touch
+pnpm feed:shapes   # checks across 10 adversarial feed shapes
 
 npx impeccable detect http://localhost:5173/v7    # live audit — never point it at src/
 pnpm shoot v7      # 6 PNGs into lab/shots/v7/ — then look at them
+
+# CAUTION: the committed shots in lab/shots/v7/ were taken WITH posters. Shooting here
+# overwrites them with fallback-tile renders. Review the new images, then
+#   git checkout -- lab/shots/v7/
+# unless you served a harvest via VITE_POSTER_BASE first.
 ```
 
-All green as of the artwork commit, counted in one run on 2026-08-20.
+**Counted in one run on 2026-08-23, on a clean checkout of this branch:** lint clean,
+42 tests, `contrast:v7` 0 failing, `states:v7` 0 failing, `feed:shapes` 0 failing,
+`verify:v6` 0 failing, `impeccable` 0 findings on `/v7` (13 on `/v1`, which is how you
+confirm the scan is actually running before trusting a 0).
+
+**`verify:v7` reports 2 failing, and they are the environment, not the page.** Both are
+`every card draws the artwork its row names` — `image.tmdb.org` is blocked here, so every
+card renders the designed fallback tile and the check correctly reports the mismatch. Serve
+a harvest via `VITE_POSTER_BASE` (§4) and they clear. This was true before any change on
+this branch; it is the baseline, not a regression.
 
 **The verify totals move with the calendar.** Both suites skip blocks the current data
 cannot reach, so the number is not a constant. Read the `0 failing check(s)` line.
@@ -102,8 +117,30 @@ cannot reach, so the number is not a constant. Read the `0 failing check(s)` lin
 ### If Playwright will not launch
 
 This container has Chromium at `/opt/pw-browsers/chromium-1194` but Playwright 1.62 looks
-for build 1234. Symlinking the expected paths works. `impeccable` additionally refuses to
-run as root — pass it a wrapper that adds `--no-sandbox` via `PUPPETEER_EXECUTABLE_PATH`.
+for build 1234. Symlinking the expected paths works — three links, not one, because the
+headless shell is also looked up under a name it does not ship with:
+
+```bash
+cd /opt/pw-browsers
+ln -sfn chromium-1194 chromium-1234
+ln -sfn chromium_headless_shell-1194 chromium_headless_shell-1234
+mkdir -p chromium_headless_shell-1234/chrome-headless-shell-linux64
+ln -sfn ../chrome-linux/headless_shell \
+  chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+```
+
+Never run `playwright install` here; it is blocked and the browsers are already present.
+`impeccable` additionally refuses to run as root — pass it a wrapper that adds
+`--no-sandbox` via `PUPPETEER_EXECUTABLE_PATH`:
+
+```bash
+printf '#!/bin/sh\nexec /opt/pw-browsers/chromium-1194/chrome-linux/chrome --no-sandbox "$@"\n' \
+  > /tmp/chrome-wrap.sh && chmod +x /tmp/chrome-wrap.sh
+PUPPETEER_EXECUTABLE_PATH=/tmp/chrome-wrap.sh npx impeccable detect http://localhost:5173/v7 --json
+```
+
+Text output comes back empty under this wrapper; `--json` works. Check `/v1` returns 13
+before believing a 0 anywhere else.
 
 ## 4. Blocked — with a working route around it
 

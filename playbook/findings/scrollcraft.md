@@ -312,3 +312,79 @@ Nothing here changes `CLAUDE.md` yet. Three things are worth proposing, in this 
 The Geist collision needs no action beyond noting it: this repo's ban is measured and
 scrollcraft's recommendation is a preference, so the ban wins here and the skill would need
 its theme tokens overridden before any of its output could ship into this repo.
+
+---
+
+## 7. What was applied to `/v7`, 2026-08-23
+
+`v0`–`v6` are frozen by the append-only rule. `v7` is the live route, so it is the only
+place any of this could land. Every change below is from scrollcraft's taste floor and has
+no equivalent in `CLAUDE.md`.
+
+**The premise for doing it at all:** `impeccable` scores `/v7` at **0 findings**, and
+`verify:v7` and `contrast:v7` both pass. So anything worth changing had to be something no
+instrument here can see, which is exactly the category scrollcraft's taste floor covers.
+
+| Applied | Was |
+|---|---|
+| Nine hover blocks gated behind `@media (hover: hover) and (pointer: fine)` | Ungated. On a phone, a tap left a stuck hover state |
+| Press feedback (`:active`) on buttons, week rows, nav links, calendar days | Absent. On touch — where the hover half never fires — this is the only feedback there is |
+| `::selection`, `caret-color`, `scrollbar-color`, underline offset and thickness | All absent. `v5` and `v6` already themed selection; `v7` was the odd one out |
+| `text-wrap: balance` on headings, `pretty` on the two prose blocks | Absent |
+| Poster zoom `0.5s ease-in-out` → `0.32s cubic-bezier(0.23, 1, 0.32, 1)`; card meta → `0.18s` | `ease-in-out` delays the moment the eye is already on, and 500ms sat oddly against the page's own 150ms buttons. The curve is one the file already used |
+
+### What was checked and deliberately not changed
+
+- **Display tracking.** `letter-spacing: 0.005em` on the hero means tracking *loosens* as
+  size grows, which inverts scrollcraft's rule. Left alone: the face is Abril Fatface, a fat
+  didone whose counters close up, and on the render at 1440 and 390 it reads correctly.
+  Applying the rule blind would have been a regression. **Verify against the render.**
+- **The reduced-motion block.** Read as thin at first glance; it is not. It inventories
+  everything on the page that moves, with a comment saying so.
+- **`:focus-visible`.** One rule at `.v7-page :focus-visible`, which is a descendant
+  selector covering every control. Not the gap it looked like.
+- **The marooned last card.** 13 titles in a 3-column grid leaves one alone on the last row,
+  and scrollcraft's "if a multi-cell grid has an empty trailing cell, the grid was planned
+  wrong" applies. Reshaping the slate is a real design change with real risk, and
+  `feed:shapes` already covers ten grid shapes. **Flagged, not silently redesigned.**
+
+### The check, and watching it fail
+
+The new suite is `pnpm states:v7` (`lab/scripts/states-v7.mjs`). It runs the page twice,
+once at 1440 with a fine pointer and once as a Pixel 7, and asserts the hover applies in the
+first and not the second.
+
+**Two things it got wrong before it got them right,** both found by running it rather than
+reading it:
+
+1. **`dispatchEvent('mouseover')` does not drive CSS `:hover`.** It fires the JS event and
+   leaves the pointer where it was. With the gating deliberately deleted, the touch check
+   still passed. `locator.hover()` moves the virtual mouse and does drive it. This is the
+   `(v6)` trap — a check that means nothing — caught only because the negative test was run.
+2. **A rule whose value is a `var()` reads back empty from `.style.backgroundColor`.** The
+   `::selection` check reported the rule absent when it was present. And the caret check
+   hardcoded the dark palette's `#e6ff41` while headless defaults to light, where the accent
+   is `#4f5a00`. Two false failures on a correct page.
+
+The gate was then sabotaged on purpose, watched go red naming the mismatch, and restored
+**from a byte-copy** — `md5sum` identical before and after — never by re-applying the edit.
+
+### The screenshots were reverted on purpose
+
+`pnpm shoot v7` overwrites `lab/shots/v7/`, and **the committed shots there were taken with
+real posters from the harvest.** Regenerating them in this sandbox replaces what a reader
+sees with what this sandbox sees — the `(posters)` trap, one turn after writing it down.
+They were restored byte-identically (`md5sum` confirmed) and the new renders were used for
+review only. Anyone shooting `/v7` here should do the same, or serve a harvest first.
+
+Comparing the two did pay for itself once: `text-wrap: balance` visibly rewrapped the hero
+from `Em chustunnaru e / vaaram?` to `Em chustunnaru / e vaaram?`. Two even lines instead of
+a long one and a stub. That is the only change in this batch that shows up in a screenshot
+at all.
+
+### What could not be verified here
+
+`.v7-poster` and `.v7-card__meta` never mount in this sandbox: `image.tmdb.org` is blocked,
+so every card renders the designed fallback tile. The poster-zoom timing change is asserted
+from the CSSOM and **has not been watched move.** Anyone with a reachable poster host should
+look at it before trusting it.
