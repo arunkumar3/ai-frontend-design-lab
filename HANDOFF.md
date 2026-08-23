@@ -42,6 +42,20 @@ Nothing is uncommitted, and **no PR is open for these six commits** — `main` r
 but has none of the artwork work. Merging them is an open call (§8). Run the checks — never
 trust this table's notion of "green" without re-running.
 
+### Adopted from the scrollcraft diff, 2026-08-23
+
+All four proposals in `playbook/findings/scrollcraft.md` §6 are now in the tree, on
+`claude/article-reference-kamfxt`:
+
+| Change | Where |
+|---|---|
+| The fingerprint gate, dimensions re-derived for a feed page | `playbook/FINGERPRINTS.md`, rule in `CLAUDE.md` Process |
+| Entrance-animation rule scoped, with the exemption's price stated | `CLAUDE.md` Required |
+| Reference rule split into craft (measure it) and direction (never a site) | `CLAUDE.md` Process |
+| Why older routes fail current rules, and why they will not be migrated | `README.md`, after the append-only line |
+
+New rules carry the `(scrollcraft)` provenance tag. Nothing in `lab/` was touched.
+
 ## 3. Running it
 
 ```bash
@@ -216,10 +230,6 @@ These are yours, not mine. Each changes what gets built next.
 - **Is `v7` scored as a drill?** It was human-directed across several rounds, like `v6`, so
   it is not a like-for-like measurement against `v0`–`v5`. The README says so; the levers
   table has never been updated with what `v6` and `v7` proved.
-- **Do the three scrollcraft proposals land in `CLAUDE.md`?** Import the fingerprint gate,
-  scope the entrance-animation rule so it is not silently violated by anything scroll-driven,
-  and split the reference rule into craft (measure it) and direction (do not name a site).
-  Argued in `playbook/findings/scrollcraft.md` §6. Nothing has been changed in `CLAUDE.md`.
 - **Does the grid still hold at feed scale?** `feed:shapes` proves 50 titles in a week lay
   out without breaking. Whether 50 cards is a *good* answer to "what dropped this week" is
   a design question nobody has looked at.
@@ -248,8 +258,8 @@ The full list with evidence is in `CLAUDE.md`. The four that cost the most:
 - `playbook/findings/RANKING.md` — the verdict pass, and the repo's central argument
 - `playbook/findings/v7.md` — building from a reference nobody could load
 - `playbook/findings/scrollcraft.md` — the constitution diffed against `nateherkai/scroll-craft`,
-  the closest published equivalent: twelve independent agreements, three real conflicts, and
-  the fingerprint gate this repo should probably steal
+  the closest published equivalent: twelve independent agreements and three real conflicts
+- `playbook/FINGERPRINTS.md` — the new gate. Its rows have had one pass, not two (§7)
 - `PHASE-2.md` §2 — why each `v6` decision was made; §4 — the trap list with evidence
 - `CLAUDE.md` — the constitution, including every rule the drills forced into it
 - `docs/sessions/` — what happened in each working session

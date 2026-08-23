@@ -5,8 +5,14 @@ Applies to all frontend work in this repository.
 Rules marked **(measured)** were added after `v0`–`v5`, because the original list missed
 them and the drills exposed the gap. Rules marked **(v6)** were added after the `v6` build.
 Rules marked **(posters)** came from the 2026-08-20 artwork harvest — see
-`docs/sessions/2026-08-20-posters-and-the-merge.md`.
+`docs/sessions/2026-08-20-posters-and-the-merge.md`. Rules marked **(scrollcraft)** were
+adopted on 2026-08-23 from diffing this document against `nateherkai/scroll-craft` — see
+`playbook/findings/scrollcraft.md`; they are the only rules here not earned by a build in
+this repo, and each says whose evidence it rests on.
 See `playbook/05-troubleshooting.md` and `playbook/findings/v6.md` for evidence.
+
+A rule's tag is also its date. A route built before a tag existed is not in violation of
+it — see the note under the routes table in `README.md`.
 
 ## Start here
 
@@ -17,9 +23,12 @@ making the feed real.
    blocked, gaps ranked, open decisions. **Read this first in a new session.**
 2. `playbook/findings/RANKING.md` — why the best-scoring page was not the best product.
 3. `playbook/findings/v7.md` — building from a reference nobody could load.
+   `playbook/findings/scrollcraft.md` — this document diffed against the closest published
+   equivalent, and where the two disagree.
 4. `PHASE-2.md` — why each `v6` decision was made (§2) and the trap list with evidence (§4).
    Superseded by `HANDOFF.md` on anything to do with current state.
-5. `docs/sessions/` — what happened in each working session.
+5. `playbook/FINGERPRINTS.md` — what every build already is, and the gate a new one clears.
+6. `docs/sessions/` — what happened in each working session.
 
 Before trusting any change, run the commands in `HANDOFF.md` §3. Never quote a check count
 or a defect count from a document without re-running it — both have gone stale here.
@@ -71,6 +80,15 @@ or a defect count from a document without re-running it — both have gone stale
 - **(v7)** An entrance animation must never be what makes content visible. Default to the
   finished state and let the class add the animation; if the observer never fires, the page
   is merely un-animated rather than empty.
+  **(scrollcraft)** Scoped: this holds for every content page, which is all of `/v0`–`/v7`.
+  A page whose *medium* is the scroll — where there is no single finished state to default
+  to, because every scroll position is a different frame — may opt out, and the exemption
+  has a price paid in advance: a harness that walks the page and reports any element that
+  never reaches full opacity, plus a reduced-motion pass that proves the content is still
+  reachable. No harness, no exemption. `scrollcraft` is the worked example on both sides —
+  its `data-sc-in` path ships an explicit fallback that adds the class when
+  `IntersectionObserver` is missing, and its `data-sc-cue` path, which carries most of the
+  copy, ships `opacity: 0` with nothing behind it.
 - **(v6)** Restoring what an earlier version did is a hypothesis, not an instruction. `v0`'s
   date grouping was the missing axis, but re-implemented literally it put the 9-title US
   slate into nine groups of one — the orphan defect `v4` had already fixed.
@@ -147,10 +165,16 @@ or a defect count from a document without re-running it — both have gone stale
 - **(v7)** Every test file needs a documented command that runs it. `releases.test.js`
   sat in this repo through six drills with ten passing tests and no `test` script — worse
   than a green suite that misleads, a suite nobody could run at all.
-- **(v7)** A design reference is a set of measurements. If you cannot load the page
+- **(v7)** A *craft* reference is a set of measurements. If you cannot load the page
   yourself, get `getComputedStyle` output, a colour histogram with counts, and the
   `@font-face` src URLs — not adjectives. "Warm off-white with a bold serif" cannot be
   built from; `#F7F7F1` and `Abril Fatface 400` can.
+- **(scrollcraft)** A *direction* reference must not be a site. The rule above governs
+  what you copy — card craft, palette, type pairing — and it is wrong applied to what the
+  page should *be*: naming a site is how a page inherits that site's structure, which is
+  the `v7` trap one level up and the reason `scrollcraft`'s first interview question asks
+  for a film, an album cover, a shop, a magazine, and explicitly not "sites you like".
+  Measure the reference you are borrowing from; do not take direction from a site at all.
 - **(posters)** A review instrument that cannot fetch what the page fetches is reviewing the
   fallback. Every screenshot pass in this repo reviewed the designed poster tiles, because
   `image.tmdb.org` is blocked here and nothing errors when it is — the same shape as the
@@ -164,3 +188,10 @@ or a defect count from a document without re-running it — both have gone stale
 - **(v6)** Removing a structural element removes everything it silently carried. Deleting
   the week rail also deleted the page's only `<h2>`, leaving `h1` → `h3`; four screenshot
   passes could not see it and the live audit caught it immediately.
+- **(scrollcraft)** Before building, check the plan against `playbook/FINGERPRINTS.md`. A
+  new build must differ from **every** existing row on at least four of six dimensions —
+  four against each row individually, not four on average. If it fails, change the plan,
+  not the table; a row rewritten to accommodate a new build makes the whole file worthless.
+  Applies from `v8` forward: `v0`–`v5` were deliberately near-identical, which was the
+  experiment. This lab produced eight builds of one page and only noticed their convergence
+  in the verdict pass, which is what the gate is for.

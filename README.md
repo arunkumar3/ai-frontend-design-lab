@@ -49,6 +49,14 @@ page, never the repository.
 Routes are append-only: a later drill never edits an earlier one, so all eight stay live
 and directly comparable.
 
+**So a route obeys the constitution as it stood on the day it was built, not as it stands
+now.** Four routes still set faces `CLAUDE.md` now bans — `v2` uses Fraunces, and `v3`–`v5`
+use Inter with Instrument Serif — because the font ban is tagged `(measured)` and was added
+after those six drills. Seven of the eight fetch their faces from `fonts.googleapis.com`;
+only `v7` self-hosts, because that rule is tagged `(v7)` and arrived with it. Neither is a
+regression, and neither will be fixed: migrating the pages would destroy the comparison they
+exist for. Read the provenance tag on a rule before judging an older route against it.
+
 **The two columns are the same tool on the same pages, and they disagree.** No route
 changed; `impeccable`'s rule set did. `v2` moves from third-worst to second-best, `v6`
 from a clean sheet to five findings on a rule that did not exist when it was scored, and
@@ -153,6 +161,11 @@ captured at `deviceScaleFactor: 2` — **device pixels**, twice CSS pixels. Chec
 - [`playbook/findings/v7.md`](playbook/findings/v7.md) — building from a reference nobody
   could load: why the 3D everyone assumed was there was two gradients and an easing curve,
   and why a reference's layout is the one thing not to copy
+- [`playbook/findings/scrollcraft.md`](playbook/findings/scrollcraft.md) — this repo's
+  constitution diffed against `nateherkai/scroll-craft`, the closest published equivalent:
+  twelve findings reached independently, three real conflicts, and the four changes adopted
+- [`playbook/FINGERPRINTS.md`](playbook/FINGERPRINTS.md) — what every build already is, and
+  the gate a new one has to clear
 - [`HANDOFF.md`](HANDOFF.md) — current state, every check, what's blocked, what's next
 - [`PHASE-2.md`](PHASE-2.md) — why each `v6` decision was made, and the trap list
 - [`docs/sessions/`](docs/sessions/) — what happened in each working session

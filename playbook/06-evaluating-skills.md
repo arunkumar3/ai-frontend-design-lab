@@ -3,6 +3,13 @@
 This project started from an Instagram carousel recommending three design skills. The method
 below is what it took to check it, and the carousel is the worked example throughout.
 
+A second worked example, run 2026-08-23 against a skill nobody could install here, is in
+[`findings/scrollcraft.md`](findings/scrollcraft.md). It is the other half of this method:
+where this file measures whether a skill *loaded and moved the needle*, that one reads a
+skill's rules and diffs them against rules you already trust. Both are needed — a skill can
+be well argued and still be wrong for your data, and it can raise a score while telling you
+to do something you have measured as harmful.
+
 ## The method
 
 **1. Verify every handle and command resolves. Do this first, it costs seconds.**
