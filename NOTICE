@@ -5,7 +5,7 @@ This repository vendors third-party work. The list below is what is redistribute
 here, who wrote it, and under what terms. Full license texts are in
 `third_party/licenses/`.
 
-Everything outside `.agents/skills/` and `.claude/skills/` — `lab/`, `playbook/`,
+Everything outside `.agents/skills/` and `.claude/skills/` — `projects/ott-radar/lab/`, `playbook/`,
 `docs/`, and the root documents — is this repository's own work.
 
 Why these are vendored at all: the `v5` drill measured what installed community
@@ -80,7 +80,7 @@ Sources were read from `skills-lock.json` (which records 23 of the 24 packs) and
 for impeccable, from the published npm package metadata. Upstream license texts
 were retrieved from each project's repository.
 
-The packs are unmodified. `playbook/findings/v5.md` and `v5-conflicts.md` describe
+The packs are unmodified. `projects/ott-radar/findings/v5.md` and `v5-conflicts.md` describe
 where their advice was deliberately overridden, and why — those are disagreements
 recorded in this repository's own documents, not changes to anyone's pack.
 
@@ -91,7 +91,7 @@ vendored copy removed, or the framing changed, please open an issue.
 Fonts — SIL Open Font License 1.1
 --------------------------------------------------------------------------------
 
-`lab/public/fonts/` holds two latin-subset woff2 files, redistributed under the
+`projects/ott-radar/lab/public/fonts/` holds two latin-subset woff2 files, redistributed under the
 OFL. They are self-hosted rather than linked from fonts.googleapis.com because
 this lab's primary instrument is a screenshot: when the font host is unreachable
 the page silently renders in a fallback face, and a review pass will approve the
@@ -112,13 +112,13 @@ are frozen as measured and are not edited.
 Other credits
 --------------------------------------------------------------------------------
 
-`lab/src/routes/v7/` reproduces the visual language of https://filmhood.in — its
+`projects/ott-radar/lab/src/routes/v7/` reproduces the visual language of https://filmhood.in — its
 palette, type pairing, card treatment and section rhythm — as a design exercise.
 No code, markup, stylesheet or asset was copied from that site; the spec it was
 built against was a set of measured values (computed styles and colour counts)
 read off the live page. It is not affiliated with or endorsed by Filmhood.
 
-Poster artwork referenced by `lab/` is served from TMDB (https://www.themoviedb.org)
+Poster artwork referenced by `projects/ott-radar/lab/` is served from TMDB (https://www.themoviedb.org)
 by URL and is not redistributed in this repository. One deliberate exception, decided by
 the repository owner on 2026-08-20: the private published sandbox preview (a Claude
 artifact page, whose content-security policy cannot load remote images) embeds low-res
@@ -126,4 +126,4 @@ poster thumbnails as data URIs at bundle time. Those bytes live only in that pre
 page, never in this repository — the local `.posters-cache/` they are built from is
 gitignored. This product uses the TMDB API but is not
 endorsed or certified by TMDB. Release dates were compiled from FilmiBeat, myvi.in,
-FilmyChill and Boston.com; see `lab/src/data/releases.js`.
+FilmyChill and Boston.com; see `projects/ott-radar/lab/src/data/releases.js`.

@@ -2,8 +2,8 @@ node_modules/
 dist/
 .DS_Store
 .superpowers/
-lab/src/data/feed.generated.json
-lab/.posters-cache/
+projects/ott-radar/lab/src/data/feed.generated.json
+projects/ott-radar/lab/.posters-cache/
 
 # harvested poster files, served locally so screenshot review sees real artwork
-lab/public/tmdb/
+projects/ott-radar/lab/public/tmdb/

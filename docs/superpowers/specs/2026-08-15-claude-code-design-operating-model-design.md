@@ -1,5 +1,9 @@
 # Design Operating Model for Claude Code
 
+> **Paths updated 2026-08-23.** The lab moved to `projects/ott-radar/`; the file paths
+> in this spec were repointed so they still resolve. Nothing else in the text changed.
+> (One was already stale before the move: the data file is `releases.js`, not `.json`.)
+
 **Date:** 2026-08-15
 **Status:** Awaiting review
 **Owner:** Arun
@@ -59,7 +63,7 @@ web_development/
     04-screenshot-loop.md
     05-troubleshooting.md       # symptom → missing lever (written from findings)
     06-evaluating-skills.md     # how to vet the next one you find
-  lab/
+  projects/ott-radar/lab/
     design/tokens.md
     design/references/          # captured gallery screenshots
     design/dna/                 # /taste output: {domain}.md + {domain}.json
@@ -121,7 +125,7 @@ Content is real (see Dataset), so generic copy cannot flatter weak layout.
 
 ### Dataset — week of 15–21 Aug 2026
 
-Hardcoded to `lab/src/data/releases.json`. Real titles gathered from
+Hardcoded to `projects/ott-radar/lab/src/data/releases.js`. Real titles gathered from
 FilmiBeat, myvi.in, FilmyChill, and Boston.com.
 
 **India**
@@ -196,9 +200,9 @@ are listed in the plan and are kept deliberately.
 
 1. Source from galleries: Godly, Land-book, Lapa Ninja, SiteInspire, and
    Mobbin (best for data-dense product UI).
-2. Capture with Playwright into `lab/design/references/` — done together in
+2. Capture with Playwright into `projects/ott-radar/lab/design/references/` — done together in
    session, not assigned as homework.
-3. Run `/taste <url>` on the 3–4 strongest → `lab/design/dna/`.
+3. Run `/taste <url>` on the 3–4 strongest → `projects/ott-radar/lab/design/dna/`.
 4. **Synthesize, do not clone.** Extract systems (type scale, spacing rhythm,
    color relationships, motion timing) and compose an original token set.
    Copying one site yields a worse copy of that site and transfers nothing.

@@ -21,7 +21,7 @@ Each was invisible to inspection and obvious once rendered.
 
 ## The harness
 
-`lab/scripts/shoot.mjs`, run as `pnpm shoot <route>` with the dev server already running.
+`projects/ott-radar/lab/scripts/shoot.mjs`, run as `pnpm shoot <route>` with the dev server already running.
 Six captures per route: 390 / 768 / 1440 px, each in light and dark, full-page, at
 `deviceScaleFactor: 2`.
 
@@ -47,7 +47,7 @@ Per round, in this order — the order is the method:
 1. `pnpm shoot <route>`
 2. Downscale so you can view all six without exhausting context:
    ```bash
-   mkdir -p /tmp/look && for f in lab/shots/<route>/*.png; do
+   mkdir -p /tmp/look && for f in projects/ott-radar/lab/shots/<route>/*.png; do
      sips -Z 1200 "$f" --out "/tmp/look/$(basename $f)" >/dev/null
    done
    ```

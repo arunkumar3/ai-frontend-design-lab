@@ -1,5 +1,10 @@
 # OTT Releases Design Lab — Implementation Plan
 
+> **Moved 2026-08-23.** This is a dated record and its text is unchanged. Paths in it
+> are written as they were at the time, when the lab sat at the repository root. The
+> project now lives under `projects/ott-radar/`, so read `lab/…` as
+> `projects/ott-radar/lab/…` and `playbook/findings/…` as `projects/ott-radar/findings/…`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build six independently-viewable versions of an "OTT Releases This Week" site, each adding exactly one design-direction technique, producing screenshot evidence of what each technique is worth.

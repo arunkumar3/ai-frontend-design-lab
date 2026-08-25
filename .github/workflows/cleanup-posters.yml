@@ -4,7 +4,7 @@ name: cleanup-posters
 on:
   push:
     paths:
-      - '.poster-cleanup'
+      - 'projects/ott-radar/.poster-cleanup'
 
 permissions:
   contents: write

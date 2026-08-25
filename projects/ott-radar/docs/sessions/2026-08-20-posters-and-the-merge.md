@@ -1,5 +1,10 @@
 # Session — 2026-08-20: posters on the page, and `main` becomes the site
 
+> **Moved 2026-08-23.** This is a dated record and its text is unchanged. Paths in it
+> are written as they were at the time, when the lab sat at the repository root. The
+> project now lives under `projects/ott-radar/`, so read `lab/…` as
+> `projects/ott-radar/lab/…` and `playbook/findings/…` as `projects/ott-radar/findings/…`.
+
 Six commits on `claude/continue-discussion-w580hz`, from `4d422f7` (the PR #1 merge).
 
 | | |

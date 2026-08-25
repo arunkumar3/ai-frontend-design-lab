@@ -1,7 +1,7 @@
 # Fingerprints
 
 A record of what each build in this lab already is, so the next one has to be something
-else. Imported from `scrollcraft`'s fingerprint gate — see `playbook/findings/scrollcraft.md`
+else. Imported from `scrollcraft`'s fingerprint gate — see `projects/ott-radar/findings/scrollcraft.md`
 §4 — with the dimensions re-derived, because copying its six columns literally would be the
 exact mistake `CLAUDE.md`'s `(v7)` reference rule warns about. Its dimensions encode the
 shape of a scroll-driven film. Ours have to encode the shape of a weekly release feed.
@@ -26,6 +26,17 @@ criticism of `v0`–`v5`: those six were *designed* to be near-identical, one le
 a time against a fixed brief, and that was the experiment. The gate exists for what comes
 after the measurement, where repetition is no longer the method.
 
+## A second project changes what the gate means
+
+Every row below is a build of one product: a weekly OTT release radar. The gate asks a new
+build to differ from them, and that question only makes sense **within a product**. A new
+project under `projects/` is not repeating this table by having a date axis and a card unit
+— it has different data and a different job.
+
+So: gate a new build against the rows for **its own project**. Start a fresh table for a new
+one, in `projects/<name>/`, and leave this file as the OTT radar's. What carries across
+projects is the method, not the rows.
+
 ## The dimensions
 
 | # | Dimension | What it records |
@@ -39,7 +50,7 @@ after the measurement, where repetition is no longer the method.
 
 ## The table
 
-Rows for `v0`–`v5` are read from `playbook/findings/`; `v6` and `v7` from their components.
+Rows for `v0`–`v5` are read from `projects/ott-radar/findings/`; `v6` and `v7` from their components.
 **They have had one pass, not two.** Before the gate is enforced on `v8`, walk the running
 routes and correct anything here that does not match the render — this file is subject to
 the same rule as every other document in the repo, and a fingerprint row nobody verified is

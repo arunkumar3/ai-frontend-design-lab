@@ -4,7 +4,7 @@ This project started from an Instagram carousel recommending three design skills
 below is what it took to check it, and the carousel is the worked example throughout.
 
 A second worked example, run 2026-08-23 against a skill nobody could install here, is in
-[`findings/scrollcraft.md`](findings/scrollcraft.md). It is the other half of this method:
+[`projects/ott-radar/findings/scrollcraft.md`](../projects/ott-radar/findings/scrollcraft.md). It is the other half of this method:
 where this file measures whether a skill *loaded and moved the needle*, that one reads a
 skill's rules and diffs them against rules you already trust. Both are needed — a skill can
 be well argued and still be wrong for your data, and it can raise a score while telling you

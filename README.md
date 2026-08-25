@@ -3,12 +3,28 @@
 Measuring what design-direction techniques actually buy an AI coding agent building a UI
 from scratch — with evidence, not opinion.
 
+## Layout
+
+The repository holds a **shared design method** at the root and **one project per folder**
+under `projects/`.
+
+| | |
+|---|---|
+| [`CLAUDE.md`](CLAUDE.md) | the design constitution. Applies to every frontend project here |
+| [`playbook/`](playbook/) | **the deliverable** — what the measurements concluded, as method |
+| [`playbook/FINGERPRINTS.md`](playbook/FINGERPRINTS.md) | the gate a new build clears: differ from every prior build on 4 of 6 dimensions |
+| [`projects/ott-radar/`](projects/ott-radar/) | the weekly OTT release radar — eight builds, and the evidence behind the playbook |
+
+A new project starts as `projects/<name>/` and inherits `CLAUDE.md` and the playbook without
+copying anything.
+
+## The project that produced the evidence
+
 Eight builds of the same page. Six of them (`v0`–`v5`) add exactly one lever on top of the
 last, so the difference between any two routes is one variable. `v6` was built from what the
 measurements said; `v7` from a measured spec of a real site nobody here could load.
-
-**The deliverable is [`playbook/`](playbook/).** `lab/` is the apparatus that produced the
-evidence.
+[`projects/ott-radar/`](projects/ott-radar/) is the apparatus that produced the evidence;
+start at its [`HANDOFF.md`](projects/ott-radar/HANDOFF.md).
 
 ## The headline finding
 
@@ -26,7 +42,7 @@ axis was missing.
 | Installed community design skill packs | No |
 | Reading the data and asking what the page is for | **Yes** |
 
-Full argument in [`playbook/findings/RANKING.md`](playbook/findings/RANKING.md).
+Full argument in [`projects/ott-radar/findings/RANKING.md`](projects/ott-radar/findings/RANKING.md).
 
 The second finding is smaller and more immediately useful: **how you run an audit changes
 the answer completely.** The same tool, on the same pages, minutes apart — a source-file
@@ -64,7 +80,7 @@ from a clean sheet to five findings on a rule that did not exist when it was sco
 measured — but **a defect count is a reading of one tool at one version, and only a column
 where every page was scanned in the same run can be ranked.** This is the same lesson as the
 source-versus-live discovery below, arriving from a different direction:
-[`playbook/findings/v7.md`](playbook/findings/v7.md) §5.
+[`projects/ott-radar/findings/v7.md`](projects/ott-radar/findings/v7.md) §5.
 
 Three more caveats worth stating before anyone quotes these numbers:
 
@@ -106,7 +122,7 @@ With the dev server still running, in a second shell:
 cd lab && pnpm shoot v7
 ```
 
-Writes six PNGs to `lab/shots/v7/` — 390 / 768 / 1440px, light and dark.
+Writes six PNGs to `projects/ott-radar/lab/shots/v7/` — 390 / 768 / 1440px, light and dark.
 
 ### Verifying a change
 
@@ -127,7 +143,7 @@ pnpm feed:shapes    # 10 adversarial feed shapes driven through the real page
 `src/feed/` is the boundary a live source lands on — validate, dedupe, and guarantee every
 platform lookup resolves before a route sees a record. `v7` reads through it; `v0`–`v6`
 still import the frozen table directly and are unchanged. See
-[`PHASE-2.md`](PHASE-2.md) §6.
+[`projects/ott-radar/PHASE-2.md`](projects/ott-radar/PHASE-2.md) §6.
 
 Plus the live audit, which must be pointed at the running URL, not at `src/`:
 
@@ -136,7 +152,7 @@ npx impeccable detect http://localhost:5173/v7
 ```
 
 `v6`'s four checks were green at `d82fbf9`; `verify:v6` needed a fix afterwards when Node
-and Chromium turned out to format dates differently ([`v6.md`](playbook/findings/v6.md) §6).
+and Chromium turned out to format dates differently ([`v6.md`](projects/ott-radar/findings/v6.md) §6).
 `v7`'s checks are green as committed, and each was negative-tested — deliberately broken and
 confirmed to go red — before being believed.
 
@@ -155,20 +171,20 @@ captured at `deviceScaleFactor: 2` — **device pixels**, twice CSS pixels. Chec
   mechanism, and why to measure your own baseline before trusting anyone's
 - [`playbook/02-the-levers.md`](playbook/02-the-levers.md) — every lever ranked by measured
   value, not by how good it sounds
-- [`playbook/findings/RANKING.md`](playbook/findings/RANKING.md) — the verdict pass
-- [`playbook/findings/v6.md`](playbook/findings/v6.md) — what building the predicted page
+- [`projects/ott-radar/findings/RANKING.md`](projects/ott-radar/findings/RANKING.md) — the verdict pass
+- [`projects/ott-radar/findings/v6.md`](projects/ott-radar/findings/v6.md) — what building the predicted page
   proved about the toolkit, including where the verdict's own prescription was wrong
-- [`playbook/findings/v7.md`](playbook/findings/v7.md) — building from a reference nobody
+- [`projects/ott-radar/findings/v7.md`](projects/ott-radar/findings/v7.md) — building from a reference nobody
   could load: why the 3D everyone assumed was there was two gradients and an easing curve,
   and why a reference's layout is the one thing not to copy
-- [`playbook/findings/scrollcraft.md`](playbook/findings/scrollcraft.md) — this repo's
+- [`projects/ott-radar/findings/scrollcraft.md`](projects/ott-radar/findings/scrollcraft.md) — this repo's
   constitution diffed against `nateherkai/scroll-craft`, the closest published equivalent:
   twelve findings reached independently, three real conflicts, and the four changes adopted
 - [`playbook/FINGERPRINTS.md`](playbook/FINGERPRINTS.md) — what every build already is, and
   the gate a new one has to clear
-- [`HANDOFF.md`](HANDOFF.md) — current state, every check, what's blocked, what's next
-- [`PHASE-2.md`](PHASE-2.md) — why each `v6` decision was made, and the trap list
-- [`docs/sessions/`](docs/sessions/) — what happened in each working session
+- [`projects/ott-radar/HANDOFF.md`](projects/ott-radar/HANDOFF.md) — current state, every check, what's blocked, what's next
+- [`projects/ott-radar/PHASE-2.md`](projects/ott-radar/PHASE-2.md) — why each `v6` decision was made, and the trap list
+- [`projects/ott-radar/docs/sessions/`](projects/ott-radar/docs/sessions/) — what happened in each working session
 - [`CLAUDE.md`](CLAUDE.md) — the constitution, including the rules the drills forced into it
 
 ## Scope and honesty
@@ -178,10 +194,10 @@ levers were measured against a specific brief with real data and real missing fi
 different page could rank them differently. Treat the method as the transferable part —
 isolate one variable, render it, and check the output rather than the intent.
 
-The dataset in `lab/src/data/releases.js` is a frozen hand-scraped snapshot of 22 titles
+The dataset in `projects/ott-radar/lab/src/data/releases.js` is a frozen hand-scraped snapshot of 22 titles
 dated August 2026. `v6` and `v7` resolve "this week" against the real clock, so they degrade
 to the most recent week with releases once the clock passes the data. It needs a live feed to
-be a real product; see [`PHASE-2.md`](PHASE-2.md).
+be a real product; see [`projects/ott-radar/PHASE-2.md`](projects/ott-radar/PHASE-2.md).
 
 `v7` reproduces the *visual language* of [filmhood.in](https://filmhood.in) — palette, type
 pairing, card treatment, section rhythm — from a spec of measured values read off the live
@@ -191,7 +207,7 @@ Filmhood. See [`NOTICE`](NOTICE).
 ## Third-party work
 
 `.agents/skills/` and `.claude/skills/` vendor 24 community skill packs from three projects
-(MIT and Apache-2.0), committed so the `v5` measurement stays reproducible. `lab/public/fonts/`
+(MIT and Apache-2.0), committed so the `v5` measurement stays reproducible. `projects/ott-radar/lab/public/fonts/`
 holds two OFL-licensed webfont subsets, self-hosted so `v7`'s typography does not depend on a
 third-party host being reachable at screenshot time. Attribution,
 licenses and provenance are in [`NOTICE`](NOTICE) and

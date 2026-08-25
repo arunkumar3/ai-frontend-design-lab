@@ -21,7 +21,7 @@ on:
   # marker starts a run from this branch. Bump .feed-trigger to fire it.
   push:
     paths:
-      - '.feed-trigger'
+      - 'projects/ott-radar/.feed-trigger'
 
 permissions:
   contents: write
@@ -49,11 +49,11 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        working-directory: lab
+        working-directory: projects/ott-radar/lab
         run: npm install
 
       - name: Fetch this week's feed
-        working-directory: lab
+        working-directory: projects/ott-radar/lab
         env:
           TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
         run: node scripts/fetch-feed.mjs --out src/data/feed.live.json
@@ -62,7 +62,7 @@ jobs:
         run: |
           git config user.name feed-runner
           git config user.email actions@invalid
-          git add lab/src/data/feed.live.json
+          git add projects/ott-radar/lab/src/data/feed.live.json
           if git diff --cached --quiet; then
             echo "No change to the feed this run."
           else

@@ -1,37 +1,45 @@
 # Design Constitution
 
-Applies to all frontend work in this repository.
+Applies to all frontend work in this repository, across every project under `projects/`.
+
+Projects live in `projects/<name>/` and inherit this document. The `v0`–`v7` builds cited
+throughout are the OTT release radar in `projects/ott-radar/`; each rule names the build
+that earned it, and the evidence sits in `projects/ott-radar/findings/`.
 
 Rules marked **(measured)** were added after `v0`–`v5`, because the original list missed
 them and the drills exposed the gap. Rules marked **(v6)** were added after the `v6` build.
 Rules marked **(posters)** came from the 2026-08-20 artwork harvest — see
-`docs/sessions/2026-08-20-posters-and-the-merge.md`. Rules marked **(scrollcraft)** were
-adopted on 2026-08-23 from diffing this document against `nateherkai/scroll-craft` — see
-`playbook/findings/scrollcraft.md`; they are the only rules here not earned by a build in
+`projects/ott-radar/docs/sessions/2026-08-20-posters-and-the-merge.md`.
+Rules marked **(scrollcraft)** were adopted on 2026-08-23 from diffing this document against `nateherkai/scroll-craft` — see
+`projects/ott-radar/findings/scrollcraft.md`; they are the only rules here not earned by a build in
 this repo, and each says whose evidence it rests on.
-See `playbook/05-troubleshooting.md` and `playbook/findings/v6.md` for evidence.
+See `playbook/05-troubleshooting.md` and `projects/ott-radar/findings/v6.md` for evidence.
 
 A rule's tag is also its date. A route built before a tag existed is not in violation of
 it — see the note under the routes table in `README.md`.
 
 ## Start here
 
-Phase 1 (`v0`–`v5`) is complete and scored. `v6` and `v7` are built. The current work is
-making the feed real.
+**Working on an existing project?** Open its folder and read its `HANDOFF.md` first. That
+file is the current state; this one is the standing rules.
 
-1. **`HANDOFF.md`** (repo root) — current state, every verification command, what is
-   blocked, gaps ranked, open decisions. **Read this first in a new session.**
-2. `playbook/findings/RANKING.md` — why the best-scoring page was not the best product.
-3. `playbook/findings/v7.md` — building from a reference nobody could load.
-   `playbook/findings/scrollcraft.md` — this document diffed against the closest published
-   equivalent, and where the two disagree.
-4. `PHASE-2.md` — why each `v6` decision was made (§2) and the trap list with evidence (§4).
-   Superseded by `HANDOFF.md` on anything to do with current state.
-5. `playbook/FINGERPRINTS.md` — what every build already is, and the gate a new one clears.
-6. `docs/sessions/` — what happened in each working session.
+**Starting a new project?** Read this document and `playbook/`. Then create
+`projects/<name>/` with its own `README.md`, `HANDOFF.md` and fingerprint table. Nothing is
+copied from another project — the constitution and the playbook are inherited in place.
 
-Before trusting any change, run the commands in `HANDOFF.md` §3. Never quote a check count
-or a defect count from a document without re-running it — both have gone stale here.
+The rules below cite `v0`–`v7`, which are the eight builds of the OTT release radar in
+`projects/ott-radar/`. Where a rule's evidence matters:
+
+1. `projects/ott-radar/findings/RANKING.md` — why the best-scoring page was not the best
+   product. The single most useful thing in the repo.
+2. `projects/ott-radar/findings/scrollcraft.md` — this document diffed against the closest
+   published equivalent, and where the two disagree.
+3. `projects/ott-radar/findings/v7.md` — building from a reference nobody could load.
+4. `playbook/FINGERPRINTS.md` — the gate a new build clears, and why the rows are per-project.
+5. `projects/ott-radar/docs/sessions/` — what happened in each working session.
+
+Never quote a check count or a defect count from a document without re-running it — both
+have gone stale here.
 
 ## Banned outright
 
@@ -127,7 +135,8 @@ or a defect count from a document without re-running it — both have gone stale
   images.
 - **(measured)** Three rounds, not one. One round of screenshot review ships the regressions
   it just introduced. 8–10 of 16 defects in `v4` were caused by the loop's own earlier
-  fixes (8 clean regressions, 2 more on a generous reading — see `playbook/findings/v4.md`).
+  fixes (8 clean regressions, 2 more on a generous reading — see
+  `projects/ott-radar/findings/v4.md`).
 - **(measured)** Verify against the render, never against your intent. Check computed style
   in a browser; cross-reference displayed text against the underlying data.
 - **(measured)** Audit the running page, not the repository:

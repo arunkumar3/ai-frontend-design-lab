@@ -12,7 +12,7 @@ Run this once, deliberately, at the start of any project:
 > Build a modern, clean landing page that shows this week's new OTT releases. It should have
 > a toggle to switch between India and US. Make it look professional and modern.
 
-→ `lab/shots/v0/`
+→ `projects/ott-radar/lab/shots/v0/`
 
 "Modern," "clean," and "professional" are the three words that guarantee the statistical
 centre. Keep the result. It is your control, and without it every later claim of improvement
@@ -44,7 +44,7 @@ automatically:
 - Both light and dark must be designed, not inherited.
 ```
 
-→ `lab/shots/v1/` · 9 of 17 tells fixed
+→ `projects/ott-radar/lab/shots/v1/` · 9 of 17 tells fixed
 
 Put it in the file, not the prompt. It reaches subagents automatically, it applies to every
 future session in that directory, and you never retype it.
@@ -53,7 +53,7 @@ future session in that directory, and you never retype it.
 
 ## Forcing the system before the markup
 
-> Write `lab/design/tokens.md` **before you write a single line of markup or component
+> Write `projects/ott-radar/lab/design/tokens.md` **before you write a single line of markup or component
 > code.** It must specify, with concrete committed values — not ranges, not options:
 > a typeface pairing (**not Inter**); a modular type scale with base, ratio and four steps;
 > a spacing scale; one accent colour with light and dark variants; a radius rule stated as a
@@ -64,7 +64,7 @@ future session in that directory, and you never retype it.
 > one-off `px` in JSX. If you need a value the system doesn't have, add it to `tokens.md`
 > first, then use it.
 
-→ `lab/shots/v2/` · 14 of 17
+→ `projects/ott-radar/lab/shots/v2/` · 14 of 17
 
 The load-bearing clause is **"no arbitrary values."** It forces a justification for every
 number, and justifying a number means measuring it.
@@ -90,7 +90,7 @@ Then the build:
 > original system from their reasoning. If you find yourself reproducing a specific site's
 > layout, stop.
 
-→ `lab/shots/v3/`
+→ `projects/ott-radar/lab/shots/v3/`
 
 **Add the warning this lab learned the hard way**, which the above is missing:
 
@@ -108,14 +108,14 @@ platform and produced five single-poster rows.
 >
 > 1. `pnpm shoot v4` — six PNGs at 390/768/1440 in light and dark.
 > 2. **Actually look at all six.** Downscale first so you can view them all:
->    `for f in lab/shots/v4/*.png; do sips -Z 1200 "$f" --out "/tmp/look/$(basename $f)"; done`
+>    `for f in projects/ott-radar/lab/shots/v4/*.png; do sips -Z 1200 "$f" --out "/tmp/look/$(basename $f)"; done`
 > 3. **Write your critique to a file BEFORE you edit any code.** At least five specific
 >    defects per round. A defect names the element and the viewport:
 >    - ✗ "the layout feels unbalanced"
 >    - ✓ "at 390px the platform group header wraps to two lines, so the title count sits alone on line 2"
 > 4. Fix **only** what you listed. Do not make changes you did not first write down.
 
-→ `lab/shots/v4/` · 15 of 17, page height halved
+→ `projects/ott-radar/lab/shots/v4/` · 15 of 17, page height halved
 
 Two clauses do the work. **Write before you edit** stops the loop degenerating into
 fiddle-and-feel-better. **Reject vague impressions** is what makes a finding auditable.

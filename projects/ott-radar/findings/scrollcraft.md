@@ -2,7 +2,7 @@
 
 `scrollcraft` is a Claude Code skill for building scroll-driven landing pages, published by
 Nate Herk and written up in a thread on 2026-08-22 (*"I Built The Ultimate Claude Website
-Design Skill (steal this)"*). It is the closest published thing to this repo's `CLAUDE.md`:
+Design Skill (steal this)"*). It is the closest published thing to this repo's `../../CLAUDE.md`:
 a long, opinionated, evidence-backed design constitution carried as skill files rather than
 as a repo document. This is a line-by-line comparison of the two.
 
@@ -45,7 +45,7 @@ where both sides have written down evidence and the evidence disagrees.
 
 ### 2.1 Geist
 
-`CLAUDE.md` bans Inter, Fraunces, Instrument Serif, **Geist**, Plus Jakarta Sans and Space
+`../../CLAUDE.md` bans Inter, Fraunces, Instrument Serif, **Geist**, Plus Jakarta Sans and Space
 Grotesk, with the rationale stated in the rule itself:
 
 > Banning Inter alone just routes you to the next fashionable face.
@@ -67,7 +67,7 @@ repo does not have it.
 
 ### 2.2 Content that is invisible until an animation runs
 
-`CLAUDE.md` (v7):
+`../../CLAUDE.md` (v7):
 
 > An entrance animation must never be what makes content visible. Default to the finished
 > state and let the class add the animation; if the observer never fires, the page is merely
@@ -89,7 +89,7 @@ throws before init renders its media and none of its copy.
 **One path does get this right, and it is worth crediting.** Flow reveals (`data-sc-in`) use
 the engine's single `IntersectionObserver`, and it is written with an explicit else-branch:
 when the API is unavailable the engine adds the `.sc-in` class to every such element
-directly (`engine/scrollcraft.js:505-507`). That is precisely the construction `CLAUDE.md`
+directly (`engine/scrollcraft.js:505-507`). That is precisely the construction `../../CLAUDE.md`
 asks for — if the observer never fires, the content is merely un-animated. The gap is that
 the same care was not extended to `[data-sc-cue]`, which is most of the copy on the page.
 
@@ -107,12 +107,12 @@ JS throws before the engine initialises is blank, and nothing in the pass runs t
 genuinely cannot default to the finished state, because it has no single finished state —
 that is `verify.md`'s opening sentence and it is correct. The honest reading is that this
 rule is scoped: it holds for content pages, and a page whose medium *is* the scroll buys an
-exemption by paying for a harness. Worth writing that scope into `CLAUDE.md` rather than
+exemption by paying for a harness. Worth writing that scope into `../../CLAUDE.md` rather than
 leaving the rule looking absolute and quietly violated by anything scroll-driven.
 
 ### 2.3 What a reference is
 
-`CLAUDE.md` (v7), earned on `filmhood.in`:
+`../../CLAUDE.md` (v7), earned on `filmhood.in`:
 
 > A design reference is a set of measurements. If you cannot load the page yourself, get
 > `getComputedStyle` output, a colour histogram with counts, and the `@font-face` src URLs —
@@ -144,7 +144,7 @@ right about their own axis, and each is wrong applied to the other's.
 These are the strongest part of the comparison, because neither document could have copied
 the other. Each was written from a build that broke.
 
-| Finding | `CLAUDE.md` | scrollcraft |
+| Finding | `../../CLAUDE.md` | scrollcraft |
 |---|---|---|
 | **A `ch` cap on a wrapper sizes against the wrapper's font-size, not the heading's** | (v6), broke a 56px headline over three lines | `verify.md` failure table: "A hero headline wrapped to six lines — `max-width` in `ch` on a **container**" |
 | **A review instrument that cannot fetch what the page fetches reviews the fallback** | (posters), `image.tmdb.org` blocked, every pass reviewed the fallback tiles | Three separate instances: `file://` blocks the Blob fetch so clips fall back to posters; bundled Chromium has no h264 decoder so "the run passes against posters"; "a 404 on a clip degrades to a poster silently, which looks fine and is not" |
@@ -168,7 +168,7 @@ Two near-misses worth noting rather than counting:
 - **The banned-word lists overlap but are not the same.** Shared: elevate, seamless,
   revolutionize, supercharge. Only here: empower, effortless, unlock. Only scrollcraft:
   unleash, next-gen. Merging the two lists is free.
-- **`CLAUDE.md` has no em dash rule.** scrollcraft bans the em dash in any visible copy.
+- **`../../CLAUDE.md` has no em dash rule.** scrollcraft bans the em dash in any visible copy.
 
 ---
 
@@ -297,7 +297,7 @@ whichever page happens to be under test.
 
 ## 6. What to do with it
 
-Nothing here changes `CLAUDE.md` yet. Three things are worth proposing, in this order:
+Nothing here changes `../../CLAUDE.md` yet. Three things are worth proposing, in this order:
 
 1. **Import the fingerprint gate.** It is six columns and one rule about not editing the
    record, it needs no engine, and this repo has eight builds that would have failed it.
@@ -319,7 +319,7 @@ its theme tokens overridden before any of its output could ship into this repo.
 
 `v0`–`v6` are frozen by the append-only rule. `v7` is the live route, so it is the only
 place any of this could land. Every change below is from scrollcraft's taste floor and has
-no equivalent in `CLAUDE.md`.
+no equivalent in `../../CLAUDE.md`.
 
 **The premise for doing it at all:** `impeccable` scores `/v7` at **0 findings**, and
 `verify:v7` and `contrast:v7` both pass. So anything worth changing had to be something no

@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - '.poster-trigger'
+      - 'projects/ott-radar/.poster-trigger'
 
 permissions:
   contents: write
@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 20
       - name: Collect posters
-        run: node lab/scripts/action-fetch-posters.mjs
+        run: node projects/ott-radar/lab/scripts/action-fetch-posters.mjs
       - name: Push to transient branch
         run: |
           cd posters-out

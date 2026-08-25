@@ -17,7 +17,7 @@ what the measurements concluded, `v7` from a measured spec of a real site.
 
 The repo's headline finding is that **the best-scoring page was not the best product** —
 `v3`/`v4`/`v5` scored best on every instrument while failing at the question the page
-exists to answer. Only reading the data found it. `playbook/findings/RANKING.md` is the
+exists to answer. Only reading the data found it. `findings/RANKING.md` is the
 argument.
 
 `playbook/` is the deliverable. `lab/` is the apparatus.
@@ -44,14 +44,14 @@ trust this table's notion of "green" without re-running.
 
 ### Adopted from the scrollcraft diff, 2026-08-23
 
-All four proposals in `playbook/findings/scrollcraft.md` §6 are now in the tree, on
+All four proposals in `findings/scrollcraft.md` §6 are now in the tree, on
 `claude/article-reference-kamfxt`:
 
 | Change | Where |
 |---|---|
-| The fingerprint gate, dimensions re-derived for a feed page | `playbook/FINGERPRINTS.md`, rule in `CLAUDE.md` Process |
-| Entrance-animation rule scoped, with the exemption's price stated | `CLAUDE.md` Required |
-| Reference rule split into craft (measure it) and direction (never a site) | `CLAUDE.md` Process |
+| The fingerprint gate, dimensions re-derived for a feed page | `../../playbook/FINGERPRINTS.md`, rule in `../../CLAUDE.md` Process |
+| Entrance-animation rule scoped, with the exemption's price stated | `../../CLAUDE.md` Required |
+| Reference rule split into craft (measure it) and direction (never a site) | `../../CLAUDE.md` Process |
 | Why older routes fail current rules, and why they will not be migrated | `README.md`, after the append-only line |
 
 New rules carry the `(scrollcraft)` provenance tag. Nothing in `lab/` was touched.
@@ -273,7 +273,7 @@ These are yours, not mine. Each changes what gets built next.
 
 ## 9. Traps this repo has already paid for
 
-The full list with evidence is in `CLAUDE.md`. The four that cost the most:
+The full list with evidence is in `../../CLAUDE.md`. The four that cost the most:
 
 1. **Audit the running page, never the repository.** Source-mode reported 0 findings on a
    page the live scan gave 28.
@@ -292,11 +292,11 @@ The full list with evidence is in `CLAUDE.md`. The four that cost the most:
 - `docs/sessions/2026-08-20-posters-and-the-merge.md` — the most recent session: the
   artwork harvest, why five titles keep their tiles, and the review instrument that had
   been reviewing the fallback
-- `playbook/findings/RANKING.md` — the verdict pass, and the repo's central argument
-- `playbook/findings/v7.md` — building from a reference nobody could load
-- `playbook/findings/scrollcraft.md` — the constitution diffed against `nateherkai/scroll-craft`,
+- `findings/RANKING.md` — the verdict pass, and the repo's central argument
+- `findings/v7.md` — building from a reference nobody could load
+- `findings/scrollcraft.md` — the constitution diffed against `nateherkai/scroll-craft`,
   the closest published equivalent: twelve independent agreements and three real conflicts
-- `playbook/FINGERPRINTS.md` — the new gate. Its rows have had one pass, not two (§7)
+- `../../playbook/FINGERPRINTS.md` — the new gate. Its rows have had one pass, not two (§7)
 - `PHASE-2.md` §2 — why each `v6` decision was made; §4 — the trap list with evidence
-- `CLAUDE.md` — the constitution, including every rule the drills forced into it
+- `../../CLAUDE.md` — the constitution, including every rule the drills forced into it
 - `docs/sessions/` — what happened in each working session

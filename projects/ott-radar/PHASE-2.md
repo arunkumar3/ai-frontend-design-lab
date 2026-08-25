@@ -8,19 +8,19 @@
 
 Phase 1 ran six drills (`v0`–`v5`) to measure which lever most improves AI-generated
 frontend, then built `v6` from what the measurements said. This document is the starting
-point for the next conversation. Read this, `CLAUDE.md`, and `playbook/findings/RANKING.md`
+point for the next conversation. Read this, `../../CLAUDE.md`, and `findings/RANKING.md`
 first.
 
 **State:** `v6` is merged to `main`. It was built on `v6-weekly-radar` at `d82fbf9`; that
 branch is gone and the history is on `main`. `v7` is the current work — the weekly radar
-rebuilt in the visual language of `filmhood.in`; see `playbook/findings/v7.md`.
+rebuilt in the visual language of `filmhood.in`; see `findings/v7.md`.
 Routes `/v6` and `/v7` at `http://localhost:5173/` (`pnpm dev` in `lab/`).
 
 ---
 
 ## 1. Where phase 1 landed
 
-The lab's own verdict, from `playbook/findings/RANKING.md`:
+The lab's own verdict, from `findings/RANKING.md`:
 
 > the best-scoring page is not the best product
 
@@ -79,13 +79,13 @@ so the check cannot drift away from the stylesheet.
 - `pnpm shoot v6` — captures 3 widths × 2 themes into `shots/v6/`. Then *look at them*.
 
 All four were green at `d82fbf9`, and `verify:v6` and `contrast:v6` are green again after
-the ICU portability fix (see `playbook/findings/v6.md` §6). **The live audit and the
+the ICU portability fix (see `findings/v6.md` §6). **The live audit and the
 screenshot loop cannot be re-run on a network that blocks `image.tmdb.org`** — the page
 renders, but with six blank posters.
 
 ## 4. Traps this project has already paid for
 
-Each of these cost a drill. They are in `CLAUDE.md` as rules; this is why they exist.
+Each of these cost a drill. They are in `../../CLAUDE.md` as rules; this is why they exist.
 
 - **A clean automated scan is not proof.** `impeccable detect` reported zero contrast
   findings on a page with a real WCAG failure. Compute the values.
