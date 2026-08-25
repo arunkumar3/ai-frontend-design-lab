@@ -6,6 +6,30 @@
   "source": "tmdb",
   "releases": [
     {
+      "id": "tmdb-in-series-303351",
+      "title": "Blood Sacrifice",
+      "date": "2026-08-20",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "8iFUWLKBAWDrJ9rOunscgIDrGQ1.jpg",
+      "posterApprox": false,
+      "tmdbId": 303351
+    },
+    {
+      "id": "tmdb-us-series-303351",
+      "title": "Blood Sacrifice",
+      "date": "2026-08-20",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "8iFUWLKBAWDrJ9rOunscgIDrGQ1.jpg",
+      "posterApprox": false,
+      "tmdbId": 303351
+    },
+    {
       "id": "tmdb-in-movie-1741201",
       "title": "Chompoo: Lost​ &​ Forgotten​",
       "date": "2026-08-20",
@@ -66,6 +90,54 @@
       "tmdbId": 1626188
     },
     {
+      "id": "tmdb-in-series-312523",
+      "title": "S&X",
+      "date": "2026-08-20",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "iyBgwNr5I7CW1Mf7ulPgdz3Y5Ax.jpg",
+      "posterApprox": false,
+      "tmdbId": 312523
+    },
+    {
+      "id": "tmdb-us-series-312523",
+      "title": "S&X",
+      "date": "2026-08-20",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "iyBgwNr5I7CW1Mf7ulPgdz3Y5Ax.jpg",
+      "posterApprox": false,
+      "tmdbId": 312523
+    },
+    {
+      "id": "tmdb-us-series-294722",
+      "title": "The Dynasty: UConn Huskies",
+      "date": "2026-08-20",
+      "region": "US",
+      "type": "series",
+      "platform": "appletv",
+      "language": "English",
+      "poster": "5lZ0NLV93fIx8yIWT38h8rt5u2I.jpg",
+      "posterApprox": false,
+      "tmdbId": 294722
+    },
+    {
+      "id": "tmdb-us-series-329987",
+      "title": "9/11: Reunited",
+      "date": "2026-08-21",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "gRRbtlz7Lyygch0UOWr5Iso0LVk.jpg",
+      "posterApprox": false,
+      "tmdbId": 329987
+    },
+    {
       "id": "tmdb-in-movie-1621552",
       "title": "Facing El Chapo",
       "date": "2026-08-21",
@@ -106,6 +178,18 @@
       "title": "Pyaar Prema Kalyanam",
       "date": "2026-08-21",
       "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "Tamil",
+      "poster": "AjaNAeMXOrK9n0YqGqX0Lz5qxYu.jpg",
+      "posterApprox": false,
+      "tmdbId": 1538273
+    },
+    {
+      "id": "tmdb-in-movie-1538273",
+      "title": "Pyaar Prema Kalyanam",
+      "date": "2026-08-21",
+      "region": "IN",
       "type": "movie",
       "platform": "netflix",
       "language": "Tamil",
