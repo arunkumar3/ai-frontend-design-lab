@@ -80,9 +80,29 @@ measured it:
 | 2026-08-25 | `2026-08-20..08-26` (past) | 17 |
 | 2026-08-28 | `2026-08-27..09-02` (today + future) | **0**, with 0 failures |
 
-The window now trails — the eight days ending today, in `src/feed/window.js`, pure and
-tested. The page's own Thursday→Wednesday grid (`RUN_DAY` in `routes/v7/week.js`) is
-untouched: only what we *ask TMDB for* trails, not how the page groups.
+The window is now bounded by the week's own edges, in `src/feed/window.js`, pure and tested.
+
+**And then the week model itself turned out to be the bigger defect.** With the fetch fixed,
+the reader's answer to "what landed this week" was still wrong, because `v7` anchored weeks
+to **Thursday — the day the robot runs**. That conflated a schedule with a calendar. On
+Friday 2026-08-28 it put the sixteen titles that dropped Monday to Wednesday into "last
+week", flagged them `ARCHIVE`, and left "this week" holding two. The list people wanted was
+on the page the whole time, under the wrong heading.
+
+`v7`'s weeks are now **Monday to Sunday**, which is what a week means to the people reading
+it. Same day, same data, the page went from *2 titles, ARCHIVE* to *India 7 · US 11 ·
+24–30 Aug, this week*. The fetch still runs on Thursday; that is a schedule and it no longer
+decides where a week begins.
+
+`WEEK_START_DAY` lives in `routes/v7/week.js`, and `verify-v7.mjs` and `feed-shapes-v7.mjs`
+carry matching copies — change one, change all three. **`v6` still anchors on Thursday and
+was deliberately left alone**, routes here being append-only; `verify-v6.mjs` keeps its own
+Thursday copy for that reason.
+
+The fetch window reaches back a full extra week — Monday of the *previous* week to Sunday of
+the current one. Not padding: the run is weekly on a Thursday, so a title landing on the
+Friday, Saturday or Sunday after it is not in TMDB's provider data yet and would never be
+asked for again. Without the reach-back every weekend falls permanently through the gap.
 
 **Why it looked like a success.** The zero-record guard only fired when there were also
 transport failures, so 28 requests returning `200` with empty bodies fell straight through.

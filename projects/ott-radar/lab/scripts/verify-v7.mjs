@@ -22,14 +22,16 @@ import { generatedSource } from '../src/feed/sources/generated.js'
 // from an empty read to a real week.
 const ALL = [...RELEASES, ...CURATED, ...generatedSource.read()]
 
-const RUN_DAY = 4 // Thursday
+// v7's weeks are Monday to Sunday — must match src/routes/v7/week.js.
+// v6 still anchors on Thursday; verify-v6.mjs keeps its own copy.
+const WEEK_START_DAY = 1 // Monday
 const asDate = (iso) => new Date(`${iso}T00:00:00`)
 const isoOf = (d) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 
 function weekStartIso(iso) {
   const d = asDate(iso)
-  d.setDate(d.getDate() - ((d.getDay() - RUN_DAY + 7) % 7))
+  d.setDate(d.getDate() - ((d.getDay() - WEEK_START_DAY + 7) % 7))
   return isoOf(d)
 }
 function addDays(iso, n) {

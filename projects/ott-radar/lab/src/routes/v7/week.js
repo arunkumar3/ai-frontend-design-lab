@@ -1,10 +1,21 @@
 // Week arithmetic for v7. Duplicated from v6 rather than imported: routes in
 // this lab are append-only, so a later drill never reaches into an earlier
-// one's files. The rules themselves are unchanged — the run is weekly, on a
-// Thursday, and a title dropping Thursday morning belongs to the week that
-// run publishes.
+// one's files. v6 still anchors its weeks to Thursday and is left alone.
+//
+// v7's weeks are Monday to Sunday, which is what "this week" means to the
+// people reading the page. It used to anchor on Thursday, the day the fetch
+// runs, and that conflated two different things: when the robot wakes up, and
+// what a reader calls a week. The cost was not theoretical — on Friday
+// 2026-08-28 the Thursday anchor put the sixteen titles that had dropped that
+// Monday to Wednesday into "last week" and flagged them ARCHIVE, leaving
+// "this week" holding two. The reader's answer to "what landed this week" was
+// sitting on the page under the wrong heading.
+//
+// The fetch still runs on Thursday. That is a schedule, and it no longer
+// decides where a week begins — see `src/feed/window.js`, which asks for a
+// window bounded by these same Monday/Sunday edges.
 
-export const RUN_DAY = 4 // Thursday
+export const WEEK_START_DAY = 1 // Monday. Intl day index, Sun = 0.
 
 export const asDate = (iso) => new Date(`${iso}T00:00:00`)
 
@@ -15,7 +26,7 @@ export const isoOf = (d) =>
 
 export function weekStart(iso) {
   const d = asDate(iso)
-  d.setDate(d.getDate() - ((d.getDay() - RUN_DAY + 7) % 7))
+  d.setDate(d.getDate() - ((d.getDay() - WEEK_START_DAY + 7) % 7))
   return d
 }
 

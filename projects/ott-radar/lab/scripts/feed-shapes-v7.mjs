@@ -12,7 +12,9 @@
 import { chromium } from 'playwright'
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:5173'
-const RUN_DAY = 4 // Thursday
+// v7's weeks are Monday to Sunday — must match src/routes/v7/week.js.
+// v6 still anchors on Thursday; verify-v6.mjs keeps its own copy.
+const WEEK_START_DAY = 1 // Monday
 
 const isoOf = (d) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -23,7 +25,7 @@ const addDays = (iso, n) => {
 }
 const weekStart = (iso) => {
   const d = new Date(`${iso}T00:00:00`)
-  d.setDate(d.getDate() - ((d.getDay() - RUN_DAY + 7) % 7))
+  d.setDate(d.getDate() - ((d.getDay() - WEEK_START_DAY + 7) % 7))
   return isoOf(d)
 }
 
