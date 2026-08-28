@@ -1,10 +1,106 @@
 {
   "fetchedFor": {
-    "from": "2026-08-21",
-    "to": "2026-08-28"
+    "from": "2026-08-17",
+    "to": "2026-08-30"
   },
   "source": "tmdb",
   "releases": [
+    {
+      "id": "tmdb-us-series-331999",
+      "title": "Disney Sidekick Adventures",
+      "date": "2026-08-17",
+      "region": "US",
+      "type": "series",
+      "platform": "disneyplus",
+      "language": "English",
+      "poster": null,
+      "posterApprox": false,
+      "tmdbId": 331999
+    },
+    {
+      "id": "tmdb-us-movie-1676318",
+      "title": "Back to the 90s",
+      "date": "2026-08-18",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "2T0j25ofU6aUei6J6ek2hlTL1wc.jpg",
+      "posterApprox": false,
+      "tmdbId": 1676318
+    },
+    {
+      "id": "tmdb-in-movie-1738070",
+      "title": "Kelsey Cook: Happy Hour",
+      "date": "2026-08-18",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "rbvVm5OPzWGypYJzFMylMJ0wMWG.jpg",
+      "posterApprox": false,
+      "tmdbId": 1738070
+    },
+    {
+      "id": "tmdb-us-movie-1738070",
+      "title": "Kelsey Cook: Happy Hour",
+      "date": "2026-08-18",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "rbvVm5OPzWGypYJzFMylMJ0wMWG.jpg",
+      "posterApprox": false,
+      "tmdbId": 1738070
+    },
+    {
+      "id": "tmdb-in-series-326901",
+      "title": "Take a Hike!",
+      "date": "2026-08-18",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "ya3p0meUJJ92gjFRFcZ1C3TJ0nO.jpg",
+      "posterApprox": false,
+      "tmdbId": 326901
+    },
+    {
+      "id": "tmdb-us-series-326901",
+      "title": "Take a Hike!",
+      "date": "2026-08-18",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "ya3p0meUJJ92gjFRFcZ1C3TJ0nO.jpg",
+      "posterApprox": false,
+      "tmdbId": 326901
+    },
+    {
+      "id": "tmdb-us-series-331946",
+      "title": "A Beautiful Obsession",
+      "date": "2026-08-19",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "sMGr6FeYhA799ZU50r4wjt5HVdV.jpg",
+      "posterApprox": false,
+      "tmdbId": 331946
+    },
+    {
+      "id": "tmdb-us-series-323557",
+      "title": "Lion",
+      "date": "2026-08-19",
+      "region": "US",
+      "type": "series",
+      "platform": "disneyplus",
+      "language": "English",
+      "poster": "mvFQIZo2DG1pyiINL2bDa5QNR4O.jpg",
+      "posterApprox": false,
+      "tmdbId": 323557
+    },
     {
       "id": "tmdb-in-series-303351",
       "title": "Blood Sacrifice",
@@ -316,6 +412,30 @@
       "poster": "sCjOLNZPeh067D2d7aXBeuwMGmn.jpg",
       "posterApprox": false,
       "tmdbId": 275224
+    },
+    {
+      "id": "tmdb-in-series-326879",
+      "title": "The Airport Chaplain",
+      "date": "2026-08-26",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "lK90V9tQ8pyc7IWreLgQTHVgU3b.jpg",
+      "posterApprox": false,
+      "tmdbId": 326879
+    },
+    {
+      "id": "tmdb-us-series-326879",
+      "title": "The Airport Chaplain",
+      "date": "2026-08-26",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "lK90V9tQ8pyc7IWreLgQTHVgU3b.jpg",
+      "posterApprox": false,
+      "tmdbId": 326879
     },
     {
       "id": "tmdb-in-series-299952",
