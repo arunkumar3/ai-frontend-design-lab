@@ -61,16 +61,32 @@ for (const region of Object.keys(PROVIDERS)) {
   for (const [key, id] of Object.entries(PROVIDERS[region])) {
     const name = live.get(id)
     let hits = 0
+    const recent = []
     for (const kind of ['movie', 'series']) {
       const body = await get(discoverUrl({ region, kind, providerId: id, ...WINDOW }))
       hits += (body.results ?? []).length
+
+      // The count alone misled once already. `discoverUrl` sorts ASCENDING and
+      // only ever reads page 1, so "40 results" over 120 days is the OLDEST
+      // twenty of each kind and says nothing about whether the provider has
+      // anything recent — which is the only thing that decides whether a title
+      // reaches this week's page. Ask again, newest first, and print dates.
+      const url = new URL(discoverUrl({ region, kind, providerId: id, ...WINDOW }))
+      const field = kind === 'movie' ? 'primary_release_date' : 'first_air_date'
+      url.searchParams.set('sort_by', `${field}.desc`)
+      const newest = await get(url.toString())
+      for (const r of (newest.results ?? []).slice(0, 3)) {
+        recent.push(`${r[field] ?? '????-??-??'} ${(r.original_language ?? '--').padEnd(2)} ${r.title ?? r.name}`)
+      }
     }
+    recent.sort().reverse()
     const verdict = !name
       ? 'NOT A PROVIDER IN THIS REGION'
       : hits === 0
         ? `"${name}" — id is real, but 0 results in 120 days`
         : `"${name}" — ${hits} results`
-    summary.push(`  ${region}  ${key.padEnd(12)} id ${String(id).padEnd(5)} ${verdict}`)
+    summary.push(`  ${region}  ${key.padEnd(13)} id ${String(id).padEnd(5)} ${verdict}`)
+    for (const line of recent.slice(0, 3)) summary.push(`                     newest: ${line}`)
   }
 
   // What a human would recognise: the region's providers by name, so a wrong
