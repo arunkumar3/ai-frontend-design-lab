@@ -36,6 +36,12 @@ from.setDate(from.getDate() - 120)
 const iso = (d) => d.toISOString().slice(0, 10)
 const WINDOW = { from: iso(from), to: iso(to) }
 
+// The services worth naming in the report. Deliberately broad on spelling —
+// TMDB renames these ("Hotstar" -> "JioHotstar" -> "JioCinema"), which is one
+// of the ways a hardcoded id quietly stops matching anything.
+const INTEREST =
+  /hotstar|jio|zee|sony|sun ?nxt|aha|etv|voot|mx ?player|eros|alt|hoichoi|manorama|chaupal|stage|klikk|addatimes|prime video|netflix|apple|lionsgate|discovery|shemaroo|amazon/i
+
 for (const region of Object.keys(PROVIDERS)) {
   console.log(`\n${'='.repeat(72)}\n${region} — configured ids checked against TMDB's own list\n${'='.repeat(72)}`)
 
@@ -64,10 +70,17 @@ for (const region of Object.keys(PROVIDERS)) {
 
   // What a human would recognise: the region's providers by name, so a wrong
   // id can be replaced with the right one rather than guessed at again.
+  //
+  // Printed filtered, not whole. A region carries hundreds of providers, most
+  // of them Amazon add-on channels, and dumping all of them buries the four
+  // lines anybody actually needs. INTEREST is the shortlist that matters for
+  // this page: the services carrying Indian-language originals.
   const configured = new Set(Object.values(PROVIDERS[region]))
   const missing = [...live.entries()]
     .filter(([id]) => !configured.has(id))
     .sort((a, b) => a[1].localeCompare(b[1]))
-  console.log(`\n  Not configured (${missing.length}) — the ones worth adding, by TMDB's own name:`)
-  for (const [id, name] of missing) console.log(`    ${String(id).padStart(5)}  ${name}`)
+  const hits = missing.filter(([, name]) => INTEREST.test(name))
+  console.log(`\n  Not configured: ${missing.length} in this region. Of those, matching the`)
+  console.log(`  services this page is about (${hits.length}):`)
+  for (const [id, name] of hits) console.log(`    ${String(id).padStart(5)}  ${name}`)
 }
