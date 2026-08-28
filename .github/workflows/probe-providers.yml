@@ -1,0 +1,40 @@
+# Verifies the TMDB watch-provider ids in src/feed/sources/tmdb.js against
+# TMDB's own list for each region. Read-only: prints a report, commits nothing.
+#
+# Runs here rather than in the sandbox for the same reason fetch-feed does —
+# api.themoviedb.org is blocked on the development network, which is exactly
+# why those ids went unverified long enough to ship a feed with no Telugu or
+# Hindi titles in it.
+#
+# Bump projects/ott-radar/.probe-trigger to fire it from a branch.
+name: probe-providers
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'projects/ott-radar/.probe-trigger'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Require TMDB_TOKEN
+        env:
+          TOKEN_SET: ${{ secrets.TMDB_TOKEN != '' }}
+        run: |
+          if [ "$TOKEN_SET" != "true" ]; then
+            echo "::error::TMDB_TOKEN secret is not set."
+            exit 1
+          fi
+      - name: Probe
+        working-directory: projects/ott-radar/lab
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: node scripts/probe-providers.mjs
