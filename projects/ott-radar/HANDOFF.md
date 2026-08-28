@@ -92,21 +92,42 @@ workflow's `git diff --cached --quiet` saw a two-line change and committed
 in the log from one that worked. Zero records is now a hard failure with a diagnosis, and a
 run whose release set is unchanged leaves the file alone so there is nothing to commit.
 
-**And a third cause, found after the first two were fixed: the site was not building at
-all.** A Vercel preview of the fix commit failed with `vite: command not found`, and the log
-said the package manager had "changed from pnpm to npm". Both symptoms are one cause — the
-build is running at the repo root, which has no `package.json` and no lockfile. It has been
-that way since `d431bd2` moved the app from `lab/` to `projects/ott-radar/lab/` on
-2026-08-25 and nothing updated Vercel's Root Directory to match. So nothing has deployed
-since the move, and the two fixes above could not have reached the site on their own.
+**And a third cause, found after the first two were fixed: the site has never built.** A
+Vercel preview of the fix commit failed with `vite: command not found`, and the log said the
+package manager had "changed from pnpm to npm". Both symptoms point one way — the build runs
+at the repo root, which has no `package.json` and no lockfile, so Vercel installs nothing and
+then runs a build needing a binary it never installed.
 
-A `vercel.json` at the repo root now builds the app from its new path, verified by running
-its own `buildCommand` and checking its own `outputDirectory` rather than a retyped copy.
-`projects/ott-radar/lab/vercel.json` is deliberately left in place: exactly one of the two
-is read, depending on the Root Directory setting, and the app-level one is still what runs
-if that setting is pointed back at the app directory. Changing it there is the one-line
-alternative to this file, and it is the better fix if the root is ever wanted for a second
-site — which is what the move was for.
+**Do not repeat the first reading of this, which was wrong.** It looked like `d431bd2`'s move
+of the app out of `lab/` had orphaned Vercel's Root Directory, and that was written down here
+as fact before the evidence was checked. Walking the commit statuses back says otherwise:
+
+| commit | date | Vercel |
+|---|---|---|
+| `b2ba098`, `dcc9de0` | 2026-08-28 | failure |
+| `1320eac` (main) | 2026-08-28 | failure |
+| `bee0b91`, `d431bd2` — the move | 2026-08-25 | failure |
+| `c97b238`, `df52cce`, `208601c`, `0bab269` | 2026-08-22 | failure |
+| `9d0b018` and everything older | ≤2026-08-22 | no status — project not connected yet |
+
+The first status of any kind lands on `0bab269`, the commit that added `lab/vercel.json`, so
+that is when the Vercel project was connected. **Every deployment it has ever attempted has
+failed.** There is no green build to regress from; the move is a red herring. Whatever the
+group has been looking at is not coming from this project, and from inside the sandbox that
+cannot be checked either way — the egress proxy 403s `*.vercel.app`.
+
+A `vercel.json` at the repo root now builds the app from its path, verified by running its own
+`buildCommand` and listing its own `outputDirectory` rather than a retyped copy. It uses npm,
+not pnpm: Vercel's own log reports npm as the package manager for this build, and the weekly
+Action already proves `npm install` builds this app from a clean machine. That is a reasoned
+choice, **not a confirmed fix** — the build log for `dpl_AV3uqun3uffLdWQjGPsdDfh6jKyR` has not
+been read, and nothing here should be treated as diagnosed until it has.
+
+The one change that needs no guessing at all is in the dashboard: point Root Directory at
+`projects/ott-radar/lab`, where `package.json`, `pnpm-lock.yaml` and the app's own
+`vercel.json` already sit. `projects/ott-radar/lab/vercel.json` is kept for exactly that
+reason — one of the two is read, whichever sits in the configured Root Directory, so they
+cannot conflict.
 
 **Still open, and not fixed here:** the page labels the fallback week "Landing this week".
 When the current week has no releases it degrades to the most recent week that does — which
