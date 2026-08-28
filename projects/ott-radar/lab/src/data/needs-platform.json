@@ -1,0 +1,89 @@
+{
+  "generatedFor": {
+    "from": "2026-08-24",
+    "to": "2026-08-30"
+  },
+  "note": "Digital releases with no streaming provider listed in TMDB yet. Look up the service, then add the tmdbId to src/data/platform-overrides.js.",
+  "titles": [
+    {
+      "tmdbId": 1740614,
+      "title": "Newton's 3rd Law",
+      "date": "2026-08-27",
+      "language": "Telugu",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1740614"
+    },
+    {
+      "tmdbId": 1757305,
+      "title": "Harudu",
+      "date": "2026-08-27",
+      "language": "Telugu",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1757305"
+    },
+    {
+      "tmdbId": 1654516,
+      "title": "Babita Singh Reporting",
+      "date": "2026-08-28",
+      "language": "Hindi",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1654516"
+    },
+    {
+      "tmdbId": 1122030,
+      "title": "Alpha",
+      "date": "2026-08-28",
+      "language": "Hindi",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1122030"
+    },
+    {
+      "tmdbId": 1293550,
+      "title": "Bandar",
+      "date": "2026-08-28",
+      "language": "Hindi",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1293550"
+    },
+    {
+      "tmdbId": 1709263,
+      "title": "IRUL VAAN MUGIL",
+      "date": "2026-08-28",
+      "language": "Tamil",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1709263"
+    },
+    {
+      "tmdbId": 1444088,
+      "title": "Pluto",
+      "date": "2026-08-24",
+      "language": "Malayalam",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1444088"
+    },
+    {
+      "tmdbId": 1473603,
+      "title": "LURK",
+      "date": "2026-08-26",
+      "language": "Malayalam",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1473603"
+    },
+    {
+      "tmdbId": 1339676,
+      "title": "I, Nobody",
+      "date": "2026-08-25",
+      "language": "Malayalam",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1339676"
+    },
+    {
+      "tmdbId": 1531823,
+      "title": "Angam Attahasam",
+      "date": "2026-08-28",
+      "language": "Malayalam",
+      "region": "IN",
+      "tmdb": "https://www.themoviedb.org/movie/1531823"
+    }
+  ]
+}
