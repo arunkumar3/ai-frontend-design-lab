@@ -85,9 +85,8 @@ for (const region of Object.keys(PROVIDERS)) {
     .filter(([id]) => !configured.has(id))
     .sort((a, b) => a[1].localeCompare(b[1]))
   const hits = missing.filter(([, name]) => INTEREST.test(name))
-  console.log(`\n  Not configured: ${missing.length} in this region. Of those, matching the`)
-  console.log(`  services this page is about (${hits.length}):`)
-  for (const [id, name] of hits) console.log(`    ${String(id).padStart(5)}  ${name}`)
+  summary.push(`\n  ${region} — not configured: ${missing.length} in region, ${hits.length} matching this page's services:`)
+  for (const [id, name] of hits) summary.push(`    ${String(id).padStart(5)}  ${name}`)
 }
 
 // Last, deliberately. This report is read through a log tail, and the first
