@@ -1,6 +1,6 @@
 {
   "fetchedFor": {
-    "from": "2026-08-17",
+    "from": "2026-08-24",
     "to": "2026-08-30"
   },
   "source": "tmdb",
@@ -532,6 +532,18 @@
       "poster": "jQKt9R0LRWGXYF4TfhyrIrqqvv3.jpg",
       "posterApprox": false,
       "tmdbId": 332379
+    },
+    {
+      "id": "tmdbdig-in-movie-1437143",
+      "title": "KJQ",
+      "date": "2026-08-28",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": "Telugu",
+      "poster": "q1AGDayKh45gCc00ZiDpWd1XzI7.jpg",
+      "posterApprox": false,
+      "tmdbId": 1437143
     }
   ]
 }
