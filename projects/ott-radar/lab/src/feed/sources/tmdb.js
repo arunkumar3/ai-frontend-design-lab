@@ -20,22 +20,30 @@ export const PROVIDERS = {
   IN: {
     netflix: 8,
     prime: 119,
-    jiohotstar: 122,
+    // 2336, verified against TMDB's own provider list for IN on 2026-08-28.
+    // It was 122 — an id that is not a provider in India at all, so India's
+    // largest Hindi and regional service returned `200` with an empty list on
+    // every run since the feed was built. Nothing reported it, because that is
+    // exactly what a genuinely quiet provider looks like.
+    jiohotstar: 2336,
     zee5: 232,
     sonyliv: 237,
     sunnxt: 309,
-    lionsgate: 339,
-    // Aha — the Telugu-first OTT, added on request; conspicuous by absence for
-    // a page inspired by filmhood.in. Id 532 is TMDB's published provider id,
-    // but api.themoviedb.org is blocked on this network, so unlike the ids
-    // above it has never been exercised against the live service. If Aha
-    // titles are missing from a real fetch, verify this id first.
+    // aha, 532, is right — confirmed against the same list, so the comment
+    // that used to sit here asking someone to verify it is discharged. Its
+    // catalogue in TMDB is the problem instead: one title in 120 days.
     aha: 532,
-    // ETV Win is curated in PLATFORMS but deliberately absent here: its TMDB
-    // provider id could not be verified from this network, and a guessed id
-    // would silently fetch some other service's catalog. Curated rows on
-    // etvwin render fine through the boundary; resolve the id before the
-    // first live fetch is expected to cover it.
+    // Added 2026-08-28, all read off TMDB's India list rather than guessed.
+    // These carry the Hindi catalogue that jiohotstar's dead id was supposed
+    // to be covering. MX Player is listed twice by TMDB, standalone and as a
+    // Prime channel; both are queried because a title can appear under either,
+    // and `normaliseFeed` dedupes by id so the overlap costs one request.
+    mxplayer: 515,
+    mxplayerprime: 1898,
+    shemaroome: 474,
+    // Removed: lionsgate, 339. TMDB does not list it as a provider in India,
+    // so it was never going to return anything. It stays in PLATFORMS because
+    // curated rows still use the key.
   },
   US: {
     netflix: 8,
