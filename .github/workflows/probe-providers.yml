@@ -38,6 +38,11 @@ jobs:
         env:
           TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
         run: node scripts/probe-providers.mjs
+      - name: Probe a second source for the unplaced titles
+        working-directory: projects/ott-radar/lab
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: node scripts/probe-second-source.mjs
       - name: Probe digital releases by language
         working-directory: projects/ott-radar/lab
         env:
