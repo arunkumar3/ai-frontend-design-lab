@@ -20,6 +20,7 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { fetchTmdbFeed } from '../src/feed/sources/tmdb.js'
+import { fetchTmdbDigital } from '../src/feed/sources/tmdb-digital.js'
 import { normaliseFeed, derivedPlatforms } from '../src/feed/normalise.js'
 import { fetchWindow } from '../src/feed/window.js'
 
@@ -49,7 +50,30 @@ if (!token) {
 
 console.log(`window ${from} .. ${to}`)
 
-const { records, failures } = await fetchTmdbFeed({ from, to, token })
+const byProvider = await fetchTmdbFeed({ from, to, token })
+
+// A second question, not a second attempt at the first one. See
+// `src/feed/sources/tmdb-digital.js`: the provider-filtered query above is six
+// to ten weeks stale for Indian services, so it cannot put a Telugu or Hindi
+// title in the week it actually landed. Digital-release records are current.
+const byDigital = await fetchTmdbDigital({ from, to, token })
+
+const records = [...byProvider.records, ...byDigital.records]
+const failures = [...byProvider.failures, ...byDigital.failures]
+
+console.log(`\nby provider   ${byProvider.records.length} raw`)
+console.log(`by digital    ${byDigital.records.length} raw`)
+if (byDigital.unresolved.length) {
+  // Reported, never silent. These are real digital releases TMDB has no
+  // provider mapping for yet; dropping them is a choice, and a choice that is
+  // not counted is indistinguishable from a week that was simply smaller.
+  console.log(
+    `\n${byDigital.unresolved.length} digital release(s) dropped — no streaming provider listed in region yet:`,
+  )
+  for (const u of byDigital.unresolved.slice(0, 12)) {
+    console.log(`   ${u.date}  ${(u.language ?? '?').padEnd(10)} ${u.title}`)
+  }
+}
 
 // Distinguish "the feed is empty" from "nothing got through". A run where every
 // request failed and a run where the week genuinely has no releases both end
