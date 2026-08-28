@@ -39,8 +39,13 @@ const WINDOW = { from: iso(from), to: iso(to) }
 // The services worth naming in the report. Deliberately broad on spelling —
 // TMDB renames these ("Hotstar" -> "JioHotstar" -> "JioCinema"), which is one
 // of the ways a hardcoded id quietly stops matching anything.
+// Indian-language services only. The first version of this list included
+// "amazon", which matched several hundred Amazon add-on channels and buried
+// the report all over again — the filter defeating its own purpose.
 const INTEREST =
-  /hotstar|jio|zee|sony|sun ?nxt|aha|etv|voot|mx ?player|eros|alt|hoichoi|manorama|chaupal|stage|klikk|addatimes|prime video|netflix|apple|lionsgate|discovery|shemaroo|amazon/i
+  /hotstar|jio|zee|sony ?liv|sun ?nxt|\baha\b|etv|voot|mx ?player|eros|altbalaji|hoichoi|manorama|chaupal|stage|klikk|addatimes|shemaroo|planet marathi|tentkotta|simply ?south/i
+
+const summary = []
 
 for (const region of Object.keys(PROVIDERS)) {
   console.log(`\n${'='.repeat(72)}\n${region} — configured ids checked against TMDB's own list\n${'='.repeat(72)}`)
@@ -65,7 +70,7 @@ for (const region of Object.keys(PROVIDERS)) {
       : hits === 0
         ? `"${name}" — id is real, but 0 results in 120 days`
         : `"${name}" — ${hits} results`
-    console.log(`  ${key.padEnd(12)} id ${String(id).padEnd(5)} ${verdict}`)
+    summary.push(`  ${region}  ${key.padEnd(12)} id ${String(id).padEnd(5)} ${verdict}`)
   }
 
   // What a human would recognise: the region's providers by name, so a wrong
@@ -84,3 +89,8 @@ for (const region of Object.keys(PROVIDERS)) {
   console.log(`  services this page is about (${hits.length}):`)
   for (const [id, name] of hits) console.log(`    ${String(id).padStart(5)}  ${name}`)
 }
+
+// Last, deliberately. This report is read through a log tail, and the first
+// two runs put the answer above a few hundred lines of provider names.
+console.log(`\n${'='.repeat(72)}\nVERDICT — every configured id, ${WINDOW.from}..${WINDOW.to}\n${'='.repeat(72)}`)
+for (const line of summary) console.log(line)
