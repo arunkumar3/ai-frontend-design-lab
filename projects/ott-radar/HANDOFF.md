@@ -92,6 +92,22 @@ workflow's `git diff --cached --quiet` saw a two-line change and committed
 in the log from one that worked. Zero records is now a hard failure with a diagnosis, and a
 run whose release set is unchanged leaves the file alone so there is nothing to commit.
 
+**And a third cause, found after the first two were fixed: the site was not building at
+all.** A Vercel preview of the fix commit failed with `vite: command not found`, and the log
+said the package manager had "changed from pnpm to npm". Both symptoms are one cause — the
+build is running at the repo root, which has no `package.json` and no lockfile. It has been
+that way since `d431bd2` moved the app from `lab/` to `projects/ott-radar/lab/` on
+2026-08-25 and nothing updated Vercel's Root Directory to match. So nothing has deployed
+since the move, and the two fixes above could not have reached the site on their own.
+
+A `vercel.json` at the repo root now builds the app from its new path, verified by running
+its own `buildCommand` and checking its own `outputDirectory` rather than a retyped copy.
+`projects/ott-radar/lab/vercel.json` is deliberately left in place: exactly one of the two
+is read, depending on the Root Directory setting, and the app-level one is still what runs
+if that setting is pointed back at the app directory. Changing it there is the one-line
+alternative to this file, and it is the better fix if the root is ever wanted for a second
+site — which is what the move was for.
+
 **Still open, and not fixed here:** the page labels the fallback week "Landing this week".
 When the current week has no releases it degrades to the most recent week that does — which
 is correct behaviour — but the copy still says "this week", so stale data reads as fresh
