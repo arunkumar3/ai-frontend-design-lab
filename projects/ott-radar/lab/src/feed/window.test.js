@@ -1,38 +1,78 @@
 import { describe, expect, it } from 'vitest'
-import { fetchWindow, isoOf, TRAILING_DAYS } from './window.js'
+import { fetchWindow, isoOf, mondayOf } from './window.js'
 
-// The defect these cover: the window used to be the *current* publishing week,
-// Thursday to Wednesday, computed forward from today. On its own Thursday cron
-// that asked TMDB for a week which had not happened yet, and a provider-filtered
-// discover can only ever answer for titles a service already carries. The
-// 2026-08-28 run fetched 0 records with 0 failures and still committed.
-describe('fetchWindow', () => {
-  it('never asks for a date past today', () => {
-    // Every weekday, not just the cron's own, because --from/--to-less manual
-    // runs happen on whatever day someone is debugging.
-    for (let day = 20; day <= 26; day += 1) {
-      const today = new Date(2026, 7, day)
-      expect(fetchWindow(today).to).toBe(isoOf(today))
+const AUG = 7
+const SEP = 8
+
+describe('mondayOf', () => {
+  it('is stable for every day of one Monday-to-Sunday week', () => {
+    for (let day = 24; day <= 30; day += 1) {
+      expect(isoOf(mondayOf(new Date(2026, AUG, day)))).toBe('2026-08-24')
     }
   })
 
-  it('covers the publishing week that just closed when it runs on Thursday', () => {
-    // Thu 2026-08-27. The week Thu 08-20 .. Wed 08-26 must be inside the
-    // window, or the titles the page is about fall outside the fetch.
-    expect(fetchWindow(new Date(2026, 7, 27))).toEqual({
-      from: '2026-08-20',
-      to: '2026-08-27',
+  it('puts Sunday at the END of its week, not the start', () => {
+    // The classic off-by-one: JS getDay() has Sunday as 0, so a naive
+    // subtraction rolls Sunday forward into the next week.
+    expect(isoOf(mondayOf(new Date(2026, AUG, 30)))).toBe('2026-08-24')
+    expect(isoOf(mondayOf(new Date(2026, AUG, 31)))).toBe('2026-08-31')
+  })
+})
+
+describe('fetchWindow', () => {
+  // The spec, in the terms it was given: the Thursday run covers that week,
+  // Monday to Sunday, and the next Thursday covers the next one.
+  it('a Thursday run asks for Monday to Sunday of its own week', () => {
+    expect(fetchWindow(new Date(2026, AUG, 27))).toEqual({
+      from: '2026-08-24',
+      to: '2026-08-30',
     })
   })
 
-  it('spans TRAILING_DAYS + 1 days inclusive', () => {
-    const { from, to } = fetchWindow(new Date(2026, 7, 28))
-    const days = (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000
-    expect(days).toBe(TRAILING_DAYS)
+  it('the following Thursday asks for the following week', () => {
+    expect(fetchWindow(new Date(2026, SEP, 3))).toEqual({
+      from: '2026-08-31',
+      to: '2026-09-06',
+    })
   })
 
-  it('crosses month and year boundaries by calendar, not by arithmetic on the day number', () => {
-    expect(fetchWindow(new Date(2026, 8, 3)).from).toBe('2026-08-27')
-    expect(fetchWindow(new Date(2027, 0, 5)).from).toBe('2026-12-29')
+  it('consecutive runs neither overlap nor leave a gap', () => {
+    const a = fetchWindow(new Date(2026, AUG, 27))
+    const b = fetchWindow(new Date(2026, SEP, 3))
+    const dayAfter = (iso) => {
+      const d = new Date(`${iso}T00:00:00`)
+      d.setDate(d.getDate() + 1)
+      return isoOf(d)
+    }
+    expect(dayAfter(a.to)).toBe(b.from)
+  })
+
+  it('is identical on every day of the same week', () => {
+    for (const day of [24, 25, 26, 27, 28, 29, 30]) {
+      expect(fetchWindow(new Date(2026, AUG, day))).toEqual({
+        from: '2026-08-24',
+        to: '2026-08-30',
+      })
+    }
+  })
+
+  it('spans exactly 7 days', () => {
+    const { from, to } = fetchWindow(new Date(2026, AUG, 27))
+    const days = (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000
+    expect(days).toBe(6)
+  })
+
+  it('crosses month and year boundaries by calendar, not day-number arithmetic', () => {
+    expect(fetchWindow(new Date(2026, SEP, 3))).toEqual({ from: '2026-08-31', to: '2026-09-06' })
+    expect(fetchWindow(new Date(2027, 0, 5))).toEqual({ from: '2027-01-04', to: '2027-01-10' })
+  })
+
+  it('asks for exactly the week the page will show', () => {
+    // The contract that matters: the fetch window and the page's week are the
+    // same seven days, so the featured week is never half-fetched.
+    const today = new Date(2026, AUG, 28)
+    const { from, to } = fetchWindow(today)
+    expect(from).toBe(isoOf(mondayOf(today)))
+    expect(to).toBe('2026-08-30')
   })
 })

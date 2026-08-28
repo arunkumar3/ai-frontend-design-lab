@@ -1,41 +1,52 @@
-// The date window a live fetch asks TMDB for.
+// The date window a live fetch asks TMDB for: Monday to Sunday of the week the
+// run happens in — the same week the page groups on (`src/routes/v7/week.js`).
 //
-// This is NOT the publishing week the page renders. It is the window the
-// source can actually answer, and the two are different for a concrete reason:
-// `discover` filtered by `with_watch_providers` matches only titles a service
-// *already carries*, so a window running into the future is structurally empty
-// however healthy the pipeline is.
+//   run Thu 2026-08-27  ->  2026-08-24 .. 2026-08-30
+//   run Thu 2026-09-03  ->  2026-08-31 .. 2026-09-06
 //
-// Measured, not assumed — two runs of the same code with the same token:
+// One run, one whole calendar week, no overlap between runs. The window is the
+// week; it is not derived from the run day, which is only a schedule.
+//
+// This replaced a window that counted *forward* from the run day. That version
+// asked for a week that had not happened, and a `discover` call filtered by
+// `with_watch_providers` matches only titles a service already carries, so it
+// came back empty however healthy the pipeline was. Measured, same code and
+// token:
 //
 //   2026-08-25, window 2026-08-20..08-26 (past)          -> 17 raw records
 //   2026-08-28, window 2026-08-27..09-02 (today+future)  ->  0 raw records, 0 failures
 //
-// The second one committed a "weekly TMDB fetch" whose entire diff was the
-// `fetchedFor` label, and the page went on rendering the week before. So the
-// window trails instead: the eight days ending today. Run on its Thursday
-// cron that covers the publishing week which just closed (Thu..Wed) plus the
-// Thursday it runs on — the newest data the provider filter can see.
-//
-// Pure and exported so it can be tested. The I/O half lives in
-// `scripts/fetch-feed.mjs`, which is the only caller.
+// A Monday-to-Sunday window does not have that problem on its Thursday run:
+// Monday through Wednesday are already past, so there is always real data to
+// return. The tail of the week is not, and that has a documented consequence —
+// see the note in HANDOFF: a title landing on the Friday, Saturday or Sunday
+// after a Thursday run is not in TMDB's provider data yet, and the next run's
+// window has moved on to the following week. Closing that needs a second run
+// over the completed week, not a wider window here.
 
-/** How many days back the window reaches from `today`, inclusive of both ends. */
-export const TRAILING_DAYS = 7
+export const WEEK_START_DAY = 1 // Monday. Intl day index, Sun = 0.
 
 /** A Date to `YYYY-MM-DD` in the local zone (UTC on a runner). */
 export function isoOf(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
+/** The Monday on or before `d`. */
+export function mondayOf(d) {
+  const m = new Date(d)
+  m.setDate(m.getDate() - ((m.getDay() - WEEK_START_DAY + 7) % 7))
+  return m
+}
+
 /**
- * @param {Date}   [today]
- * @param {number} [days]  defaults to TRAILING_DAYS
+ * Monday to Sunday of the week containing `today`.
+ *
+ * @param {Date} [today]
  * @returns {{ from: string, to: string }} inclusive ISO date bounds
  */
-export function fetchWindow(today = new Date(), days = TRAILING_DAYS) {
-  const to = new Date(today)
-  const from = new Date(today)
-  from.setDate(from.getDate() - days)
-  return { from: isoOf(from), to: isoOf(to) }
+export function fetchWindow(today = new Date()) {
+  const monday = mondayOf(today)
+  const sunday = new Date(monday)
+  sunday.setDate(sunday.getDate() + 6)
+  return { from: isoOf(monday), to: isoOf(sunday) }
 }

@@ -80,9 +80,42 @@ measured it:
 | 2026-08-25 | `2026-08-20..08-26` (past) | 17 |
 | 2026-08-28 | `2026-08-27..09-02` (today + future) | **0**, with 0 failures |
 
-The window now trails — the eight days ending today, in `src/feed/window.js`, pure and
-tested. The page's own Thursday→Wednesday grid (`RUN_DAY` in `routes/v7/week.js`) is
-untouched: only what we *ask TMDB for* trails, not how the page groups.
+The window is now bounded by the week's own edges, in `src/feed/window.js`, pure and tested.
+
+**And then the week model itself turned out to be the bigger defect.** With the fetch fixed,
+the reader's answer to "what landed this week" was still wrong, because `v7` anchored weeks
+to **Thursday — the day the robot runs**. That conflated a schedule with a calendar. On
+Friday 2026-08-28 it put the sixteen titles that dropped Monday to Wednesday into "last
+week", flagged them `ARCHIVE`, and left "this week" holding two. The list people wanted was
+on the page the whole time, under the wrong heading.
+
+`v7`'s weeks are now **Monday to Sunday**, which is what a week means to the people reading
+it. Same day, same data, the page went from *2 titles, ARCHIVE* to *India 7 · US 11 ·
+24–30 Aug, this week*. The fetch still runs on Thursday; that is a schedule and it no longer
+decides where a week begins.
+
+`WEEK_START_DAY` lives in `routes/v7/week.js`, and `verify-v7.mjs` and `feed-shapes-v7.mjs`
+carry matching copies — change one, change all three. **`v6` still anchors on Thursday and
+was deliberately left alone**, routes here being append-only; `verify-v6.mjs` keeps its own
+Thursday copy for that reason.
+
+The fetch window is exactly that week, Monday to Sunday — one run, one whole calendar week,
+consecutive runs neither overlapping nor leaving a gap:
+
+    run Thu 2026-08-27  ->  2026-08-24 .. 2026-08-30
+    run Thu 2026-09-03  ->  2026-08-31 .. 2026-09-06
+
+**Known gap, accepted deliberately — do not "fix" it by widening the window.** A title
+landing on the Friday, Saturday or Sunday after a Thursday run is not in TMDB's provider
+data yet (it lists a title only once the service actually carries it, a day or two late),
+and the next run's window has already moved to the following week. Those titles are never
+asked for. An earlier version of this commit reached back an extra week to cover it; that
+was rejected, because it makes the window stop meaning "the week" and every run re-fetch
+data it already has.
+
+The right way to close it is a **second run over the completed week** — a Monday run whose
+window is the previous Monday to Sunday. Same rule, same shape of window, one run later.
+Not built; it needs a second cron and a `--from/--to` the workflow does not pass yet.
 
 **Why it looked like a success.** The zero-record guard only fired when there were also
 transport failures, so 28 requests returning `200` with empty bodies fell straight through.
