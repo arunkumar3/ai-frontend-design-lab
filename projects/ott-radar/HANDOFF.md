@@ -56,6 +56,47 @@ All four proposals in `findings/scrollcraft.md` §6 are now in the tree, on
 
 New rules carry the `(scrollcraft)` provenance tag. Nothing in `lab/` was touched.
 
+### The weekly refresh was broken in two places, 2026-08-28
+
+Reported as "the site didn't refresh on Thursday". Both halves are fixed on
+`claude/website-refresh-failure-e5jnj3`; neither was visible from a green Actions run,
+which is the part worth remembering.
+
+**The cron did not fire on Thursday.** `cron: '30 18 * * 4'` was scheduled for
+2026-08-27 18:30 UTC. GitHub delivered it at 2026-08-28 02:14 UTC — 7h44m late, hours
+after the group had looked. Scheduled events are best effort and get delayed or dropped
+outright on a low-traffic repo. There is no cron setting that fixes this; the workflow now
+makes three attempts on Thursday (12:30 / 16:30 / 20:30 UTC) and lets whichever lands
+first do the work.
+
+**The window it asked for could never be answered.** `fetch-feed.mjs` computed the
+*current* publishing week, Thursday to Wednesday, counting forward from today. But
+`discover` filtered by `with_watch_providers` matches only titles a service already
+carries, so a forward window is structurally empty. Two runs of the same code and token
+measured it:
+
+| run | window | raw records |
+|---|---|---|
+| 2026-08-25 | `2026-08-20..08-26` (past) | 17 |
+| 2026-08-28 | `2026-08-27..09-02` (today + future) | **0**, with 0 failures |
+
+The window now trails — the eight days ending today, in `src/feed/window.js`, pure and
+tested. The page's own Thursday→Wednesday grid (`RUN_DAY` in `routes/v7/week.js`) is
+untouched: only what we *ask TMDB for* trails, not how the page groups.
+
+**Why it looked like a success.** The zero-record guard only fired when there were also
+transport failures, so 28 requests returning `200` with empty bodies fell straight through.
+The run then merged the previous file's 17 rows back in, rewrote `fetchedFor`, and the
+workflow's `git diff --cached --quiet` saw a two-line change and committed
+`feed: weekly TMDB fetch 2026-08-28` — a refresh carrying no new titles, indistinguishable
+in the log from one that worked. Zero records is now a hard failure with a diagnosis, and a
+run whose release set is unchanged leaves the file alone so there is nothing to commit.
+
+**Still open, and not fixed here:** the page labels the fallback week "Landing this week".
+When the current week has no releases it degrades to the most recent week that does — which
+is correct behaviour — but the copy still says "this week", so stale data reads as fresh
+data. That is what the group actually saw. It wants a dateline, not a data fix.
+
 ## 3. Running it
 
 ```bash
@@ -81,7 +122,7 @@ With the dev server up, in a second shell:
 
 ```bash
 cd lab
-pnpm test          # 41 unit tests — the feed boundary. No browser, no server needed.
+pnpm test          # 46 unit tests — the feed boundary. No browser, no server needed.
 pnpm lint
 
 pnpm verify:v6     # 26 render-vs-data checks
@@ -100,10 +141,11 @@ pnpm shoot v7      # 6 PNGs into lab/shots/v7/ — then look at them
 # unless you served a harvest via VITE_POSTER_BASE first.
 ```
 
-**Counted in one run on 2026-08-23, on a clean checkout of this branch:** lint clean,
-42 tests, `contrast:v7` 0 failing, `states:v7` 0 failing, `feed:shapes` 0 failing,
-`verify:v6` 0 failing, `impeccable` 0 findings on `/v7` (13 on `/v1`, which is how you
-confirm the scan is actually running before trusting a 0).
+**Counted in one run on 2026-08-28, on `claude/website-refresh-failure-e5jnj3`:** lint
+clean, 46 tests, `contrast:v6` 0 failing, `contrast:v7` 0 failing, `states:v7` 0 failing,
+`feed:shapes` 0 failing, `verify:v6` 0 failing. `impeccable` was **not** re-run in that
+pass, so the 2026-08-23 reading — 0 findings on `/v7`, 13 on `/v1`, which is how you
+confirm the scan is actually running before trusting a 0 — is the last one anybody took.
 
 **`verify:v7` reports 2 failing, and they are the environment, not the page.** Both are
 `every card draws the artwork its row names` — `image.tmdb.org` is blocked here, so every

@@ -4,12 +4,16 @@
 // where egress is open, publish through git, read as a static import where it
 // is not.
 //
-// No CI run has ever completed, so `releases` starts as `[]`. That is a
-// legitimate empty result, not a failure — see the empty-vs-failure rule in
-// CLAUDE.md — and `v7` already has a designed empty state reachable through
-// `?week=`. Once a run lands, its week joins the archive alongside the frozen
-// snapshot and the curated week; `normaliseFeed` dedupes by id, so a fetch
-// window that overlaps a previous run collides safely instead of doubling up.
+// Runs have landed since this file was written, so `releases` is no longer
+// empty; each week joins the archive alongside the frozen snapshot and the
+// curated week, and `normaliseFeed` dedupes by id, so a fetch window that
+// overlaps a previous run collides safely instead of doubling up. The windows
+// deliberately overlap — see `../window.js`.
+//
+// `[]` here would now mean something has gone wrong rather than a quiet week:
+// `scripts/fetch-feed.mjs` refuses to write a zero-record run at all, so an
+// empty array can only arrive by someone emptying the file by hand. `v7`'s
+// designed empty state still covers it, reachable through `?week=`.
 //
 // TMDB cannot supply sport (see `sources/tmdb.js`), so the frozen snapshot's
 // two fixtures stay the only sport rows until a second live source exists.
