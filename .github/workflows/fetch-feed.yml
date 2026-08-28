@@ -75,7 +75,8 @@ jobs:
         run: |
           git config user.name feed-runner
           git config user.email actions@invalid
-          git add projects/ott-radar/lab/src/data/feed.live.json
+          git add projects/ott-radar/lab/src/data/feed.live.json \
+                  projects/ott-radar/lab/src/data/needs-platform.json
           if git diff --cached --quiet; then
             echo "No change to the feed this run."
           else

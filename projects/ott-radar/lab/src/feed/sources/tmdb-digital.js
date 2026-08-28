@@ -22,6 +22,7 @@
 // is reported so "we dropped nine" never looks like "there were nine fewer".
 
 import { PROVIDERS } from './tmdb.js'
+import { PLATFORM_OVERRIDES } from '../../data/platform-overrides.js'
 
 const API = 'https://api.themoviedb.org/3'
 const IMAGE_PATH_PREFIX = /^\//
@@ -128,6 +129,15 @@ export async function fetchTmdbDigital({
       if (!body) continue
 
       for (const result of body.results ?? []) {
+        // A hand-filled answer beats the API and skips the lookup entirely —
+        // somebody already checked the service, and TMDB's mapping was empty
+        // when it was asked. See `data/platform-overrides.js`.
+        const override = PLATFORM_OVERRIDES[result.id]
+        if (override) {
+          records.push(mapDigitalRecord(result, { region, platform: override, language: label }))
+          continue
+        }
+
         const providers = await get(`${API}/movie/${result.id}/watch/providers`, {
           region,
           language: code,
@@ -139,7 +149,16 @@ export async function fetchTmdbDigital({
         if (!platform) {
           // A real digital release with no provider mapping yet. Not an error,
           // and not showable on a platform-grouped page either.
-          unresolved.push({ title: result.title, date: result.release_date, language: label })
+          unresolved.push({
+            tmdbId: result.id,
+            title: result.title,
+            date: result.release_date,
+            language: label,
+            region,
+            // The link is the whole point of the worklist: it has to be one
+            // click from "which service is this on".
+            tmdb: `https://www.themoviedb.org/movie/${result.id}`,
+          })
           continue
         }
         records.push(mapDigitalRecord(result, { region, platform, language: label }))

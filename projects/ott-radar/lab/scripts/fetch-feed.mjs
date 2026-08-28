@@ -63,6 +63,25 @@ const failures = [...byProvider.failures, ...byDigital.failures]
 
 console.log(`\nby provider   ${byProvider.records.length} raw`)
 console.log(`by digital    ${byDigital.records.length} raw`)
+// The worklist. A dropped title is not a dead end — everything about it is
+// already known except which service carries it, and that is a question a
+// person answers in fifteen seconds. Written to a tracked file with a
+// themoviedb.org link per row; fill an answer into
+// `src/data/platform-overrides.js` and it appears on the next run.
+const worklistPath = fileURLToPath(new URL('../src/data/needs-platform.json', import.meta.url))
+await writeFile(
+  worklistPath,
+  JSON.stringify(
+    {
+      generatedFor: { from, to },
+      note: 'Digital releases with no streaming provider listed in TMDB yet. Look up the service, then add the tmdbId to src/data/platform-overrides.js.',
+      titles: byDigital.unresolved,
+    },
+    null,
+    2,
+  ) + '\n',
+)
+
 if (byDigital.unresolved.length) {
   // Reported, never silent. These are real digital releases TMDB has no
   // provider mapping for yet; dropping them is a choice, and a choice that is
