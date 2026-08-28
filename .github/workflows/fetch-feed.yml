@@ -13,9 +13,22 @@ name: fetch-feed
 on:
   workflow_dispatch:
   schedule:
-    # Thursdays, 18:30 UTC = Friday 00:00 IST — Thursday afternoon for the US
-    # side of the group, midnight-into-Friday for the India side, same instant.
-    - cron: '30 18 * * 4'
+    # The target is Friday 00:00 IST — Thursday afternoon for the US side of the
+    # group, midnight-into-Friday for the India side, the same instant.
+    #
+    # A single cron at that instant does not reach it. GitHub's scheduled events
+    # are best effort and get delayed or dropped outright on a low-traffic repo:
+    # the 2026-08-27 18:30 firing was delivered at 2026-08-28 02:14 UTC, 7h44m
+    # late and hours after the group had already looked. So attempt it three
+    # times on Thursday and let whichever lands first do the work.
+    #
+    # This is only safe because the run is idempotent. All three share one UTC
+    # date, so they compute the same window, and fetch-feed.mjs leaves the file
+    # untouched when the release set has not changed — the later attempts commit
+    # nothing rather than churning the history.
+    - cron: '30 12 * * 4' # Thu 18:00 IST — early, absorbs a long delay
+    - cron: '30 16 * * 4' # Thu 22:00 IST — near the target
+    - cron: '30 20 * * 4' # Fri 02:00 IST — catch-up if both were dropped
   # workflow_dispatch only registers once this file reaches the default branch — same
   # limitation the poster workflow hit. Until then, a push that touches the trigger
   # marker starts a run from this branch. Bump .feed-trigger to fire it.

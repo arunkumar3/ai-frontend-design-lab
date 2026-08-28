@@ -21,25 +21,20 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { fetchTmdbFeed } from '../src/feed/sources/tmdb.js'
 import { normaliseFeed, derivedPlatforms } from '../src/feed/normalise.js'
-
-const RUN_DAY = 4 // Thursday
-const isoOf = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+import { fetchWindow } from '../src/feed/window.js'
 
 function arg(name, fallback) {
   const i = process.argv.indexOf(`--${name}`)
   return i > -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback
 }
 
-// Default window: the current publishing week, Thursday to Wednesday.
-const today = new Date()
-const start = new Date(today)
-start.setDate(start.getDate() - ((start.getDay() - RUN_DAY + 7) % 7))
-const end = new Date(start)
-end.setDate(end.getDate() + 6)
+// Default window: the eight days ending today. It trails deliberately — see
+// `src/feed/window.js` for the two runs that measured why a forward-looking
+// window returns nothing.
+const defaults = fetchWindow()
 
-const from = arg('from', isoOf(start))
-const to = arg('to', isoOf(end))
+const from = arg('from', defaults.from)
+const to = arg('to', defaults.to)
 const out = arg('out', fileURLToPath(new URL('../src/data/feed.generated.json', import.meta.url)))
 const token = process.env.TMDB_TOKEN
 
@@ -60,14 +55,32 @@ const { records, failures } = await fetchTmdbFeed({ from, to, token })
 // request failed and a run where the week genuinely has no releases both end
 // with zero records, and treating them the same is how a broken pipeline ships
 // as a quiet week.
-if (!records.length && failures.length) {
-  console.error(`\nEvery request failed (${failures.length}). Nothing was written.`)
-  for (const f of failures.slice(0, 5)) console.error('  ', JSON.stringify(f))
-  if (failures.some((f) => /ENOTFOUND|EAI_AGAIN|fetch failed|ECONNREFUSED|403/.test(String(f.error ?? f.status)))) {
+//
+// Zero records is a failure either way. The transport-failure half was always
+// caught here; the half that got through with 200s and empty bodies was not,
+// and on 2026-08-28 it sailed into a green run and a commit that read like a
+// refresh. Across two regions, fourteen provider pairs and both kinds over an
+// eight-day window, zero results is a broken query — a wrong window, a stale
+// provider id, a revoked token — never a quiet week.
+if (!records.length) {
+  if (failures.length) {
+    console.error(`\nEvery request failed (${failures.length}). Nothing was written.`)
+    for (const f of failures.slice(0, 5)) console.error('  ', JSON.stringify(f))
+    if (failures.some((f) => /ENOTFOUND|EAI_AGAIN|fetch failed|ECONNREFUSED|403/.test(String(f.error ?? f.status)))) {
+      console.error(
+        '\napi.themoviedb.org looks unreachable from here. It is blocked on the network this\n' +
+          'repo was built on, which is why the fetch half of the TMDB source has no test\n' +
+          'coverage — see playbook/findings/v7.md and src/feed/sources/tmdb.js.',
+      )
+    }
+  } else {
     console.error(
-      '\napi.themoviedb.org looks unreachable from here. It is blocked on the network this\n' +
-        'repo was built on, which is why the fetch half of the TMDB source has no test\n' +
-        'coverage — see playbook/findings/v7.md and src/feed/sources/tmdb.js.',
+      `\nEvery request succeeded and returned nothing for ${from}..${to}. Nothing was written.\n` +
+        '\nThat is a broken query, not a quiet week. Check, in this order:\n' +
+        '  - is the window in the future? `with_watch_providers` only matches titles a\n' +
+        '    service already carries, so a forward window is always empty (src/feed/window.js)\n' +
+        '  - are the provider ids in src/feed/sources/tmdb.js still current?\n' +
+        '  - is TMDB_TOKEN a v4 read access token that still works?',
     )
   }
   process.exit(1)
@@ -115,6 +128,21 @@ if (!releases.some((r) => r.type === 'sport')) {
       '      football rows come from elsewhere, and a real build needs a second source for\n' +
       '      them. normaliseFeed takes a concatenated array so sources can be mixed.',
   )
+}
+
+// Do not rewrite the file when the only thing that would change is the
+// `fetchedFor` label. That two-line diff is what the workflow's `git diff
+// --cached --quiet` guard sees as a change, so it produced a commit titled
+// "feed: weekly TMDB fetch" carrying no new titles — a refresh that refreshed
+// nothing, indistinguishable in the log from one that worked. Both sides of
+// this comparison are `normaliseFeed` output, which sorts by (date, title),
+// so it is a content comparison and not an ordering accident.
+if (JSON.stringify(previous) === JSON.stringify(releases)) {
+  console.log(
+    `\nno new titles — the same ${releases.length} releases as the last run.\n` +
+      `left ${out} untouched, so there is nothing to commit.`,
+  )
+  process.exit(0)
 }
 
 await writeFile(
