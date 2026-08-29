@@ -33,6 +33,21 @@ jobs:
             echo "::error::TMDB_TOKEN secret is not set."
             exit 1
           fi
+      - name: Probe the Streaming Availability API (skipped without a key)
+        working-directory: projects/ott-radar/lab
+        env:
+          STREAMING_API_KEY: ${{ secrets.STREAMING_API_KEY }}
+        # Skipped rather than failed while the key is absent: the other probes
+        # in this job are still worth running, and a red job for a dependency
+        # nobody has signed up for yet is noise.
+        run: |
+          if [ -z "$STREAMING_API_KEY" ]; then
+            echo "STREAMING_API_KEY not set — skipping. Add it under"
+            echo "Settings -> Secrets and variables -> Actions to run this."
+            exit 0
+          fi
+          node scripts/probe-streaming-api.mjs
+
       - name: Probe provider ids
         working-directory: projects/ott-radar/lab
         env:
