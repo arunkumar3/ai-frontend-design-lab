@@ -582,6 +582,30 @@
       "tmdbId": 1739202
     },
     {
+      "id": "tmdb-in-series-290234",
+      "title": "Lovesick",
+      "date": "2026-09-02",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "91s80WxRqIirFSpGVtiXJoS1GA5.jpg",
+      "posterApprox": false,
+      "tmdbId": 290234
+    },
+    {
+      "id": "tmdb-us-series-290234",
+      "title": "Lovesick",
+      "date": "2026-09-02",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "91s80WxRqIirFSpGVtiXJoS1GA5.jpg",
+      "posterApprox": false,
+      "tmdbId": 290234
+    },
+    {
       "id": "tmdb-in-movie-1752159",
       "title": "Turning Point: Generation 9/11",
       "date": "2026-09-02",
