@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-08-17",
-    "to": "2026-08-30"
+    "from": "2026-08-31",
+    "to": "2026-09-06"
   },
   "source": "tmdb",
   "releases": [
@@ -532,6 +532,102 @@
       "poster": "jQKt9R0LRWGXYF4TfhyrIrqqvv3.jpg",
       "posterApprox": false,
       "tmdbId": 332379
+    },
+    {
+      "id": "tmdb-in-movie-1749166",
+      "title": "Jared Freid: The Family Plan",
+      "date": "2026-09-01",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "pbkEx1zKRsffOhg3Gfqv7cGkVgJ.jpg",
+      "posterApprox": false,
+      "tmdbId": 1749166
+    },
+    {
+      "id": "tmdb-us-movie-1749166",
+      "title": "Jared Freid: The Family Plan",
+      "date": "2026-09-01",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "pbkEx1zKRsffOhg3Gfqv7cGkVgJ.jpg",
+      "posterApprox": false,
+      "tmdbId": 1749166
+    },
+    {
+      "id": "tmdb-in-movie-1739202",
+      "title": "Untold: Raygun: Breaking Badly",
+      "date": "2026-09-01",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "3pnlJjsGtrUp3cPEOLzkR0sPQAK.jpg",
+      "posterApprox": false,
+      "tmdbId": 1739202
+    },
+    {
+      "id": "tmdb-us-movie-1739202",
+      "title": "Untold: Raygun: Breaking Badly",
+      "date": "2026-09-01",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "3pnlJjsGtrUp3cPEOLzkR0sPQAK.jpg",
+      "posterApprox": false,
+      "tmdbId": 1739202
+    },
+    {
+      "id": "tmdb-in-movie-1752159",
+      "title": "Turning Point: Generation 9/11",
+      "date": "2026-09-02",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "6DVDbbneXuhFHmqGvTVko2sVz0o.jpg",
+      "posterApprox": false,
+      "tmdbId": 1752159
+    },
+    {
+      "id": "tmdb-us-movie-1752159",
+      "title": "Turning Point: Generation 9/11",
+      "date": "2026-09-02",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "6DVDbbneXuhFHmqGvTVko2sVz0o.jpg",
+      "posterApprox": false,
+      "tmdbId": 1752159
+    },
+    {
+      "id": "tmdb-in-movie-1386315",
+      "title": "The Runner",
+      "date": "2026-09-03",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "uxCaBoYXsDC4A0SqTm3SISj0OwK.jpg",
+      "posterApprox": false,
+      "tmdbId": 1386315
+    },
+    {
+      "id": "tmdb-us-movie-1386315",
+      "title": "The Runner",
+      "date": "2026-09-03",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "uxCaBoYXsDC4A0SqTm3SISj0OwK.jpg",
+      "posterApprox": false,
+      "tmdbId": 1386315
     }
   ]
 }
