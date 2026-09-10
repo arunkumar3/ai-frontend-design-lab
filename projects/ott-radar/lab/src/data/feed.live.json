@@ -786,6 +786,18 @@
       "tmdbId": 1440098
     },
     {
+      "id": "tmdb-us-series-258230",
+      "title": "Last Seen",
+      "date": "2026-09-09",
+      "region": "US",
+      "type": "series",
+      "platform": "appletv",
+      "language": "English",
+      "poster": "vozJZjHv0Yyv4PjoOxF5tVMUGFI.jpg",
+      "posterApprox": false,
+      "tmdbId": 258230
+    },
+    {
       "id": "tmdb-in-series-331586",
       "title": "LOL Next",
       "date": "2026-09-10",
