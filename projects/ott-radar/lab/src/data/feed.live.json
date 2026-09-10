@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-08-31",
-    "to": "2026-09-06"
+    "from": "2026-09-07",
+    "to": "2026-09-13"
   },
   "source": "tmdb",
   "releases": [
@@ -652,6 +652,162 @@
       "poster": "uxCaBoYXsDC4A0SqTm3SISj0OwK.jpg",
       "posterApprox": false,
       "tmdbId": 1386315
+    },
+    {
+      "id": "tmdb-us-series-331033",
+      "title": "Collision",
+      "date": "2026-09-07",
+      "region": "US",
+      "type": "series",
+      "platform": "hbomax",
+      "language": null,
+      "poster": "4loiHfZZx027yP0CtErtCPbkTc1.jpg",
+      "posterApprox": false,
+      "tmdbId": 331033
+    },
+    {
+      "id": "tmdb-in-series-314478",
+      "title": "DANG!",
+      "date": "2026-09-08",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "wSDM4tIC5praLH9GxZisiIBIkz.jpg",
+      "posterApprox": false,
+      "tmdbId": 314478
+    },
+    {
+      "id": "tmdb-us-series-314478",
+      "title": "DANG!",
+      "date": "2026-09-08",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "wSDM4tIC5praLH9GxZisiIBIkz.jpg",
+      "posterApprox": false,
+      "tmdbId": 314478
+    },
+    {
+      "id": "tmdb-in-movie-1664003",
+      "title": "Stavros Halkias: Uncle Stav",
+      "date": "2026-09-08",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "lVdlQbkpnETCZXN76UwQzMiJH6m.jpg",
+      "posterApprox": false,
+      "tmdbId": 1664003
+    },
+    {
+      "id": "tmdb-us-movie-1664003",
+      "title": "Stavros Halkias: Uncle Stav",
+      "date": "2026-09-08",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "lVdlQbkpnETCZXN76UwQzMiJH6m.jpg",
+      "posterApprox": false,
+      "tmdbId": 1664003
+    },
+    {
+      "id": "tmdb-in-movie-1739206",
+      "title": "Untold Mr. T: I Pity the Fool",
+      "date": "2026-09-08",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "bUWHsZqPiYl8GwxhXA1nCdKRZbn.jpg",
+      "posterApprox": false,
+      "tmdbId": 1739206
+    },
+    {
+      "id": "tmdb-us-movie-1739206",
+      "title": "Untold Mr. T: I Pity the Fool",
+      "date": "2026-09-08",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "bUWHsZqPiYl8GwxhXA1nCdKRZbn.jpg",
+      "posterApprox": false,
+      "tmdbId": 1739206
+    },
+    {
+      "id": "tmdb-in-movie-1522689",
+      "title": "Why Did I Get Married Again?",
+      "date": "2026-09-08",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "rwaxLuOkJ5mMvJU5juNaPcKADOW.jpg",
+      "posterApprox": false,
+      "tmdbId": 1522689
+    },
+    {
+      "id": "tmdb-us-movie-1522689",
+      "title": "Why Did I Get Married Again?",
+      "date": "2026-09-08",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "rwaxLuOkJ5mMvJU5juNaPcKADOW.jpg",
+      "posterApprox": false,
+      "tmdbId": 1522689
+    },
+    {
+      "id": "tmdb-in-movie-1440098",
+      "title": "Drawn Together",
+      "date": "2026-09-09",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "6rpvddXbaQPOi0fB2HKWbZ3uUSg.jpg",
+      "posterApprox": false,
+      "tmdbId": 1440098
+    },
+    {
+      "id": "tmdb-us-movie-1440098",
+      "title": "Drawn Together",
+      "date": "2026-09-09",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "6rpvddXbaQPOi0fB2HKWbZ3uUSg.jpg",
+      "posterApprox": false,
+      "tmdbId": 1440098
+    },
+    {
+      "id": "tmdb-in-series-331586",
+      "title": "LOL Next",
+      "date": "2026-09-10",
+      "region": "IN",
+      "type": "series",
+      "platform": "prime",
+      "language": null,
+      "poster": "iUtfdREddJD4A7yNqsacJZHKJVk.jpg",
+      "posterApprox": false,
+      "tmdbId": 331586
+    },
+    {
+      "id": "tmdb-us-series-331586",
+      "title": "LOL Next",
+      "date": "2026-09-10",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": null,
+      "poster": "iUtfdREddJD4A7yNqsacJZHKJVk.jpg",
+      "posterApprox": false,
+      "tmdbId": 331586
     }
   ]
 }
