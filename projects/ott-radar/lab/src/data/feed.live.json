@@ -714,6 +714,18 @@
       "tmdbId": 1664003
     },
     {
+      "id": "tmdb-us-series-304842",
+      "title": "The Drop: A Snowfall Saga",
+      "date": "2026-09-08",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "tiLqDZQdVILCIt00MLwDvnXAttr.jpg",
+      "posterApprox": false,
+      "tmdbId": 304842
+    },
+    {
       "id": "tmdb-in-movie-1739206",
       "title": "Untold Mr. T: I Pity the Fool",
       "date": "2026-09-08",
