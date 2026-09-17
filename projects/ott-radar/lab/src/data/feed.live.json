@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-09-07",
-    "to": "2026-09-13"
+    "from": "2026-09-14",
+    "to": "2026-09-20"
   },
   "source": "tmdb",
   "releases": [
@@ -832,6 +832,126 @@
       "poster": "iUtfdREddJD4A7yNqsacJZHKJVk.jpg",
       "posterApprox": false,
       "tmdbId": 331586
+    },
+    {
+      "id": "tmdb-in-series-330302",
+      "title": "Cathedrals",
+      "date": "2026-09-16",
+      "region": "IN",
+      "type": "series",
+      "platform": "prime",
+      "language": null,
+      "poster": "7LQKFR1iOlIZkbDLbhcLOBWfmXk.jpg",
+      "posterApprox": false,
+      "tmdbId": 330302
+    },
+    {
+      "id": "tmdb-us-series-330302",
+      "title": "Cathedrals",
+      "date": "2026-09-16",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": null,
+      "poster": "7LQKFR1iOlIZkbDLbhcLOBWfmXk.jpg",
+      "posterApprox": false,
+      "tmdbId": 330302
+    },
+    {
+      "id": "tmdb-us-series-332401",
+      "title": "City of Blood",
+      "date": "2026-09-16",
+      "region": "US",
+      "type": "series",
+      "platform": "disneyplus",
+      "language": null,
+      "poster": "Njr0Rlb4CobAfrGE8NVffYDGqx.jpg",
+      "posterApprox": false,
+      "tmdbId": 332401
+    },
+    {
+      "id": "tmdb-us-series-252105",
+      "title": "Golden Axe",
+      "date": "2026-09-16",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "toEwR5VTFzHmxW1pX1HjtTXH6QH.jpg",
+      "posterApprox": false,
+      "tmdbId": 252105
+    },
+    {
+      "id": "tmdb-in-series-273207",
+      "title": "Neagley",
+      "date": "2026-09-16",
+      "region": "IN",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "1m6CxPAuGv2oHc1ahERrcVWnk2J.jpg",
+      "posterApprox": false,
+      "tmdbId": 273207
+    },
+    {
+      "id": "tmdb-us-series-273207",
+      "title": "Neagley",
+      "date": "2026-09-16",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "1m6CxPAuGv2oHc1ahERrcVWnk2J.jpg",
+      "posterApprox": false,
+      "tmdbId": 273207
+    },
+    {
+      "id": "tmdb-in-series-332282",
+      "title": "Physical 100: Mexico",
+      "date": "2026-09-16",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "vPsjiq0O8PCX9vdMCmXbbvVQmlC.jpg",
+      "posterApprox": false,
+      "tmdbId": 332282
+    },
+    {
+      "id": "tmdb-us-series-332282",
+      "title": "Physical 100: Mexico",
+      "date": "2026-09-16",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "vPsjiq0O8PCX9vdMCmXbbvVQmlC.jpg",
+      "posterApprox": false,
+      "tmdbId": 332282
+    },
+    {
+      "id": "tmdb-in-series-295089",
+      "title": "The Doll",
+      "date": "2026-09-16",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "zJSceCJMF7C6AtdRycZjNjavCT.jpg",
+      "posterApprox": false,
+      "tmdbId": 295089
+    },
+    {
+      "id": "tmdb-us-series-295089",
+      "title": "The Doll",
+      "date": "2026-09-16",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "zJSceCJMF7C6AtdRycZjNjavCT.jpg",
+      "posterApprox": false,
+      "tmdbId": 295089
     }
   ]
 }
