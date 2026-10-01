@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-09-21",
-    "to": "2026-09-27"
+    "from": "2026-09-28",
+    "to": "2026-10-04"
   },
   "source": "tmdb",
   "releases": [
@@ -1072,6 +1072,246 @@
       "poster": "5padVOGD7QxyFLlTAWdCFY2FQf1.jpg",
       "posterApprox": false,
       "tmdbId": 286940
+    },
+    {
+      "id": "tmdb-in-series-297982",
+      "title": "Irreplaceable",
+      "date": "2026-09-28",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "bT95Aq4hfcak7echBfjKV3GJf4a.jpg",
+      "posterApprox": false,
+      "tmdbId": 297982
+    },
+    {
+      "id": "tmdb-us-series-297982",
+      "title": "Irreplaceable",
+      "date": "2026-09-28",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "bT95Aq4hfcak7echBfjKV3GJf4a.jpg",
+      "posterApprox": false,
+      "tmdbId": 297982
+    },
+    {
+      "id": "tmdb-in-series-334702",
+      "title": "Last Trace with Kaelyn Moore",
+      "date": "2026-09-28",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "a8hgF7UAoshScIhzc6aoaAQpxkc.jpg",
+      "posterApprox": false,
+      "tmdbId": 334702
+    },
+    {
+      "id": "tmdb-us-series-334702",
+      "title": "Last Trace with Kaelyn Moore",
+      "date": "2026-09-28",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "a8hgF7UAoshScIhzc6aoaAQpxkc.jpg",
+      "posterApprox": false,
+      "tmdbId": 334702
+    },
+    {
+      "id": "tmdb-in-series-318918",
+      "title": "LEGO ONE PIECE",
+      "date": "2026-09-29",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "hTUHZ337JzqPvRXBQ3lu0GBkOvz.jpg",
+      "posterApprox": false,
+      "tmdbId": 318918
+    },
+    {
+      "id": "tmdb-us-series-318918",
+      "title": "LEGO ONE PIECE",
+      "date": "2026-09-29",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "hTUHZ337JzqPvRXBQ3lu0GBkOvz.jpg",
+      "posterApprox": false,
+      "tmdbId": 318918
+    },
+    {
+      "id": "tmdb-us-movie-1757068",
+      "title": "Miller Night Football",
+      "date": "2026-09-29",
+      "region": "US",
+      "type": "movie",
+      "platform": "hbomax",
+      "language": "English",
+      "poster": "i9k5eDDpYs84rDgeZ2vyXgNtmLF.jpg",
+      "posterApprox": false,
+      "tmdbId": 1757068
+    },
+    {
+      "id": "tmdb-in-movie-1768367",
+      "title": "Sam Morril: Incorrect",
+      "date": "2026-09-29",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "uXLBzlQTuvGlOhfB0M9HK4BrKqD.jpg",
+      "posterApprox": false,
+      "tmdbId": 1768367
+    },
+    {
+      "id": "tmdb-us-movie-1768367",
+      "title": "Sam Morril: Incorrect",
+      "date": "2026-09-29",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "uXLBzlQTuvGlOhfB0M9HK4BrKqD.jpg",
+      "posterApprox": false,
+      "tmdbId": 1768367
+    },
+    {
+      "id": "tmdb-us-movie-1646945",
+      "title": "The Swan: Behind the Mirror",
+      "date": "2026-09-29",
+      "region": "US",
+      "type": "movie",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "hCALD2uCetzUjj40k8TUMnsA397.jpg",
+      "posterApprox": false,
+      "tmdbId": 1646945
+    },
+    {
+      "id": "tmdb-in-movie-1777082",
+      "title": "Crowyokan",
+      "date": "2026-09-30",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": null,
+      "poster": "kjVVAsN0Zy6uMiIF9pUXCIZlT86.jpg",
+      "posterApprox": false,
+      "tmdbId": 1777082
+    },
+    {
+      "id": "tmdb-in-movie-1437195",
+      "title": "Livestream from Hell",
+      "date": "2026-09-30",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "2bKGy1SoXZEUa69HRSy51rVM5KF.jpg",
+      "posterApprox": false,
+      "tmdbId": 1437195
+    },
+    {
+      "id": "tmdb-in-series-331669",
+      "title": "The Arena",
+      "date": "2026-09-30",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "t00g6l4L3xbPgPoB5QZzBl5hiZR.jpg",
+      "posterApprox": false,
+      "tmdbId": 331669
+    },
+    {
+      "id": "tmdb-us-series-331669",
+      "title": "The Arena",
+      "date": "2026-09-30",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "t00g6l4L3xbPgPoB5QZzBl5hiZR.jpg",
+      "posterApprox": false,
+      "tmdbId": 331669
+    },
+    {
+      "id": "tmdb-in-movie-1758536",
+      "title": "The Widower: 'Til Death Do Us Part",
+      "date": "2026-09-30",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "8MmN3JmgscGiAP3bUlrc2rLsGDq.jpg",
+      "posterApprox": false,
+      "tmdbId": 1758536
+    },
+    {
+      "id": "tmdb-us-movie-1758536",
+      "title": "The Widower: 'Til Death Do Us Part",
+      "date": "2026-09-30",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "8MmN3JmgscGiAP3bUlrc2rLsGDq.jpg",
+      "posterApprox": false,
+      "tmdbId": 1758536
+    },
+    {
+      "id": "tmdb-us-movie-1588205",
+      "title": "Without Looking Back",
+      "date": "2026-10-01",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "i1q5AFv5IXVhmO2cDgx8NllbmHh.jpg",
+      "posterApprox": false,
+      "tmdbId": 1588205
+    },
+    {
+      "id": "tmdb-in-movie-1269325",
+      "title": "Drishyam: The Conclusion",
+      "date": "2026-10-02",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": "Hindi",
+      "poster": "67FsF2kpgEZ1T5Qos4adgqm9dLf.jpg",
+      "posterApprox": false,
+      "tmdbId": 1269325
+    },
+    {
+      "id": "tmdb-us-movie-1269325",
+      "title": "Drishyam: The Conclusion",
+      "date": "2026-10-02",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": "Hindi",
+      "poster": "67FsF2kpgEZ1T5Qos4adgqm9dLf.jpg",
+      "posterApprox": false,
+      "tmdbId": 1269325
+    },
+    {
+      "id": "tmdb-us-movie-1776129",
+      "title": "Gloria",
+      "date": "2026-10-03",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "30rONXlNTT1K9u5NbKkFCOeEXvh.jpg",
+      "posterApprox": false,
+      "tmdbId": 1776129
     }
   ]
 }
