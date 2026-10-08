@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-09-28",
-    "to": "2026-10-04"
+    "from": "2026-10-05",
+    "to": "2026-10-11"
   },
   "source": "tmdb",
   "releases": [
@@ -1312,6 +1312,162 @@
       "poster": "30rONXlNTT1K9u5NbKkFCOeEXvh.jpg",
       "posterApprox": false,
       "tmdbId": 1776129
+    },
+    {
+      "id": "tmdb-us-series-307106",
+      "title": "Between Steps",
+      "date": "2026-10-05",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": null,
+      "poster": "pGqcErS76y8bcvZZSFUefdZOg2x.jpg",
+      "posterApprox": false,
+      "tmdbId": 307106
+    },
+    {
+      "id": "tmdb-in-series-337332",
+      "title": "Fauchées",
+      "date": "2026-10-05",
+      "region": "IN",
+      "type": "series",
+      "platform": "prime",
+      "language": null,
+      "poster": null,
+      "posterApprox": false,
+      "tmdbId": 337332
+    },
+    {
+      "id": "tmdb-us-series-334759",
+      "title": "Sweet Deceit",
+      "date": "2026-10-05",
+      "region": "US",
+      "type": "series",
+      "platform": "hbomax",
+      "language": "English",
+      "poster": "vMiMuswOQS3ufdzfjKH8Df7tvc8.jpg",
+      "posterApprox": false,
+      "tmdbId": 334759
+    },
+    {
+      "id": "tmdb-in-movie-1789554",
+      "title": "Mojo Brookzz: I Know You Lying",
+      "date": "2026-10-06",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "qw9mwyKEWeRIWudfaMK1gvVcGP2.jpg",
+      "posterApprox": false,
+      "tmdbId": 1789554
+    },
+    {
+      "id": "tmdb-us-movie-1789554",
+      "title": "Mojo Brookzz: I Know You Lying",
+      "date": "2026-10-06",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "qw9mwyKEWeRIWudfaMK1gvVcGP2.jpg",
+      "posterApprox": false,
+      "tmdbId": 1789554
+    },
+    {
+      "id": "tmdb-in-series-288673",
+      "title": "Carrie",
+      "date": "2026-10-07",
+      "region": "IN",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "eXjk4W4robXs7l1YXwaXMv4f2qb.jpg",
+      "posterApprox": false,
+      "tmdbId": 288673
+    },
+    {
+      "id": "tmdb-us-series-288673",
+      "title": "Carrie",
+      "date": "2026-10-07",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "eXjk4W4robXs7l1YXwaXMv4f2qb.jpg",
+      "posterApprox": false,
+      "tmdbId": 288673
+    },
+    {
+      "id": "tmdb-in-series-290233",
+      "title": "Inside The Circle",
+      "date": "2026-10-07",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "3JpnP8fYVb9B9FuvdGT4ZkRRYZJ.jpg",
+      "posterApprox": false,
+      "tmdbId": 290233
+    },
+    {
+      "id": "tmdb-us-series-290233",
+      "title": "Inside The Circle",
+      "date": "2026-10-07",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "3JpnP8fYVb9B9FuvdGT4ZkRRYZJ.jpg",
+      "posterApprox": false,
+      "tmdbId": 290233
+    },
+    {
+      "id": "tmdb-us-movie-1781653",
+      "title": "Jamie Foxx: Take Care of Yourself",
+      "date": "2026-10-07",
+      "region": "US",
+      "type": "movie",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "yldpC40h6F8c55vu6hMFotG1Hs6.jpg",
+      "posterApprox": false,
+      "tmdbId": 1781653
+    },
+    {
+      "id": "tmdb-in-movie-1756138",
+      "title": "Who Is Martin Mull?",
+      "date": "2026-10-07",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "xpIXOeUsHGl9HLc32p7Z09tkh0t.jpg",
+      "posterApprox": false,
+      "tmdbId": 1756138
+    },
+    {
+      "id": "tmdb-us-movie-1756138",
+      "title": "Who Is Martin Mull?",
+      "date": "2026-10-07",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "xpIXOeUsHGl9HLc32p7Z09tkh0t.jpg",
+      "posterApprox": false,
+      "tmdbId": 1756138
+    },
+    {
+      "id": "tmdb-us-movie-1611384",
+      "title": "The Pastor Who Preys",
+      "date": "2026-10-08",
+      "region": "US",
+      "type": "movie",
+      "platform": "disneyplus",
+      "language": "English",
+      "poster": "nzQQsZBy0H86TTl6OMh9yJH9reL.jpg",
+      "posterApprox": false,
+      "tmdbId": 1611384
     }
   ]
 }
