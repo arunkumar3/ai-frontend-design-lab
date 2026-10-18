@@ -105,13 +105,17 @@ for (const row of missing) {
     // written as `movie`, a talk show written as `series`. Ask the other
     // index too when the declared one comes back empty, rather than
     // recording a type mistake as a missing title.
-    let { status, total, results } = await search(kind, query)
+    let found = await search(kind, query)
     let via = kind
-    if (!results.length) {
+    if (!found.results.length) {
       const other = kind === 'movie' ? 'tv' : 'movie'
       const alt = await search(other, query)
-      if (alt.results.length) ({ status, total, results } = alt), (via = other)
+      if (alt.results.length) {
+        found = alt
+        via = other
+      }
     }
+    const { status, total, results } = found
 
     const candidates = []
     for (const r of results.slice(0, CANDIDATES)) {

@@ -31,7 +31,11 @@ jobs:
         run: node projects/ott-radar/lab/scripts/action-fetch-posters.mjs
       - name: Push to transient branch
         run: |
-          cd posters-out
+          # The harvester writes beside the lab, not at the repo root — this
+          # said `cd posters-out` and failed after a clean 130-poster run,
+          # because the project moved under projects/ott-radar/ and the push
+          # step did not move with it.
+          cd projects/ott-radar/posters-out
           git init -b posters-cache-temp
           git add -A
           git -c user.name=poster-runner -c user.email=actions@invalid \

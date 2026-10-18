@@ -7,7 +7,7 @@ import { CURATED } from './sources/curated.js'
 import { CURATED_OCT } from './sources/curated-oct.js'
 import { generatedSource } from './sources/generated.js'
 import { ARTWORK, applyArtwork } from './sources/artwork.js'
-import { mapTmdbRecord, discoverUrl, PROVIDERS } from './sources/tmdb.js'
+import { mapTmdbRecord, discoverUrl, PROVIDERS, ORIGIN_PASSES } from './sources/tmdb.js'
 
 const valid = {
   id: 'x-1',
@@ -307,6 +307,25 @@ test('a result with no poster or unknown language maps to nulls, not to junk', (
 test('a result missing its date is rejected at the boundary, not rendered blank', () => {
   const raw = mapTmdbRecord({ id: 2, name: 'No Date' }, { region: 'IN', platform: 'netflix', kind: 'series' })
   expect(validateRelease(raw).ok).toBe(false)
+})
+
+test('the India sweep asks for Indian-origin titles as well as the plain one', () => {
+  // The bug this covers shipped: scoped only by watch_region, the India feed
+  // returned the global Netflix and Prime catalogue licensed into India — 49
+  // rows, two of them Indian films. Both passes are wanted, so the plain one
+  // stays and the origin-scoped one is added beside it.
+  expect(ORIGIN_PASSES.IN).toEqual(['IN'])
+  expect(ORIGIN_PASSES.US).toEqual([])
+
+  const plain = discoverUrl({ region: 'IN', kind: 'movie', providerId: 8, from: '2026-10-12', to: '2026-10-18' })
+  expect(plain).not.toContain('with_origin_country')
+
+  const indian = discoverUrl({
+    region: 'IN', kind: 'movie', providerId: 8, from: '2026-10-12', to: '2026-10-18', originCountry: 'IN',
+  })
+  expect(indian).toContain('with_origin_country=IN')
+  // and it is a narrowing of the same query, not a different one
+  expect(indian.replace('&with_origin_country=IN', '')).toBe(plain)
 })
 
 test('discoverUrl uses the right date field per kind and stays region-scoped', () => {
