@@ -4,6 +4,7 @@ import { validateRelease, isRealDate, humanisePlatform } from './schema.js'
 import { normaliseFeed, derivedPlatforms } from './normalise.js'
 import { loadFeed, forRegion, titlesInBothRegions, regionsIn } from './index.js'
 import { CURATED } from './sources/curated.js'
+import { CURATED_OCT } from './sources/curated-oct.js'
 import { generatedSource } from './sources/generated.js'
 import { ARTWORK, applyArtwork } from './sources/artwork.js'
 import { mapTmdbRecord, discoverUrl, PROVIDERS } from './sources/tmdb.js'
@@ -136,22 +137,36 @@ test('a non-array source degrades to an empty feed rather than throwing', () => 
 
 /* --------------------------------------------------------------- index --- */
 
-test('loadFeed combines the snapshot, the curated week and the live feed, nothing rejected', () => {
+test('loadFeed combines the snapshot, both curated weeks and the live feed, nothing rejected', () => {
   const feed = loadFeed()
-  expect(feed.sourceId).toBe('snapshot+curated-2026-08-20+generated')
-  expect(feed.releases.length).toBe(22 + CURATED.length + generatedSource.read().length)
+  expect(feed.sourceId).toBe('snapshot+curated-2026-08-20+curated-2026-10-16+generated')
+  expect(feed.releases.length).toBe(
+    22 + CURATED.length + CURATED_OCT.length + generatedSource.read().length,
+  )
   expect(feed.rejected).toEqual([])
   expect(feed.duplicates).toEqual([])
 })
 
 test('every curated row passes the same boundary as the snapshot', () => {
   const feed = loadFeed()
-  for (const row of CURATED) {
+  for (const row of [...CURATED, ...CURATED_OCT]) {
     expect(feed.releases.some((r) => r.id === row.id), row.id).toBe(true)
     expect(feed.platforms[row.platform], `${row.id} -> ${row.platform}`).toBeDefined()
   }
   // and none of them leaked in as a derived platform — curated means curated
   expect(feed.derived).toEqual([])
+})
+
+test("this week's slate lands in the week the page calls this week", () => {
+  // The card carried no dates and Friday was assumed for most rows. The claim
+  // that matters is not which day each title landed on — it is that every one
+  // of them falls inside 12–18 Oct, because that is what puts them on the
+  // page's current week rather than in its archive.
+  for (const row of CURATED_OCT) {
+    expect(row.date >= '2026-10-12' && row.date <= '2026-10-18', `${row.id} ${row.date}`).toBe(true)
+    expect(row.region, row.id).toBe('IN')
+  }
+  expect(new Set(CURATED_OCT.map((r) => r.id)).size).toBe(CURATED_OCT.length)
 })
 
 test('forRegion is date-ordered and covers both catalogs', () => {

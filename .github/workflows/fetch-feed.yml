@@ -61,9 +61,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        working-directory: projects/ott-radar/lab
-        run: npm install
+      # No install step. `npm install` broke on 2026-10-15 with npm's
+      # "Cannot read properties of null (reading 'edgesOut')" and every
+      # scheduled run has failed since, leaving the site on the 8 Oct feed for
+      # ten days. The fix is not a newer npm: fetch-feed.mjs imports node
+      # builtins and four files from src/feed/, and nothing else. It never
+      # needed node_modules, so the step that could fail is gone rather than
+      # repaired.
 
       - name: Fetch this week's feed
         working-directory: projects/ott-radar/lab
