@@ -104,7 +104,7 @@ test('a duplicate id keeps the first and reports the collision', () => {
   expect(releases).toHaveLength(1)
   expect(releases[0].title).toBe('A Real Title')
   expect(duplicates).toEqual([
-    { id: 'x-1', title: 'A Different Title', keptTitle: 'A Real Title' },
+    { id: 'x-1', title: 'A Different Title', keptTitle: 'A Real Title', reason: 'id' },
   ])
 })
 
@@ -139,18 +139,48 @@ test('a non-array source degrades to an empty feed rather than throwing', () => 
 
 test('loadFeed combines the snapshot, both curated weeks and the live feed, nothing rejected', () => {
   const feed = loadFeed()
-  expect(feed.sourceId).toBe('snapshot+curated-2026-08-20+curated-2026-10-16+generated')
-  expect(feed.releases.length).toBe(
-    22 + CURATED.length + CURATED_OCT.length + generatedSource.read().length,
-  )
+  expect(feed.sourceId).toBe('snapshot+curated-2026-08-20+generated+curated-2026-10-16')
   expect(feed.rejected).toEqual([])
-  expect(feed.duplicates).toEqual([])
+  // Every input row is either rendered or reported — no row leaves quietly.
+  // A count was asserted here instead, and it could only ever be maintained
+  // by copying whatever the code produced.
+  const fedIn = 22 + CURATED.length + CURATED_OCT.length + generatedSource.read().length
+  expect(feed.releases.length + feed.duplicates.length).toBe(fedIn)
+  // and what is dropped is dropped for the one reason we expect
+  for (const d of feed.duplicates) expect(d.reason, d.title).toBe('same title, same week')
 })
 
-test('every curated row passes the same boundary as the snapshot', () => {
+test('the live fetch wins a title the listing card also claims', () => {
+  // Nine titles are in both sources for the week of 12-18 Oct. The card says
+  // Friday because it carries no dates; TMDB says the day it actually landed.
+  const feed = loadFeed()
+  const trap = feed.releases.filter((r) => r.title === 'The Trap' && r.region === 'IN')
+  expect(trap).toHaveLength(1)
+  expect(trap[0].id.startsWith('ow-'), 'the curated row should have lost').toBe(false)
+  expect(feed.duplicates.some((d) => d.id === 'ow-thetrap')).toBe(true)
+})
+
+test('a title on two services in one week is two drops, not a duplicate', () => {
+  // The dedupe key holds platform for this reason: multi-platform releases
+  // are ordinary in this catalogue, and collapsing them would hide a drop.
+  const { releases, duplicates } = normaliseFeed([
+    { ...valid, id: 'a', title: 'Same Film', platform: 'netflix', date: '2026-10-16' },
+    { ...valid, id: 'b', title: 'Same Film', platform: 'zee5', date: '2026-10-16' },
+    { ...valid, id: 'c', title: 'Same Film', platform: 'netflix', date: '2026-10-17' },
+  ])
+  expect(releases.map((r) => r.id)).toEqual(['a', 'b'])
+  expect(duplicates[0]).toMatchObject({ id: 'c', keptId: 'a', reason: 'same title, same week' })
+})
+
+test('every curated row either renders or is reported, never silently dropped', () => {
   const feed = loadFeed()
   for (const row of [...CURATED, ...CURATED_OCT]) {
-    expect(feed.releases.some((r) => r.id === row.id), row.id).toBe(true)
+    const rendered = feed.releases.some((r) => r.id === row.id)
+    // Nine October rows lose to the live fetch, which is the intended
+    // outcome — but losing has to be visible, not a row that evaporates.
+    const reported = feed.duplicates.some((d) => d.id === row.id)
+    expect(rendered || reported, `${row.id} vanished`).toBe(true)
+    expect(feed.rejected.some((r) => r.id === row.id), `${row.id} rejected`).toBe(false)
     expect(feed.platforms[row.platform], `${row.id} -> ${row.platform}`).toBeDefined()
   }
   // and none of them leaked in as a derived platform — curated means curated

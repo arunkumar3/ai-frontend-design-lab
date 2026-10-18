@@ -5,6 +5,26 @@ import { PLATFORMS as KNOWN_PLATFORMS } from '../data/releases.js'
 import { humanisePlatform, validateRelease } from './schema.js'
 
 /**
+ * The second kind of duplicate: the same title, from two sources that do not
+ * agree on an id.
+ *
+ * Ids only catch a source repeating itself. Once a hand-curated week and a
+ * live fetch cover the same days — which is the whole point of mixing
+ * sources — the same film arrives twice under `ow-thetrap` and
+ * `tmdb-tv-279892`, and the page renders two cards for one drop with two
+ * different dates on them.
+ *
+ * Region and platform stay in the key. A title that genuinely lands on two
+ * services in one week is two drops and belongs on the page twice; so is the
+ * same title in both regions, which `titlesInBothRegions` depends on.
+ */
+const titleKey = (r) =>
+  `${r.region}|${r.platform}|${r.title.toLowerCase().replace(/\s+s\d+$/, '').replace(/[^a-z0-9]+/g, '')}`
+
+/** Near enough in time to be the same drop rather than a rerun or a sequel. */
+const SAME_DROP_MS = 7 * 24 * 60 * 60 * 1000
+
+/**
  * @param {unknown[]} records  raw rows from any source
  * @param {object}    [opts]
  * @param {object}    [opts.knownPlatforms]  defaults to the curated map
@@ -22,6 +42,7 @@ export function normaliseFeed(records, { knownPlatforms = KNOWN_PLATFORMS } = {}
   const rejected = []
   const duplicates = []
   const seen = new Map()
+  const seenTitles = new Map()
 
   // Start from a copy: discovering a platform must never mutate the curated
   // map, or the second call in a test run sees the first call's leftovers.
@@ -46,7 +67,32 @@ export function normaliseFeed(records, { knownPlatforms = KNOWN_PLATFORMS } = {}
     // reported. Two *different* rows sharing an id is a source bug, and it
     // shows up here rather than as one card mysteriously missing.
     if (seen.has(release.id)) {
-      duplicates.push({ id: release.id, title: release.title, keptTitle: seen.get(release.id).title })
+      duplicates.push({
+        id: release.id,
+        title: release.title,
+        keptTitle: seen.get(release.id).title,
+        reason: 'id',
+      })
+      continue
+    }
+
+    // Same title, same service, same week, different source. First source
+    // wins, so the order `loadFeed` lists its sources in is a statement about
+    // which one to believe — the live fetch knows the real date, a weekly
+    // listing card does not.
+    const key = titleKey(release)
+    const sameTitle = seenTitles.get(key) ?? []
+    const alreadyHave = sameTitle.find(
+      (k) => Math.abs(Date.parse(k.date) - Date.parse(release.date)) < SAME_DROP_MS,
+    )
+    if (alreadyHave) {
+      duplicates.push({
+        id: release.id,
+        title: release.title,
+        keptTitle: alreadyHave.title,
+        keptId: alreadyHave.id,
+        reason: 'same title, same week',
+      })
       continue
     }
 
@@ -63,6 +109,7 @@ export function normaliseFeed(records, { knownPlatforms = KNOWN_PLATFORMS } = {}
     }
 
     seen.set(release.id, release)
+    seenTitles.set(key, [...sameTitle, release])
     releases.push(release)
   }
 

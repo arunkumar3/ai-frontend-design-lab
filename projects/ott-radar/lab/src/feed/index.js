@@ -28,11 +28,18 @@ function injectedRecords() {
 
 /**
  * Sources are an array because no single one covers the page: the frozen
- * snapshot, this week's hand-curated rows, one day a live fetch — they
- * concatenate here and the boundary treats the pile as one feed, which is
- * what `normaliseFeed` was shaped for from the start.
+ * snapshot, hand-curated weeks, the live fetch — they concatenate here and
+ * the boundary treats the pile as one feed, which is what `normaliseFeed` was
+ * shaped for from the start.
+ *
+ * The ORDER is a claim about which source to believe. `normaliseFeed` keeps
+ * the first copy of a title and reports the rest, so the live fetch sits
+ * ahead of the October card deliberately: nine titles are in both, and TMDB
+ * knows the day each one actually landed where the card only says "this
+ * week". The card still carries the other fifty, which TMDB does not list at
+ * all.
  */
-export function loadFeed({ sources = [snapshotSource, curatedSource, curatedOctSource, generatedSource] } = {}) {
+export function loadFeed({ sources = [snapshotSource, curatedSource, generatedSource, curatedOctSource] } = {}) {
   const injected = injectedRecords()
   const raw = injected ?? sources.flatMap((s) => s.read())
   // Artwork found after the fact is layered on here rather than edited into
