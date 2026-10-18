@@ -31,6 +31,7 @@ import { RELEASES } from '../src/data/releases.js'
 import { CURATED } from '../src/feed/sources/curated.js'
 import { CURATED_OCT } from '../src/feed/sources/curated-oct.js'
 import { ARTWORK } from '../src/feed/sources/artwork.js'
+import { generatedSource } from '../src/feed/sources/generated.js'
 
 const OUT = new URL('../../posters-out/', import.meta.url)
 await mkdir(OUT, { recursive: true })
@@ -61,9 +62,12 @@ async function grab(file) {
 }
 
 // --- 1. everything the feed already points at -------------------------------
+// The live source belongs in this list as much as the curated ones: its rows
+// arrive from TMDB with poster paths already on them, and leaving it out
+// meant three cards the page was ready to draw had no file to draw from.
 const known = [
   ...new Set(
-    [...RELEASES, ...CURATED, ...CURATED_OCT, ...Object.values(ARTWORK)]
+    [...RELEASES, ...CURATED, ...CURATED_OCT, ...generatedSource.read(), ...Object.values(ARTWORK)]
       .map((r) => r.poster)
       .filter((p) => p && !p.startsWith('data:') && !p.startsWith('http')),
   ),
