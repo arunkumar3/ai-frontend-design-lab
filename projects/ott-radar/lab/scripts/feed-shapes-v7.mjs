@@ -115,8 +115,26 @@ const SCENARIOS = [
   },
   {
     name: 'only one region has anything',
-    records: many(4, (i) => row({ id: `in-only-${i}`, region: 'IN' })),
+    // Distinct titles on purpose. These were four copies of 'Placeholder
+    // Title' on one platform in one week, which the boundary now reads as
+    // one drop listed four times — correctly. The scenario is about the
+    // region switch, so it should not depend on that being allowed.
+    records: many(4, (i) => row({ id: `in-only-${i}`, title: `India Only ${i + 1}`, region: 'IN' })),
     expect: { cards: 4, regionButtons: 1 },
+  },
+  {
+    name: 'two sources list the same drop',
+    // What a curated week and a live fetch covering the same days actually
+    // produce: one title, two ids, two dates a few days apart. One card.
+    records: [
+      row({ id: 'live-1', title: 'Double Counted', date: THIS_WEEK }),
+      row({ id: 'card-1', title: 'Double Counted', date: addDays(THIS_WEEK, 2) }),
+      row({ id: 'other-1', title: 'Only Once' }),
+      // same title, different service — two real drops, both shown
+      row({ id: 'live-2', title: 'Two Services', platform: 'netflix' }),
+      row({ id: 'card-2', title: 'Two Services', platform: 'zee5' }),
+    ],
+    expect: { cards: 4, notice: true },
   },
   {
     name: 'every record is unusable',
