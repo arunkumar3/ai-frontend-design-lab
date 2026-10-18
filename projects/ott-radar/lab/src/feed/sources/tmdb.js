@@ -95,8 +95,19 @@ export function mapTmdbRecord(result, { region, platform, kind }) {
   }
 }
 
-/** Discover URL for one provider, region, kind and date window. */
-export function discoverUrl({ region, kind, providerId, from, to }) {
+/**
+ * Discover URL for one provider, region, kind and date window.
+ *
+ * `originCountry` narrows to titles made in that country, and it is the whole
+ * reason the India side of this feed stopped being an American one. A query
+ * scoped only by `watch_region: 'IN'` asks "what is streamable in India",
+ * which is mostly the global Netflix and Prime catalogue: of the 49 IN rows
+ * in the 2026-10-08 run, two were Indian films and the rest were stand-up
+ * specials and US docuseries licensed into the territory. The page says
+ * "India" and a reader reads that as "Indian". One unfiltered page of twenty,
+ * sorted by date, never reaches far enough down the catalogue to disagree.
+ */
+export function discoverUrl({ region, kind, providerId, from, to, originCountry }) {
   const path = kind === 'movie' ? 'discover/movie' : 'discover/tv'
   const dateField = kind === 'movie' ? 'primary_release_date' : 'first_air_date'
   const params = new URLSearchParams({
@@ -109,8 +120,20 @@ export function discoverUrl({ region, kind, providerId, from, to }) {
     include_adult: 'false',
     page: '1',
   })
+  if (originCountry) params.set('with_origin_country', originCountry)
   return `${API}/${path}?${params}`
 }
+
+/**
+ * Extra passes a region needs beyond the plain provider sweep.
+ *
+ * India gets a second pass per provider, restricted to Indian-origin titles.
+ * A separate request rather than a filter on the first, because the two
+ * answer different questions and the page wants both: what landed here, and
+ * what landed here that was made here. Ids collide safely — `normaliseFeed`
+ * dedupes first-id-wins, so a title both passes return appears once.
+ */
+export const ORIGIN_PASSES = { IN: ['IN'], US: [] }
 
 /**
  * The I/O half. Untested in this repo, and honestly so: `api.themoviedb.org` is
@@ -127,21 +150,23 @@ export async function fetchTmdbFeed({ from, to, regions = ['IN', 'US'], token, f
   for (const region of regions) {
     for (const [platform, providerId] of Object.entries(PROVIDERS[region] ?? {})) {
       for (const kind of ['movie', 'series']) {
-        const url = discoverUrl({ region, kind, providerId, from, to })
-        try {
-          const res = await fetchImpl(url, {
-            headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-          })
-          if (!res.ok) {
-            failures.push({ region, platform, kind, status: res.status })
-            continue
+        for (const origin of [undefined, ...(ORIGIN_PASSES[region] ?? [])]) {
+          const url = discoverUrl({ region, kind, providerId, from, to, originCountry: origin })
+          try {
+            const res = await fetchImpl(url, {
+              headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+            })
+            if (!res.ok) {
+              failures.push({ region, platform, kind, origin, status: res.status })
+              continue
+            }
+            const body = await res.json()
+            for (const result of body.results ?? []) {
+              records.push(mapTmdbRecord(result, { region, platform, kind }))
+            }
+          } catch (err) {
+            failures.push({ region, platform, kind, origin, error: String(err) })
           }
-          const body = await res.json()
-          for (const result of body.results ?? []) {
-            records.push(mapTmdbRecord(result, { region, platform, kind }))
-          }
-        } catch (err) {
-          failures.push({ region, platform, kind, error: String(err) })
         }
       }
     }

@@ -4,7 +4,7 @@
 reading for *why* `v6` is the way it is and for the trap list, but where the two disagree
 about state, this document is right.
 
-Last updated: 2026-08-20, after PR #1 merged and the artwork harvest.
+Last updated: 2026-10-18, after the October week landed and two pipelines were repaired.
 
 ---
 
@@ -24,148 +24,25 @@ argument.
 
 ## 2. State
 
-**[PR #1](https://github.com/arunkumar3/ai-frontend-design-lab/pull/1) is merged**, so
-`main` carries `/v0`–`/v7`, the feed boundary and every check script. A plain clone runs the
-site with no branch step. Work since the merge sits on `claude/continue-discussion-w580hz`:
+`main` carries `/v0`–`/v7`, the feed boundary, the weekly TMDB run and every check script.
+Work for the week of 12–18 Oct sits on `claude/continue-discussion-w580hz`, not merged.
+
+**What was wrong on 2026-10-18, and what fixed it:**
 
 | | |
 |---|---|
-| `d7f6311` | this document — merged `main`, the overlay, every suite re-counted |
-| `106aad6` | delete the transient poster branch after pickup |
-| `a5ed212` | a fifth poster, `VITE_POSTER_BASE`, and the artwork checks |
-| `bb8f392` | the artwork overlay — four verified posters, the rejections written down |
-| `0ca077b` | stop guessing TMDB's markup; harvest raw pages instead |
-| `3b51ef0` | poster harvest, second pass |
-| `4d422f7` | **the merge** — `/v0`–`/v7`, the feed boundary and every check script |
+| The weekly refresh had failed every run since 15 Oct | `npm install` on the runner, dying with npm's `edgesOut` bug. `fetch-feed.mjs` has no dependencies, so the step is gone. |
+| "India" was not Indian — 49 IN rows, two Indian films | `watch_region: IN` means "licensed here", not "made here". The sweep now runs a second pass per provider with `with_origin_country=IN`. |
+| The page showed an August archive week | 59 titles for 12–18 Oct arrived as `sources/curated-oct.js`, from a weekly listing card. |
+| The same title rendered twice | `normaliseFeed` only deduped on id. It now also dedupes region + platform + title within a week, and reports it. |
 
-Nothing is uncommitted, and **no PR is open for these six commits** — `main` runs the site
-but has none of the artwork work. Merging them is an open call (§8). Run the checks — never
-trust this table's notion of "green" without re-running.
+**Source order is a claim about trust.** `loadFeed` lists
+`[snapshot, curated-Aug, generated, curated-Oct]`: the live fetch outranks the listing card
+for the nine titles both carry, because TMDB knows the day each one landed and a card that
+says "this week" does not. The card still carries the fifty TMDB does not list at all.
 
-### Adopted from the scrollcraft diff, 2026-08-23
-
-All four proposals in `findings/scrollcraft.md` §6 are now in the tree, on
-`claude/article-reference-kamfxt`:
-
-| Change | Where |
-|---|---|
-| The fingerprint gate, dimensions re-derived for a feed page | `../../playbook/FINGERPRINTS.md`, rule in `../../CLAUDE.md` Process |
-| Entrance-animation rule scoped, with the exemption's price stated | `../../CLAUDE.md` Required |
-| Reference rule split into craft (measure it) and direction (never a site) | `../../CLAUDE.md` Process |
-| Why older routes fail current rules, and why they will not be migrated | `README.md`, after the append-only line |
-
-New rules carry the `(scrollcraft)` provenance tag. Nothing in `lab/` was touched.
-
-### The weekly refresh was broken in two places, 2026-08-28
-
-Reported as "the site didn't refresh on Thursday". Both halves are fixed on
-`claude/website-refresh-failure-e5jnj3`; neither was visible from a green Actions run,
-which is the part worth remembering.
-
-**The cron did not fire on Thursday.** `cron: '30 18 * * 4'` was scheduled for
-2026-08-27 18:30 UTC. GitHub delivered it at 2026-08-28 02:14 UTC — 7h44m late, hours
-after the group had looked. Scheduled events are best effort and get delayed or dropped
-outright on a low-traffic repo. There is no cron setting that fixes this; the workflow now
-makes three attempts on Thursday (12:30 / 16:30 / 20:30 UTC) and lets whichever lands
-first do the work.
-
-**The window it asked for could never be answered.** `fetch-feed.mjs` computed the
-*current* publishing week, Thursday to Wednesday, counting forward from today. But
-`discover` filtered by `with_watch_providers` matches only titles a service already
-carries, so a forward window is structurally empty. Two runs of the same code and token
-measured it:
-
-| run | window | raw records |
-|---|---|---|
-| 2026-08-25 | `2026-08-20..08-26` (past) | 17 |
-| 2026-08-28 | `2026-08-27..09-02` (today + future) | **0**, with 0 failures |
-
-The window is now bounded by the week's own edges, in `src/feed/window.js`, pure and tested.
-
-**And then the week model itself turned out to be the bigger defect.** With the fetch fixed,
-the reader's answer to "what landed this week" was still wrong, because `v7` anchored weeks
-to **Thursday — the day the robot runs**. That conflated a schedule with a calendar. On
-Friday 2026-08-28 it put the sixteen titles that dropped Monday to Wednesday into "last
-week", flagged them `ARCHIVE`, and left "this week" holding two. The list people wanted was
-on the page the whole time, under the wrong heading.
-
-`v7`'s weeks are now **Monday to Sunday**, which is what a week means to the people reading
-it. Same day, same data, the page went from *2 titles, ARCHIVE* to *India 7 · US 11 ·
-24–30 Aug, this week*. The fetch still runs on Thursday; that is a schedule and it no longer
-decides where a week begins.
-
-`WEEK_START_DAY` lives in `routes/v7/week.js`, and `verify-v7.mjs` and `feed-shapes-v7.mjs`
-carry matching copies — change one, change all three. **`v6` still anchors on Thursday and
-was deliberately left alone**, routes here being append-only; `verify-v6.mjs` keeps its own
-Thursday copy for that reason.
-
-The fetch window is exactly that week, Monday to Sunday — one run, one whole calendar week,
-consecutive runs neither overlapping nor leaving a gap:
-
-    run Thu 2026-08-27  ->  2026-08-24 .. 2026-08-30
-    run Thu 2026-09-03  ->  2026-08-31 .. 2026-09-06
-
-**Known gap, accepted deliberately — do not "fix" it by widening the window.** A title
-landing on the Friday, Saturday or Sunday after a Thursday run is not in TMDB's provider
-data yet (it lists a title only once the service actually carries it, a day or two late),
-and the next run's window has already moved to the following week. Those titles are never
-asked for. An earlier version of this commit reached back an extra week to cover it; that
-was rejected, because it makes the window stop meaning "the week" and every run re-fetch
-data it already has.
-
-The right way to close it is a **second run over the completed week** — a Monday run whose
-window is the previous Monday to Sunday. Same rule, same shape of window, one run later.
-Not built; it needs a second cron and a `--from/--to` the workflow does not pass yet.
-
-**Why it looked like a success.** The zero-record guard only fired when there were also
-transport failures, so 28 requests returning `200` with empty bodies fell straight through.
-The run then merged the previous file's 17 rows back in, rewrote `fetchedFor`, and the
-workflow's `git diff --cached --quiet` saw a two-line change and committed
-`feed: weekly TMDB fetch 2026-08-28` — a refresh carrying no new titles, indistinguishable
-in the log from one that worked. Zero records is now a hard failure with a diagnosis, and a
-run whose release set is unchanged leaves the file alone so there is nothing to commit.
-
-**And a third cause, found after the first two were fixed: the site has never built.** A
-Vercel preview of the fix commit failed with `vite: command not found`, and the log said the
-package manager had "changed from pnpm to npm". Both symptoms point one way — the build runs
-at the repo root, which has no `package.json` and no lockfile, so Vercel installs nothing and
-then runs a build needing a binary it never installed.
-
-**Do not repeat the first reading of this, which was wrong.** It looked like `d431bd2`'s move
-of the app out of `lab/` had orphaned Vercel's Root Directory, and that was written down here
-as fact before the evidence was checked. Walking the commit statuses back says otherwise:
-
-| commit | date | Vercel |
-|---|---|---|
-| `b2ba098`, `dcc9de0` | 2026-08-28 | failure |
-| `1320eac` (main) | 2026-08-28 | failure |
-| `bee0b91`, `d431bd2` — the move | 2026-08-25 | failure |
-| `c97b238`, `df52cce`, `208601c`, `0bab269` | 2026-08-22 | failure |
-| `9d0b018` and everything older | ≤2026-08-22 | no status — project not connected yet |
-
-The first status of any kind lands on `0bab269`, the commit that added `lab/vercel.json`, so
-that is when the Vercel project was connected. **Every deployment it has ever attempted has
-failed.** There is no green build to regress from; the move is a red herring. Whatever the
-group has been looking at is not coming from this project, and from inside the sandbox that
-cannot be checked either way — the egress proxy 403s `*.vercel.app`.
-
-A `vercel.json` at the repo root now builds the app from its path, verified by running its own
-`buildCommand` and listing its own `outputDirectory` rather than a retyped copy. It uses npm,
-not pnpm: Vercel's own log reports npm as the package manager for this build, and the weekly
-Action already proves `npm install` builds this app from a clean machine. That is a reasoned
-choice, **not a confirmed fix** — the build log for `dpl_AV3uqun3uffLdWQjGPsdDfh6jKyR` has not
-been read, and nothing here should be treated as diagnosed until it has.
-
-The one change that needs no guessing at all is in the dashboard: point Root Directory at
-`projects/ott-radar/lab`, where `package.json`, `pnpm-lock.yaml` and the app's own
-`vercel.json` already sit. `projects/ott-radar/lab/vercel.json` is kept for exactly that
-reason — one of the two is read, whichever sits in the configured Root Directory, so they
-cannot conflict.
-
-**Still open, and not fixed here:** the page labels the fallback week "Landing this week".
-When the current week has no releases it degrades to the most recent week that does — which
-is correct behaviour — but the copy still says "this week", so stale data reads as fresh
-data. That is what the group actually saw. It wants a dateline, not a data fix.
+Nothing is uncommitted. Run the checks — never trust this table's notion of "green"
+without re-running.
 
 ## 3. Running it
 
@@ -192,15 +69,15 @@ With the dev server up, in a second shell:
 
 ```bash
 cd lab
-pnpm test          # 46 unit tests — the feed boundary. No browser, no server needed.
+pnpm test          # 55 unit tests — the feed boundary. No browser, no server needed.
 pnpm lint
 
 pnpm verify:v6     # 26 render-vs-data checks
 pnpm contrast:v6   # 20 computed contrast pairs
-pnpm verify:v7     # render-vs-data checks
-pnpm contrast:v7   # computed contrast pairs, read from the running page
+pnpm verify:v7     # 53 render-vs-data checks
+pnpm contrast:v7   # 34 computed contrast pairs, read from the running page
 pnpm states:v7     # hover, press, and browser-chrome states, desktop + touch
-pnpm feed:shapes   # checks across 10 adversarial feed shapes
+pnpm feed:shapes   # 75 checks across 11 adversarial feed shapes
 
 npx impeccable detect http://localhost:5173/v7    # live audit — never point it at src/
 pnpm shoot v7      # 6 PNGs into lab/shots/v7/ — then look at them
@@ -211,11 +88,15 @@ pnpm shoot v7      # 6 PNGs into lab/shots/v7/ — then look at them
 # unless you served a harvest via VITE_POSTER_BASE first.
 ```
 
-**Counted in one run on 2026-08-28, on `claude/website-refresh-failure-e5jnj3`:** lint
-clean, 46 tests, `contrast:v6` 0 failing, `contrast:v7` 0 failing, `states:v7` 0 failing,
-`feed:shapes` 0 failing, `verify:v6` 0 failing. `impeccable` was **not** re-run in that
-pass, so the 2026-08-23 reading — 0 findings on `/v7`, 13 on `/v1`, which is how you
-confirm the scan is actually running before trusting a 0 — is the last one anybody took.
+**Counted in one run on 2026-10-18, on `claude/continue-discussion-w580hz`:** lint clean,
+55 tests, `verify:v6` 26 checks 0 failing, `contrast:v6` 20 pairs 0 failing, `verify:v7` 53
+checks 0 failing, `contrast:v7` 34 pairs 0 failing, `feed:shapes` 75 checks across 11
+shapes 0 failing. The `verify:v7` artwork block only binds when a harvest is served
+locally — `VITE_POSTER_BASE=/tmdb` — because otherwise every card falls back to the tile
+and the check would be reporting on this sandbox's egress rules. `impeccable` was **not**
+re-run in that pass, so the 2026-08-23 reading — 0 findings on `/v7`, 13 on `/v1`, which is
+how you confirm the scan is actually running before trusting a 0 — is the last one anybody
+took.
 
 **`verify:v7` reports 2 failing, and they are the environment, not the page.** Both are
 `every card draws the artwork its row names` — `image.tmdb.org` is blocked here, so every

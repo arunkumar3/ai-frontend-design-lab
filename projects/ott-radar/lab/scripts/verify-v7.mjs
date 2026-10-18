@@ -13,14 +13,39 @@
 import { chromium } from 'playwright'
 import { RELEASES, PLATFORMS } from '../src/data/releases.js'
 import { CURATED } from '../src/feed/sources/curated.js'
+import { CURATED_OCT } from '../src/feed/sources/curated-oct.js'
 import { ARTWORK } from '../src/feed/sources/artwork.js'
 import { generatedSource } from '../src/feed/sources/generated.js'
 
-// The page renders the combined feed (snapshot + curated week + whatever
-// fetch-feed.yml last committed), so the model must too, or every count
+// The page renders the combined feed, so the model must too, or every count
 // drifts the day a source is added — as it did the day the live source went
-// from an empty read to a real week.
-const ALL = [...RELEASES, ...CURATED, ...generatedSource.read()]
+// from an empty read to a real week, and again the day the October card
+// joined. Source order matters here exactly as it does in `loadFeed`: the
+// live fetch outranks the listing card for a title they both carry.
+const SOURCES = [...RELEASES, ...CURATED, ...generatedSource.read(), ...CURATED_OCT]
+
+// The model keeps `loadFeed`'s two dedupe rules rather than importing them.
+// Importing `normaliseFeed` would make this script agree with the page by
+// construction — the trap the artwork check already carries a note about —
+// so the rules are restated, and a mismatch between these lines and
+// normalise.js is itself something worth finding.
+const titleKey = (r) =>
+  `${r.region}|${r.platform}|${r.title.toLowerCase().replace(/\s+s\d+$/, '').replace(/[^a-z0-9]+/g, '')}`
+
+const ALL = []
+const byId = new Set()
+const byTitle = new Map()
+for (const r of SOURCES) {
+  if (byId.has(r.id)) continue
+  const key = titleKey(r)
+  const near = (byTitle.get(key) ?? []).find(
+    (k) => Math.abs(Date.parse(k.date) - Date.parse(r.date)) < 7 * 24 * 60 * 60 * 1000,
+  )
+  if (near) continue
+  byId.add(r.id)
+  byTitle.set(key, [...(byTitle.get(key) ?? []), r])
+  ALL.push(r)
+}
 
 // v7's weeks are Monday to Sunday — must match src/routes/v7/week.js.
 // v6 still anchors on Thursday; verify-v6.mjs keeps its own copy.
@@ -277,9 +302,19 @@ for (const region of ['IN', 'US']) {
   const marked = await page.$$eval('.v7-cal__hit', (ns) =>
     ns.map((n) => ({ day: Number(n.textContent.trim()), label: n.getAttribute('aria-label') })),
   )
-  const month = resolved.slice(0, 7)
+  // The grid is padded to whole Monday-start rows, so it shows a few days of
+  // the neighbouring months and marks those too when they carry a release.
+  // Filtering the model to the anchor month made this check unsatisfiable the
+  // moment a 28–30 September row existed: the page marked three cells the
+  // model had excluded by construction, and the page was right.
+  const first = `${resolved.slice(0, 7)}-01`
+  const lead = (asDate(first).getDay() - WEEK_START_DAY + 7) % 7
+  const gridFrom = addDays(first, -lead)
+  const last = isoOf(new Date(Number(resolved.slice(0, 4)), Number(resolved.slice(5, 7)), 0))
+  const trail = (WEEK_START_DAY + 6 - asDate(last).getDay() + 7) % 7
+  const gridTo = addDays(last, trail)
   const wantDays = [...byDay.keys()]
-    .filter((d) => d.startsWith(month))
+    .filter((d) => d >= gridFrom && d <= gridTo)
     .map((d) => Number(d.slice(8)))
     .sort((a, b) => a - b)
   check(
@@ -287,15 +322,23 @@ for (const region of ['IN', 'US']) {
     'the calendar marks exactly the days that carry a release',
     `marked ${marked.map((m) => m.day).join()} / data ${wantDays.join()}`,
   )
+  // A marked cell can belong to the previous or next month, so its day
+  // number alone does not name a date — `${month}-28` for a 28 September
+  // cell is a different day that may carry nothing at all, which is how this
+  // line used to throw rather than report.
+  const isoInGrid = (day) =>
+    [...byDay.keys()].find(
+      (d) => d >= gridFrom && d <= gridTo && Number(d.slice(8)) === day,
+    )
   const badCount = marked.filter((m) => {
-    const iso = `${month}-${String(m.day).padStart(2, '0')}`
-    const n = byDay.get(iso).length
+    const iso = isoInGrid(m.day)
+    const n = byDay.get(iso)?.length ?? 0
     return !m.label.includes(`${n} title`)
   })
   check(badCount.length === 0, 'each marked day states how many titles it carries')
 
   // a fixture that runs a week must appear on every day it runs
-  const runs = forRegion(region).filter((r) => r.endDate && r.date.startsWith(month))
+  const runs = forRegion(region).filter((r) => r.endDate && r.date >= gridFrom && r.date <= gridTo)
   if (runs.length) {
     const spanDays = new Set()
     for (const r of runs) {

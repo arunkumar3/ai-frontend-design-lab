@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "echo 'no package.json at the repo root — install runs inside buildCommand'",
-  "buildCommand": "cd projects/ott-radar/lab && npm install --no-audit --no-fund && npm run build",
+  "buildCommand": "cd projects/ott-radar/lab && (corepack enable pnpm || true) && pnpm install --frozen-lockfile && pnpm build",
   "outputDirectory": "projects/ott-radar/lab/dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
