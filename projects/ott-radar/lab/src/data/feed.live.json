@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-10-12",
-    "to": "2026-10-18"
+    "from": "2026-10-19",
+    "to": "2026-10-25"
   },
   "source": "tmdb",
   "releases": [
@@ -1768,6 +1768,186 @@
       "poster": "hbApG0WSwgtaK7hXTZpwZDstDaR.jpg",
       "posterApprox": false,
       "tmdbId": 1773759
+    },
+    {
+      "id": "tmdb-in-series-332713",
+      "title": "Extraordinary Attorney Minami",
+      "date": "2026-10-19",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "xnNu56T04JDZRBIDxclpr83s7K.jpg",
+      "posterApprox": false,
+      "tmdbId": 332713
+    },
+    {
+      "id": "tmdb-in-series-303745",
+      "title": "Love in Disguise",
+      "date": "2026-10-19",
+      "region": "IN",
+      "type": "series",
+      "platform": "prime",
+      "language": null,
+      "poster": "kSAXIAovLC4z7Wp2Hy8oqLmpkox.jpg",
+      "posterApprox": false,
+      "tmdbId": 303745
+    },
+    {
+      "id": "tmdb-us-series-303745",
+      "title": "Love in Disguise",
+      "date": "2026-10-19",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": null,
+      "poster": "kSAXIAovLC4z7Wp2Hy8oqLmpkox.jpg",
+      "posterApprox": false,
+      "tmdbId": 303745
+    },
+    {
+      "id": "tmdb-in-movie-1802674",
+      "title": "Hot Wheels Let's Race: Attack of the T-Rex",
+      "date": "2026-10-20",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "aNJ1k9gyBPXkpc3zKTymFn8LvRR.jpg",
+      "posterApprox": false,
+      "tmdbId": 1802674
+    },
+    {
+      "id": "tmdb-us-movie-1802674",
+      "title": "Hot Wheels Let's Race: Attack of the T-Rex",
+      "date": "2026-10-20",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "aNJ1k9gyBPXkpc3zKTymFn8LvRR.jpg",
+      "posterApprox": false,
+      "tmdbId": 1802674
+    },
+    {
+      "id": "tmdb-us-series-275139",
+      "title": "Phony",
+      "date": "2026-10-20",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "iCyQc8cSSHkxUHbkvzbC77owALt.jpg",
+      "posterApprox": false,
+      "tmdbId": 275139
+    },
+    {
+      "id": "tmdb-in-movie-410113",
+      "title": "The Loud House Movie",
+      "date": "2026-10-20",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "mab5wPeGVjbMyYMzyzfdKKnG9cl.jpg",
+      "posterApprox": false,
+      "tmdbId": 410113
+    },
+    {
+      "id": "tmdb-us-movie-410113",
+      "title": "The Loud House Movie",
+      "date": "2026-10-20",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "mab5wPeGVjbMyYMzyzfdKKnG9cl.jpg",
+      "posterApprox": false,
+      "tmdbId": 410113
+    },
+    {
+      "id": "tmdb-in-movie-1795934",
+      "title": "Theo Von: I'm Doing Fine",
+      "date": "2026-10-20",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "eXmGan1CAQV4QtAeGcFUFxgfbvU.jpg",
+      "posterApprox": false,
+      "tmdbId": 1795934
+    },
+    {
+      "id": "tmdb-us-movie-1795934",
+      "title": "Theo Von: I'm Doing Fine",
+      "date": "2026-10-20",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "eXmGan1CAQV4QtAeGcFUFxgfbvU.jpg",
+      "posterApprox": false,
+      "tmdbId": 1795934
+    },
+    {
+      "id": "tmdb-us-movie-1683210",
+      "title": "Nurse: Empathy Heals",
+      "date": "2026-10-21",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": "2GYw3PYE8kN4gABhSDk7NIOPzQu.jpg",
+      "posterApprox": false,
+      "tmdbId": 1683210
+    },
+    {
+      "id": "tmdb-in-series-335319",
+      "title": "The New Stanford Prison Experiment",
+      "date": "2026-10-21",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "heoESrHAdmPeYECs2B7R8RIqLyN.jpg",
+      "posterApprox": false,
+      "tmdbId": 335319
+    },
+    {
+      "id": "tmdb-us-series-335319",
+      "title": "The New Stanford Prison Experiment",
+      "date": "2026-10-21",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "heoESrHAdmPeYECs2B7R8RIqLyN.jpg",
+      "posterApprox": false,
+      "tmdbId": 335319
+    },
+    {
+      "id": "tmdb-in-movie-1628116",
+      "title": "BTS: THE RETURN",
+      "date": "2026-10-25",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": null,
+      "poster": "9CNUWleZWN9EGMZjvaSTcxmAAGg.jpg",
+      "posterApprox": false,
+      "tmdbId": 1628116
+    },
+    {
+      "id": "tmdb-us-movie-1628116",
+      "title": "BTS: THE RETURN",
+      "date": "2026-10-25",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": null,
+      "poster": "9CNUWleZWN9EGMZjvaSTcxmAAGg.jpg",
+      "posterApprox": false,
+      "tmdbId": 1628116
     }
   ]
 }
