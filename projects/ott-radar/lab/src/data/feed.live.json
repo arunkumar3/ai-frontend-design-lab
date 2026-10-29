@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-10-19",
-    "to": "2026-10-25"
+    "from": "2026-10-26",
+    "to": "2026-11-01"
   },
   "source": "tmdb",
   "releases": [
@@ -1948,6 +1948,174 @@
       "poster": "9CNUWleZWN9EGMZjvaSTcxmAAGg.jpg",
       "posterApprox": false,
       "tmdbId": 1628116
+    },
+    {
+      "id": "tmdb-in-series-321221",
+      "title": "Minimum Wage",
+      "date": "2026-10-26",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "iTVhDUbzUFUJ18jrcYM4rw7qGk.jpg",
+      "posterApprox": false,
+      "tmdbId": 321221
+    },
+    {
+      "id": "tmdb-us-series-321221",
+      "title": "Minimum Wage",
+      "date": "2026-10-26",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "iTVhDUbzUFUJ18jrcYM4rw7qGk.jpg",
+      "posterApprox": false,
+      "tmdbId": 321221
+    },
+    {
+      "id": "tmdb-us-series-334887",
+      "title": "The Mob",
+      "date": "2026-10-26",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "p7Z3iK7g3ZEOm60h121fvtDmA3f.jpg",
+      "posterApprox": false,
+      "tmdbId": 334887
+    },
+    {
+      "id": "tmdb-in-movie-1596275",
+      "title": "Drive - The Pretenders",
+      "date": "2026-10-27",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "s9syckECnUYhKePQ1A0DC0mFVZ9.jpg",
+      "posterApprox": false,
+      "tmdbId": 1596275
+    },
+    {
+      "id": "tmdb-us-movie-1596275",
+      "title": "Drive - The Pretenders",
+      "date": "2026-10-27",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "s9syckECnUYhKePQ1A0DC0mFVZ9.jpg",
+      "posterApprox": false,
+      "tmdbId": 1596275
+    },
+    {
+      "id": "tmdb-us-movie-1797392",
+      "title": "Kordell Stewart / Slash & Burn",
+      "date": "2026-10-27",
+      "region": "US",
+      "type": "movie",
+      "platform": "hbomax",
+      "language": "English",
+      "poster": "wVZXTyC92jRU7lwn5QjhDs7FORk.jpg",
+      "posterApprox": false,
+      "tmdbId": 1797392
+    },
+    {
+      "id": "tmdb-in-series-333533",
+      "title": "The One About Matthew Perry",
+      "date": "2026-10-27",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "zDSjGvywwyWUqnMIpYYwFDyA7Az.jpg",
+      "posterApprox": false,
+      "tmdbId": 333533
+    },
+    {
+      "id": "tmdb-us-series-333533",
+      "title": "The One About Matthew Perry",
+      "date": "2026-10-27",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "zDSjGvywwyWUqnMIpYYwFDyA7Az.jpg",
+      "posterApprox": false,
+      "tmdbId": 333533
+    },
+    {
+      "id": "tmdb-in-series-334700",
+      "title": "The Gift of Deceit",
+      "date": "2026-10-28",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "mAfYj5ZtR2V5ad6uham1PwAh0mc.jpg",
+      "posterApprox": false,
+      "tmdbId": 334700
+    },
+    {
+      "id": "tmdb-us-series-334700",
+      "title": "The Gift of Deceit",
+      "date": "2026-10-28",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "mAfYj5ZtR2V5ad6uham1PwAh0mc.jpg",
+      "posterApprox": false,
+      "tmdbId": 334700
+    },
+    {
+      "id": "tmdb-in-movie-1657630",
+      "title": "The Awakening",
+      "date": "2026-10-29",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "vNvHT0v9xt7dDTqYue2fWXePKi7.jpg",
+      "posterApprox": false,
+      "tmdbId": 1657630
+    },
+    {
+      "id": "tmdb-in-series-307478",
+      "title": "The Perfect Lie",
+      "date": "2026-10-30",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "thXJkiBByDitV7iFSv1hU1sg7ij.jpg",
+      "posterApprox": false,
+      "tmdbId": 307478
+    },
+    {
+      "id": "tmdb-us-series-307478",
+      "title": "The Perfect Lie",
+      "date": "2026-10-30",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "thXJkiBByDitV7iFSv1hU1sg7ij.jpg",
+      "posterApprox": false,
+      "tmdbId": 307478
+    },
+    {
+      "id": "tmdb-us-movie-1293266",
+      "title": "Nightblade",
+      "date": "2026-10-31",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": "English",
+      "poster": null,
+      "posterApprox": false,
+      "tmdbId": 1293266
     }
   ]
 }
