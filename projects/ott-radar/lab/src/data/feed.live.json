@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-10-26",
-    "to": "2026-11-01"
+    "from": "2026-11-02",
+    "to": "2026-11-08"
   },
   "source": "tmdb",
   "releases": [
@@ -2116,6 +2116,234 @@
       "poster": null,
       "posterApprox": false,
       "tmdbId": 1293266
+    },
+    {
+      "id": "tmdb-us-series-334708",
+      "title": "Desperately Devoted",
+      "date": "2026-11-02",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "oxYZkiHFTSvSecYcJU03tTJ1uuD.jpg",
+      "posterApprox": false,
+      "tmdbId": 334708
+    },
+    {
+      "id": "tmdb-in-series-314271",
+      "title": "Bass X Machina",
+      "date": "2026-11-03",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "y9c1AwrldWRsY9edSf21cOgbI0h.jpg",
+      "posterApprox": false,
+      "tmdbId": 314271
+    },
+    {
+      "id": "tmdb-us-series-314271",
+      "title": "Bass X Machina",
+      "date": "2026-11-03",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "y9c1AwrldWRsY9edSf21cOgbI0h.jpg",
+      "posterApprox": false,
+      "tmdbId": 314271
+    },
+    {
+      "id": "tmdb-in-movie-1804941",
+      "title": "Mike Tyson: Return of the Mike",
+      "date": "2026-11-03",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "uaeL5BLgmGhIZXfViBsLSnvYB4i.jpg",
+      "posterApprox": false,
+      "tmdbId": 1804941
+    },
+    {
+      "id": "tmdb-us-movie-1804941",
+      "title": "Mike Tyson: Return of the Mike",
+      "date": "2026-11-03",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "uaeL5BLgmGhIZXfViBsLSnvYB4i.jpg",
+      "posterApprox": false,
+      "tmdbId": 1804941
+    },
+    {
+      "id": "tmdb-us-series-279246",
+      "title": "The Remarried Empress",
+      "date": "2026-11-03",
+      "region": "US",
+      "type": "series",
+      "platform": "disneyplus",
+      "language": null,
+      "poster": "zn3IXZzGavH3qle3o3g1r32eXDy.jpg",
+      "posterApprox": false,
+      "tmdbId": 279246
+    },
+    {
+      "id": "tmdb-in-movie-1570488",
+      "title": "A Dog's Perfect Christmas",
+      "date": "2026-11-04",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "wCBlcfbVPiK0mc13mgJDEoxRBHB.jpg",
+      "posterApprox": false,
+      "tmdbId": 1570488
+    },
+    {
+      "id": "tmdb-us-movie-1570488",
+      "title": "A Dog's Perfect Christmas",
+      "date": "2026-11-04",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "wCBlcfbVPiK0mc13mgJDEoxRBHB.jpg",
+      "posterApprox": false,
+      "tmdbId": 1570488
+    },
+    {
+      "id": "tmdb-in-series-312006",
+      "title": "Anaesthesia",
+      "date": "2026-11-04",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "4Pn7Qjfe4Jne7nZzLDe6vfPUM1f.jpg",
+      "posterApprox": false,
+      "tmdbId": 312006
+    },
+    {
+      "id": "tmdb-us-series-312006",
+      "title": "Anaesthesia",
+      "date": "2026-11-04",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "4Pn7Qjfe4Jne7nZzLDe6vfPUM1f.jpg",
+      "posterApprox": false,
+      "tmdbId": 312006
+    },
+    {
+      "id": "tmdb-in-series-338684",
+      "title": "Taken: Natalee Holloway",
+      "date": "2026-11-04",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "rKyjcuSbsDDDcIisa6cx5k5yQNa.jpg",
+      "posterApprox": false,
+      "tmdbId": 338684
+    },
+    {
+      "id": "tmdb-us-series-338684",
+      "title": "Taken: Natalee Holloway",
+      "date": "2026-11-04",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "rKyjcuSbsDDDcIisa6cx5k5yQNa.jpg",
+      "posterApprox": false,
+      "tmdbId": 338684
+    },
+    {
+      "id": "tmdb-in-series-258989",
+      "title": "The Greatest",
+      "date": "2026-11-04",
+      "region": "IN",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "hu4jco5AOs8NSIctuc9KsRyuSg8.jpg",
+      "posterApprox": false,
+      "tmdbId": 258989
+    },
+    {
+      "id": "tmdb-us-series-258989",
+      "title": "The Greatest",
+      "date": "2026-11-04",
+      "region": "US",
+      "type": "series",
+      "platform": "prime",
+      "language": "English",
+      "poster": "hu4jco5AOs8NSIctuc9KsRyuSg8.jpg",
+      "posterApprox": false,
+      "tmdbId": 258989
+    },
+    {
+      "id": "tmdb-us-movie-1815678",
+      "title": "DON'T TRUST",
+      "date": "2026-11-06",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "nXVltaqBSLbPur5zRbp5KoTDJJJ.jpg",
+      "posterApprox": false,
+      "tmdbId": 1815678
+    },
+    {
+      "id": "tmdb-in-movie-1801799",
+      "title": "Homecoming",
+      "date": "2026-11-06",
+      "region": "IN",
+      "type": "movie",
+      "platform": "sonyliv",
+      "language": null,
+      "poster": null,
+      "posterApprox": false,
+      "tmdbId": 1801799
+    },
+    {
+      "id": "tmdb-us-movie-1801799",
+      "title": "Homecoming",
+      "date": "2026-11-06",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": null,
+      "posterApprox": false,
+      "tmdbId": 1801799
+    },
+    {
+      "id": "tmdb-us-series-340698",
+      "title": "Surviving Alaska: Women of the Wild",
+      "date": "2026-11-06",
+      "region": "US",
+      "type": "series",
+      "platform": "disneyplus",
+      "language": "English",
+      "poster": "jtTlGF96Sblyu7hr56R0yL1g2iA.jpg",
+      "posterApprox": false,
+      "tmdbId": 340698
+    },
+    {
+      "id": "tmdb-us-movie-1058588",
+      "title": "The Invisible Guest",
+      "date": "2026-11-06",
+      "region": "US",
+      "type": "movie",
+      "platform": "hbomax",
+      "language": null,
+      "poster": "z3ZQXbY05pfeDwbozfxdbj7yQjM.jpg",
+      "posterApprox": false,
+      "tmdbId": 1058588
     }
   ]
 }
