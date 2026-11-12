@@ -1,7 +1,7 @@
 {
   "fetchedFor": {
-    "from": "2026-11-02",
-    "to": "2026-11-08"
+    "from": "2026-11-09",
+    "to": "2026-11-15"
   },
   "source": "tmdb",
   "releases": [
@@ -2344,6 +2344,210 @@
       "poster": "z3ZQXbY05pfeDwbozfxdbj7yQjM.jpg",
       "posterApprox": false,
       "tmdbId": 1058588
+    },
+    {
+      "id": "tmdb-in-series-336478",
+      "title": "Doozie's Doghouse",
+      "date": "2026-11-09",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "bhFbiSXg7KrwfXkpZfiLDq4QFCt.jpg",
+      "posterApprox": false,
+      "tmdbId": 336478
+    },
+    {
+      "id": "tmdb-us-series-336478",
+      "title": "Doozie's Doghouse",
+      "date": "2026-11-09",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "bhFbiSXg7KrwfXkpZfiLDq4QFCt.jpg",
+      "posterApprox": false,
+      "tmdbId": 336478
+    },
+    {
+      "id": "tmdb-us-series-340053",
+      "title": "Get Huge: Looksmaxxing to Death",
+      "date": "2026-11-10",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": "English",
+      "poster": "9qODvXSjoQmRKU9Xp24Oiucv9aZ.jpg",
+      "posterApprox": false,
+      "tmdbId": 340053
+    },
+    {
+      "id": "tmdb-in-movie-1820172",
+      "title": "Janelle James: How Romantic",
+      "date": "2026-11-10",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "zjASMxUqsye6BKLbW78FA9d64Yy.jpg",
+      "posterApprox": false,
+      "tmdbId": 1820172
+    },
+    {
+      "id": "tmdb-us-movie-1820172",
+      "title": "Janelle James: How Romantic",
+      "date": "2026-11-10",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "zjASMxUqsye6BKLbW78FA9d64Yy.jpg",
+      "posterApprox": false,
+      "tmdbId": 1820172
+    },
+    {
+      "id": "tmdb-in-series-336243",
+      "title": "ChiaroScuro",
+      "date": "2026-11-11",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "m9eZy0jzWCHSUUzbzIpysOrLgFb.jpg",
+      "posterApprox": false,
+      "tmdbId": 336243
+    },
+    {
+      "id": "tmdb-us-series-336243",
+      "title": "ChiaroScuro",
+      "date": "2026-11-11",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": null,
+      "poster": "m9eZy0jzWCHSUUzbzIpysOrLgFb.jpg",
+      "posterApprox": false,
+      "tmdbId": 336243
+    },
+    {
+      "id": "tmdb-us-movie-1822838",
+      "title": "El último rescate en la Patagonia",
+      "date": "2026-11-11",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": null,
+      "posterApprox": false,
+      "tmdbId": 1822838
+    },
+    {
+      "id": "tmdb-us-series-340321",
+      "title": "Style Wars",
+      "date": "2026-11-11",
+      "region": "US",
+      "type": "series",
+      "platform": "hulu",
+      "language": null,
+      "poster": "huoiVrSJAd5TqqRYKCCMVbyvxQe.jpg",
+      "posterApprox": false,
+      "tmdbId": 340321
+    },
+    {
+      "id": "tmdb-in-series-291507",
+      "title": "The Body",
+      "date": "2026-11-11",
+      "region": "IN",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "195kCuy2RqGaEAZDDpGTx7gBUBZ.jpg",
+      "posterApprox": false,
+      "tmdbId": 291507
+    },
+    {
+      "id": "tmdb-us-series-291507",
+      "title": "The Body",
+      "date": "2026-11-11",
+      "region": "US",
+      "type": "series",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "195kCuy2RqGaEAZDDpGTx7gBUBZ.jpg",
+      "posterApprox": false,
+      "tmdbId": 291507
+    },
+    {
+      "id": "tmdb-in-movie-1559980",
+      "title": "The Gospel of Christmas",
+      "date": "2026-11-11",
+      "region": "IN",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "k5OOd5sMEqPlKKhgFnkj1jBhNTf.jpg",
+      "posterApprox": false,
+      "tmdbId": 1559980
+    },
+    {
+      "id": "tmdb-us-movie-1559980",
+      "title": "The Gospel of Christmas",
+      "date": "2026-11-11",
+      "region": "US",
+      "type": "movie",
+      "platform": "netflix",
+      "language": "English",
+      "poster": "k5OOd5sMEqPlKKhgFnkj1jBhNTf.jpg",
+      "posterApprox": false,
+      "tmdbId": 1559980
+    },
+    {
+      "id": "tmdb-in-movie-1733518",
+      "title": "Bouma",
+      "date": "2026-11-12",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": "Malayalam",
+      "poster": "l526Yk6NJeEhxSx9dmRMPOwt3tT.jpg",
+      "posterApprox": false,
+      "tmdbId": 1733518
+    },
+    {
+      "id": "tmdb-in-movie-1314786",
+      "title": "Agent Zeta",
+      "date": "2026-11-13",
+      "region": "IN",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "1cKLG9KMoCjsgFB8Nw1EuglteVi.jpg",
+      "posterApprox": false,
+      "tmdbId": 1314786
+    },
+    {
+      "id": "tmdb-us-movie-1314786",
+      "title": "Agent Zeta",
+      "date": "2026-11-13",
+      "region": "US",
+      "type": "movie",
+      "platform": "prime",
+      "language": null,
+      "poster": "1cKLG9KMoCjsgFB8Nw1EuglteVi.jpg",
+      "posterApprox": false,
+      "tmdbId": 1314786
+    },
+    {
+      "id": "tmdb-in-movie-1636756",
+      "title": "Mrigaya 1.5: The Hunt Continues",
+      "date": "2026-11-13",
+      "region": "IN",
+      "type": "movie",
+      "platform": "zee5",
+      "language": "Bengali",
+      "poster": "zExGyNxLwMrZJ1tqSVjVLRuEPLi.jpg",
+      "posterApprox": false,
+      "tmdbId": 1636756
     }
   ]
 }
